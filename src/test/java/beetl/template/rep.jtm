@@ -1,0 +1,17 @@
+package ${dir}.rep.${package};
+
+import ${dir}.entity.${package}.${className};
+import ${dir}.dto.${package}.${className}DTO;
+import com.xinaml.frame.base.rep.JapRep;
+
+/**
+ * ${des}持久化接口
+ *
+ * @Author:	[${author}]
+ * @Date: [${date(),dateFormat="yyyy-MM-dd HH:mm:ss"}]
+ * @Description: [${des}]
+ * @Version: [${version}]
+ * @Copy: [${dir}]
+ */
+public interface ${className}Rep extends JapRep<${className}, ${className}DTO> {
+}

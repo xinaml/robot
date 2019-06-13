@@ -1,0 +1,48 @@
+package ${dir}.entity.${package};
+
+import ${dir}.base.entity.BaseEntity;
+import javax.persistence.*;
+<%
+	for(p in importPackage){
+%>
+${p}
+<%}%>
+
+/**
+ * ${des}
+ *
+ * @Author:	[${author}]
+ * @Date: [${date(),dateFormat="yyyy-MM-dd HH:mm:ss"}]
+ * @Description: [${des}]
+ * @Version: [${version}]
+ * @Copy: [${dir}]
+ */
+@Entity
+@Table(name = "${tableName}")
+public class ${className} extends BaseEntity {
+
+<%
+	for(m in list){
+%>
+    /**
+     * ${m.des}
+     */
+    ${m.annotation}
+ 	private ${m.type} ${m.name};
+<%}%>
+
+<%
+	for(m in list){
+%>
+ 	public ${m.type} ${m.getMethod} () {
+		return ${m.name};
+	}
+
+	public void ${m.setMethod} (${m.type} ${m.name}) {
+		this.${m.name} =${m.name};
+	}
+
+<%}%>
+
+
+}

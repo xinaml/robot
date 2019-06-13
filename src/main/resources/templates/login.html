@@ -1,0 +1,57 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html>
+<head>
+    <title>登录</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="keywords"
+          content="Internship Sign In & Sign Up Form Responsive Widget,Login form widgets, Sign up Web forms , Login signup Responsive web form,Flat Pricing table,Flat Drop downs,Registration Forms,News letter Forms,Elements"/>
+    <script type="application/x-javascript"> addEventListener("load", function () {
+        setTimeout(hideURLbar, 0);
+    }, false);
+
+    function hideURLbar() {
+        window.scrollTo(0, 1);
+    } </script>
+    <link href="../css/login/font-awesome.min.css" rel="stylesheet" type="text/css" media="all">
+    <link href="../css/login/style.css" rel="stylesheet" type="text/css" media="all"/>
+</head>
+<body>
+
+<div class="top-buttons-agileinfo">
+    <a href="/login" class="active">登录</a><a href="/register">注册</a>
+</div>
+<h1>后台登录管理
+</h1>
+<div class="main-agileits">
+    <div class="form-w3-agile">
+        <h2 class="sub-agileits-w3layouts">登录</h2>
+        <form id="login_form" method="post" onsubmit="return false">
+            <input type="text" name="username" placeholder="用户名" required
+                   oninvalid="setCustomValidity('请填写用户名')"/>
+            <input type="password" name="password" placeholder="密码" required
+                   oninvalid="setCustomValidity('请填写密码')"/>
+            <input type="hidden" id="prevUrl" th:value="${prevUrl}">
+            <a href="#" class="forgot-w3layouts">忘记密码 ?</a>
+            <div class="submit-w3l">
+                <input type="submit" value="登录" onclick="$login.checkOn()">
+            </div>
+            <div id="msg" style="color: red;font-size: 16px;text-align: center;width: 100%;padding-top: 4px"></div>
+            <p class="p-bottom-w3ls"><a href="/register">点击注册</a>如果你没有一个帐户。</p>
+        </form>
+    </div>
+</div>
+<div class="copyright w3-agile">
+    <p> © 2018 xxxxx <a href="http://xxx.com/" target="_blank">lgq</a></p>
+</div>
+<script type="text/javascript" src="../js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../js/login/login.js"></script>
+<script th:inline="javascript">
+    var $login;
+    $(function () {
+        $login = new Login();
+    });
+</script>
+</body>
+</html>

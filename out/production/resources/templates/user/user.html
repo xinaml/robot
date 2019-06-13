@@ -1,0 +1,132 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>用户</title>
+    <link rel="stylesheet" href="../bootstrap/css/bootstrap.css"/>
+    <link rel="stylesheet" href="../bootstrap/css/bootstrap-table.min.css"/>
+    <link rel="stylesheet" href="../bootstrap/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" href="../toastr/toastr.min.css">
+    <script src="../js/jquery-3.2.1.min.js"></script>
+    <script src="../bootstrap/js/bootstrap.js"></script>
+    <script src="../bootstrap/js/bootstrap-table.min.js"></script>
+    <script src="../bootstrap/js/bootstrap-table-zh-CN.js"></script>
+    <script src="../bootstrap/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="../bootstrap/js/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="../toastr/toastr.min.js"></script>
+    <script src="../js/user/user.js"></script>
+    <script src="../js/common/common.js"></script>
+
+</head>
+<body>
+<div id="head" th:replace="/common/head::html"  style="text-align: center"></div>
+<table id="user_table">
+</table>
+<div class="content">
+    <div id="toolbar" class="btn-group pull-right" style="margin-right: 20px;">
+        <button id="btn_edit" type="button" class="btn btn-default" style=" border-radius: 0 " onclick="$user.editUser(this)">
+            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>编辑
+        </button>
+        <button id="btn_delete" type="button" class="btn btn-default" onclick="$user.delUser(this)">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+        </button>
+        <button id="btn_add" type="button" class="btn btn-default" onclick="$user.addUser(this)">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+        </button>
+    </div>
+</div>
+<div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">×
+                </button>
+                <h4 class="modal-title" >
+                    刪除
+                </h4>
+            </div>
+            <div class="modal-body">
+                确认刪除吗?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default"
+                        data-dismiss="modal">关闭
+                </button>
+                <button type="button"  onclick="$user.delUser()" class="btn btn-primary">
+                    确认
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="modalUser" tabindex="-1" role="dialog" aria-labelledby="modalUserLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="modalUserLabel">
+
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form id="userFrom">
+                    <div class="form-group">
+                        <input type="hidden" id="id" name="id">
+                        <label>username:</label>
+                        <input style="width: 50%" type="username" class="form-control" name="username" id="username"
+                               placeholder="Enter username">
+                        <label for="email">Email:</label>
+                        <input style="width: 50%" type="email" class="form-control" id="email" name="email"
+                               placeholder="Enter email">
+                    </div>
+                    <div class="form-group">
+                        <label>phone:</label>
+                        <input style="width: 50%"  class="form-control" name="phone" id="phone" placeholder="Enter phone">
+                        <label>birthday:</label>
+                        <input style="width: 50%;" readonly type="text" class="form-control form_datetime" id="birthday"
+                               name="birthday" placeholder="Enter birthday"/>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                </button>
+                <button type="button" id="opt" class="btn btn-primary">
+                    提交
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+</body>
+
+<script>
+    <!-- codeseven.github.io/toastr/demo.html -->
+    toastr.options = {
+        timeOut: "3000", //提示框消失时间
+        preventDuplicates: true,//内容相同覆盖
+        preventManyTimes: false,//可显示多个提示框
+        hideDuration: '1000',//停留的时间
+        positionClass:'toast-top-center',//位置
+        closeButton:true,//显示关闭按钮
+        showEasing: "swing",//显示时的动画缓冲方式
+        hideEasing: "linear",//消失时的动画缓冲方式
+        showMethod: "fadeIn",//显示时的动画方式
+        hideMethod: "fadeOut"//消失时的动画方式
+    };
+    var $user;
+    $(function () {
+        $user = new User();
+        $user.initTable();
+    });
+
+</script>
+
+</html>

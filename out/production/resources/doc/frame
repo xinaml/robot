@@ -1,0 +1,49 @@
+拦截器：
+   1. LoginIntercept：
+        用法：可在控制器类，或者方法上添加 @Login 注解，加上该注解后便进行登录拦截，如果在类添加，测控制器类所有方法
+            全部校验登录，如果在方法上添加，则仅该方法上有效
+
+添加自定义拦截器 ：
+    1.拦截器目录：common/interceptor
+    2.参照 LoginIntercept 登录拦截器用法
+    3.添加拦截器类后并为生效，需在common/config/WebConf类的拦截链下添加注册你的拦截器
+        如：registry.addInterceptor(拦截器类).addPathPatterns(拦截url);
+        例：registry.addInterceptor(new LoginIntercept()).addPathPatterns("/**");
+
+
+
+AOP切面:
+    1.JSR303Aspect：
+        该类会对spring mvc 数据校验进行统一的处理
+
+添加自定义AOP ：
+    请参照：common/aspect/JSR303Aspect
+
+
+异常处理：
+    common/handler/ExceptionHandler 该类对所有异常进行统一处理
+    异常编码： 500： code ：-1 系统异常
+             200： code ： 1 业务抛出异常
+             200： code ： 2 参数校验不通过异常
+             200： code ： 403 未登录异常
+             200： code ： 0 正常数据
+
+配置：common/config
+        BeanConf: 注入一些spring 注入不了的类，比如utils类
+        DateConverterConf： 日期相关自动转换类，该类会自动把前端传过来的日期字符串自动转换，并且返回的json数据对日期进行了处理
+        SwaggerConf ： api注入及配置类
+        WebConf ： 拦截器注册配置类
+        UploadConf ： 上传文件配置类
+
+
+常量类：CommonConst，FinalConst，PathConst常用的常量
+
+工具类：common/utils
+    ASEUtil： ase前端加密解密
+    RequestUtil： 获取当前request
+    ResponseUtil： 获取当前response
+    StringUtil： 处理字符串
+    UserUtil： 获取当前用户等
+    ...
+
+

@@ -1,0 +1,182 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>资料中心</title>
+    <link href="../css/storage/storage.css" rel="stylesheet">
+    <link href="../webuploader/css/webuploader.css" rel="stylesheet"/>
+    <link href="../bootstrap/css/bootstrap.css" rel="stylesheet"/>
+    <link href="../ztree/css/zTreeStyle/zTreeStyle.css" rel="stylesheet"/>
+    <script src="../js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../webuploader/js/webuploader.nolog.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../bootstrap/js/bootstrap.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../ztree/js/jquery.ztree.all-3.5.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../js/storage/storage.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../js/ase.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+
+<div style="background: #f0f0f0;height: 30px;"></div>
+<div id="left">
+
+</div>
+<div id="right" >
+    <div id='topflexed'>
+        <div class="right-title">
+            <div class="title-left">
+                <div class="btns container" style='margin: 0;padding:0;width: 100%;'>
+                    <div>
+                        <div id="picker" class="webuploader-container"
+                             style="float: left; margin-right: 10px">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;上传 <input type="file" name="file"
+                                                                          class="webuploader-element-invisible "
+                                                                          multiple="multiple">
+                        </div>
+                    </div>
+                    <button class="titleTwo" onclick="$storage.mkdir()">&nbsp;&nbsp;&nbsp;&nbsp;新建文件夹</button>
+                    <div id="btn-group" class="btn-group" role="group">
+                        <button type="button" onclick="$storage.downFile()" class="downFile btn btn-default">下载</button>
+                        <button type="button" onclick="$storage.delFile()" class="delFile btn btn-default">删除</button>
+                        <button type="button" onclick="$storage.copyFile()" class="copyFile btn btn-default">&nbsp;&nbsp;&nbsp;复制到</button>
+                        <button type="button" onclick="$storage.moveFile()" class="moveFile btn btn-default">&nbsp;&nbsp;&nbsp;移动到</button>
+                        <button type="button" onclick="$storage.renameFile()" class="renameFile btn btn-default isdisabled">&nbsp;&nbsp;重命名</button>
+                    </div>
+                    <div class="searchright">
+                        <input id="searchText" type="search" placeholder="搜索">
+                        <div onclick="$storage.search(this)" class="search"><img style="padding-left: 30px"
+                                src="../images/storage/ss_1.png" alt=""></div>
+                        <button style="display: none" class="change" :focus{outline:0;}></button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="clearfix"></div>
+        <div class="titleInfo">
+            <p style='margin-bottom:5px'><a id="back_level" href="#" onclick="$storage.goback()">返回上一级</a><font>|</font>
+                <em id="currentPath"></em> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+                        style="float:right;font-weight:bold" id="fileNums">共0个</span></p>
+        </div>
+
+    </div>
+
+    <!--网格-->
+    <div class="countCol" >
+        <div class="colInfo danxuan">
+            <ul id="countCol-content">
+                <!-- content -->
+            </ul>
+        </div>
+    </div>
+
+    <!--模态框-->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document" style="max-width: 600px;margin: 0 auto">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">复制到</h4>
+                </div>
+                <div class="modal-body">
+                    <!--ztree插件-->
+                    <ul id="tree" class="ztree"></ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">确定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--上传-->
+    <div class="upload" style="display: none">
+        <div class="top">
+            <div style="line-height: 44px;">
+                <span id="status">上传完成</span>
+            </div>
+            <div class="top-right"></div>
+        </div>
+        <div class="bottom">
+            <div class="title" id="upload_msg" style='margin-bottom: 2px'>
+                <div class="title-left">
+                    <span>有一个文件上传成功</span>
+                </div>
+            </div>
+            <div id="fileList"></div>
+
+        </div>
+    </div>
+</div>
+<div class="prompt_box">
+    <div class="prompt_boxbody">
+        <img src="../images/storage/loading.gif" alt="">
+        <span>正在重命名...</span>
+    </div>
+</div>
+
+<div id="imgPreview">
+    <div style="cursor:pointer;font-size: 26px;font-weight:bold;color: white;float: right;padding-right: 25px;padding-top: 25px"
+         onclick='$storage.closeImgPreview()'>✖
+    </div>
+    <div style=' display: inline-block;'><img style="padding-top:150px;max-height:840px;max-width:1100px;"
+                                              src="#"></img></div>
+    <div style="margin-top:15px" id="imgDown"></div>
+</div>
+</body>
+
+<script>
+    var $storage = new Storage();
+    var currentPath = $storage.getCookie("currentPath");
+    $storage.list("/");
+    var uploader = WebUploader.create({
+        auto: false,
+        swf: '../' + "webuploader/Uploader.swf",
+        server: '/storage/upload',
+        pick: '#picker', // 选择文件的按钮。可选。
+        dnd: ".upload",
+        prepareNextFile: true,
+        chunked: true, //开启分块上传
+        chunkSize: 20 * 1024 * 1024,
+        chunkRetry: 3,//网	络问题上传失败后重试次数
+        threads: 5,
+        fileNumLimit: 10,
+        duplicate: true,
+        fileSizeLimit: 1200 * 1024 * 1024,//最大1.2GB
+        fileSingleSizeLimit: 1200 * 1024 * 1024,
+        resize: false,//不压缩
+    });
+    $storage.initUpload(uploader);
+    $(document).keyup(function (event) {
+        switch (event.keyCode) {
+            case 27:
+                $("#imgPreview").fadeOut();
+            case 96:
+                $("#imgPreview").fadeOut();
+        }
+    });
+    $('#btn-group').hide();
+    $("#myModal").on("hidden.bs.modal", function () {
+        var mymodal = '<div class="modal fade" id="myModal" tabindex="-1" role="dialog" style="max-width: 600px;margin:0 auto;"><div class="modal-dialog" role="document"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal"aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="myModalLabel">复制到</h4></div><div class="modal-body"><!--ztree插件--><ul id="tree" class="ztree"></ul></div><div class="modal-footer"><button type="button" class="btn btn-primary">确定</button><button type="button" class="btn btn-default" data-dismiss="modal">取消</button></div></div></div></div>';
+        $("#myModal").remove();
+        $('body').prepend(mymodal);
+    });
+    $('.top-right').click(function () {
+        $('.upload').fadeOut();
+        $('#imgPreview').fadeOut();
+        $('#upload_msg').html("");
+        $(".item").each(function (index, dom) {
+            $(dom).remove();
+        });
+    });
+    $('.titleright').click(function () {
+        $('.title').fadeOut();
+    });
+
+</script>
+</html>

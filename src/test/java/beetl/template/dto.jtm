@@ -1,0 +1,15 @@
+package ${dir}.dto.${package};
+
+import ${dir}.base.dto.BaseDTO;
+
+/**
+ * ${des}查询传输对象
+ *
+ * @Author:	[${author}]
+ * @Date: [${date(),dateFormat="yyyy-MM-dd HH:mm:ss"}]
+ * @Description: [${des}]
+ * @Version: [${version}]
+ * @Copy: [${dir}]
+ */
+public class ${className}DTO extends BaseDTO {
+}

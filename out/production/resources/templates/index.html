@@ -1,0 +1,43 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>index</title>
+    <link rel="stylesheet" href="../bootstrap/css/bootstrap.css"/>
+    <script src="../js/jquery-3.2.1.min.js"></script>
+    <script src="../bootstrap/js/bootstrap.js"></script>
+</head>
+
+<body>
+<div id="head" th:replace="/common/head::html"  style="text-align: center"></div>
+<div id="content" style="margin-top: 20px;margin-left: 50px">
+    <div style="height: 200px">
+        <form method="post" action="/upload?path=/"  enctype="multipart/form-data">
+            <input type="file" name="file" onchange="preview(this);"  >
+            <button class="btn btn-primary" type="submit" style="float: left;margin-top: 20px">上传</button>
+        </form>
+        <p id="preview" style="margin-top: 80px"></p>
+    </div>
+    <div id="images" style="max-width: 800px;max-height: 600px;margin-top: 50px"></div>
+    <div style="margin-top: 20px"> <a href="/user">用户管理</a></div>
+    <div style="margin-top: 20px"> <a href="/storage/page">文件管理</a></div>
+</div>
+<div id="footer" style="text-align: center"></div>
+</body>
+<script>
+    function preview(file){
+        if (file.files && file.files[0]){
+            var reader = new FileReader();
+            reader.onload = function(evt){
+                $("#preview").html('<img src="' + evt.target.result + '" width="95px" height="50px" />');
+            }
+            reader.readAsDataURL(file.files[0]);
+        }else{
+            $("#preview").html('<p style="filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale,src=\'' + file.value + '\'"></p>');
+        }
+    }
+
+
+
+</script>
+</html>

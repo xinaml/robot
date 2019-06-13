@@ -1,0 +1,42 @@
+apply from: 'config.gradle'
+buildscript {
+    ext {
+        springBootVersion = '2.0.1.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+configurations {  //过滤spring boot 自带的日志 logback
+    compile.exclude module: 'spring-boot-starter-logging'
+}
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile('org.springframework.boot:spring-boot-starter-jdbc')
+    compile('org.springframework.boot:spring-boot-starter-data-redis')
+    compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+    compile('org.springframework.boot:spring-boot-starter-log4j2')
+    compile('org.springframework.boot:spring-boot-starter-cache')
+    compile('org.springframework.boot:spring-boot-starter-quartz')
+
+
+    runtime('mysql:mysql-connector-java')
+    compile group: 'com.alibaba', name: 'druid-spring-boot-starter', version: "$druid_v" //连接池
+    compile group: 'com.alibaba', name: 'fastjson', version: "$fastjson_v"
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: "$lang3_v"
+    compile group: 'net.sourceforge.nekohtml', name: 'nekohtml', version: "$nekohtml_v" //html 标签闭合
+    compile group: 'net.coobird', name: 'thumbnailator', version: "$thumbnailator_v"
+    compile group: 'commons-io', name: 'commons-io', version: "$commonsIo_v"
+    runtime group: 'com.ibeetl', name: 'beetl', version: "$beelt_v" //类生成模板
+
+
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+
+
+}
+
+

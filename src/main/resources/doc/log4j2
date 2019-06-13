@@ -1,0 +1,14 @@
+默认保存目录为 :/storage/logs
+
+    info: info.log
+
+    error: error.log
+
+    debug: debug.log （默认已屏蔽）
+
+    warn: warn.log
+
+    (写入日志文件，超50M进行压缩，路径为：/storage/logs/年月/xxx.log)
+
+    gz解压： gunzip –c filename.gz  > filename
+

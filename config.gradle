@@ -1,0 +1,37 @@
+allprojects {
+
+
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    group = 'com.xinaml'
+    version = '0.0.1'
+    sourceCompatibility = 1.8
+
+    repositories {
+        //mavenCentral()
+        maven {
+            url 'http://maven.aliyun.com/nexus/content/groups/public/'
+        }
+        mavenLocal()
+    }
+
+
+    ext {
+        fastjson_v = '1.2.47'
+        lang3_v = '3.7'
+        swaggerUI_v = '2.9.2'
+        swagger2_v = '2.9.2'
+        druid_v='1.1.9'
+        log4j2_v='2.0.1.RELEASE'
+        thymeleaf_v='2.0.1.RELEASE'
+        nekohtml_v='1.9.22'
+        beelt_v='2.8.1'
+        commonsIo_v='2.6'
+        thumbnailator_v='0.4.8'
+        redis_v='2.0.2.RELEASE'
+        cache_v='2.0.2.RELEASE'
+    }
+}
