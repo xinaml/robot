@@ -9,7 +9,9 @@ import com.xinaml.robot.common.custom.exception.ActException;
 import com.xinaml.robot.common.custom.exception.SerException;
 import com.xinaml.robot.common.custom.result.ActResult;
 import com.xinaml.robot.common.custom.result.Result;
+import com.xinaml.robot.common.okex.Client;
 import com.xinaml.robot.common.utils.PassWordUtil;
+import com.xinaml.robot.common.utils.UserUtil;
 import com.xinaml.robot.dto.storage.StorageDTO;
 import com.xinaml.robot.dto.user.UserDTO;
 import com.xinaml.robot.entity.user.User;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.persistence.criteria.JoinType;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -43,11 +46,17 @@ public class UserAct extends BaseAct {
         return new ModelAndView("user/user");
     }
 
+    @PostMapping("/stop")
+    public Result<String> info() throws ActException {
+        boolean rs = userSer.stop();
+        return new ActResult<String>(0,"操作成功！",rs==Boolean.TRUE?"开启":"关闭");
+    }
+
     @GetMapping("maps")
-    public Result<User> maps(UserDTO dto) throws ActException {
+    public Map<String, Object> maps(UserDTO dto) throws ActException {
         try {
             Map<String, Object> maps = userSer.findByPage(dto);
-            return new ActResult(maps);
+            return maps;
         } catch (SerException e) {
             throw new ActException(e.getMessage());
         }

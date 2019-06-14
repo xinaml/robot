@@ -48,10 +48,20 @@ public class User extends BaseEntity {
     @Column(name = "is_expired", columnDefinition = "TINYINT(1) DEFAULT 0 COMMENT '是否过期'", nullable = false, insertable = false)
     private Boolean expired;
 
+    //常用类型 ：默认停止自动买卖
+    @Column(name = "is_stop", columnDefinition = "TINYINT(1) DEFAULT 1 COMMENT '是否停止'", nullable = false, insertable = false)
+    private Boolean stop;
+
     //常用类型 ：Date
     @Column(columnDefinition = "DATE  COMMENT '日期'")
     private LocalDate birthday;
 
+    @Column(unique = true, length = 20, columnDefinition = "VARCHAR(25) COMMENT '账号  '")
+    private String passPhrase;
+    @Column(unique = true, length = 56, columnDefinition = "VARCHAR(56) COMMENT 'apiKey'")
+    private String apiKey;
+    @Column(unique = true, length = 56, columnDefinition = "VARCHAR(56) COMMENT 'secretKey'")
+    private String secretKey;
 
     public String getUsername() {
         return username;
@@ -126,5 +136,37 @@ public class User extends BaseEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPassPhrase() {
+        return passPhrase;
+    }
+
+    public void setPassPhrase(String passPhrase) {
+        this.passPhrase = passPhrase;
+    }
+
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
+    public Boolean getStop() {
+        return stop;
+    }
+
+    public void setStop(Boolean stop) {
+        this.stop = stop;
     }
 }

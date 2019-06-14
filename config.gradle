@@ -30,6 +30,7 @@ allprojects {
         nekohtml_v='1.9.22'
         beelt_v='2.8.1'
         commonsIo_v='2.6'
+        httpclient_v='4.5.2'
         thumbnailator_v='0.4.8'
         redis_v='2.0.2.RELEASE'
         cache_v='2.0.2.RELEASE'

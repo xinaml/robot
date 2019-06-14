@@ -21,6 +21,7 @@
     <div id="images" style="max-width: 800px;max-height: 600px;margin-top: 50px"></div>
     <div style="margin-top: 20px"> <a href="/user">用户管理</a></div>
     <div style="margin-top: 20px"> <a href="/storage/page">文件管理</a></div>
+    <div style="margin-top: 20px"> <a id="a_stop" href="#" onclick="stop()">开启</a></div>
 </div>
 <div id="footer" style="text-align: center"></div>
 </body>
@@ -35,6 +36,29 @@
         }else{
             $("#preview").html('<p style="filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale,src=\'' + file.value + '\'"></p>');
         }
+    }
+    function stop() {
+        $.ajax({
+            type: 'POST',
+            url: '/user/stop',
+            dataType: 'json',
+            cache: false,//false是不缓存，true为缓存
+            async: true,//true为异步，false为同步
+            beforeSend: function () {
+                //请求前
+            },
+            success: function (rs) {
+                if (rs.code == 0) {
+                    console.info(rs.data)
+                   $("#a_stop").text(rs.data)
+                } else {
+                    toastr.error(rs.msg);
+                }
+            },
+            error: function () {
+                //请求失败时
+            }
+        })
     }
 
 

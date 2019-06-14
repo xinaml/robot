@@ -66,6 +66,26 @@ public final class UserUtil {
     }
 
     /**
+     * 获取当前用户token
+     * @return
+     */
+    public static String getToken( ) {
+        HttpServletRequest request = RequestUtil.get();
+        String token = request.getHeader(FinalConst.TOKEN); //取header的token
+        if (StringUtils.isBlank(token)) { //取cookie的token
+            if (null != request.getCookies()) {
+                for (Cookie cookie : request.getCookies()) {
+                    if (cookie.getName().equals(FinalConst.TOKEN)) {
+                        token = cookie.getValue();
+                        break;
+                    }
+                }
+            }
+        }
+        return token;
+    }
+
+    /**
      * 获取当前用户
      *
      * @return

@@ -5,8 +5,10 @@ import com.xinaml.robot.base.dto.RT;
 import com.xinaml.robot.base.ser.ServiceImpl;
 import com.xinaml.robot.common.custom.exception.SerException;
 import com.xinaml.robot.base.rep.RedisRep;
+import com.xinaml.robot.common.okex.threads.ThreadScan;
 import com.xinaml.robot.common.utils.PassWordUtil;
 import com.xinaml.robot.common.utils.TokenUtil;
+import com.xinaml.robot.common.utils.UserUtil;
 import com.xinaml.robot.dto.user.UserDTO;
 import com.xinaml.robot.entity.user.User;
 import com.xinaml.robot.rep.user.UserRep;
@@ -89,6 +91,15 @@ public class UserSerImp extends ServiceImpl<User, UserDTO> implements UserSer {
         return true;
     }
 
+    @Override
+    public Boolean stop() throws SerException {
+        User user = UserUtil.getUser();
+        user.setStop(!user.getStop());
+        this.update(user);
+        ThreadScan.scan(user.getId(),user.getStop());
+        return user.getStop();
+    }
+
     /**
      * 以方法名+查询条件做缓存（例子）
      *
@@ -117,6 +128,13 @@ public class UserSerImp extends ServiceImpl<User, UserDTO> implements UserSer {
     @CacheEvict(value="users", beforeInvocation = true, allEntries = true)
     @Override
     public void update(User... entities) throws SerException {
+        User old = UserUtil.getUser();
+        for(User u:entities){
+            if(u.getId().equals(old.getId())){
+                String token = UserUtil.getToken();
+                jRedis.put(token, JSON.toJSONString(u));
+            }
+        }
         super.update(entities);
     }
 

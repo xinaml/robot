@@ -6,7 +6,7 @@
  **/
 package com.xinaml.robot.common.custom.exception;
 
-public class SerException extends Exception {
+public class SerException extends RuntimeException {
     public SerException(String msg) {
         super(msg);
     }

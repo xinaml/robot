@@ -31,6 +31,9 @@ dependencies {
     compile group: 'net.sourceforge.nekohtml', name: 'nekohtml', version: "$nekohtml_v" //html 标签闭合
     compile group: 'net.coobird', name: 'thumbnailator', version: "$thumbnailator_v"
     compile group: 'commons-io', name: 'commons-io', version: "$commonsIo_v"
+    compile 'com.squareup.okhttp3:okhttp:3.10.0'
+    compile 'com.google.guava:guava:14.0'
+
     runtime group: 'com.ibeetl', name: 'beetl', version: "$beelt_v" //类生成模板
 
 

@@ -6,7 +6,7 @@
  **/
 package com.xinaml.robot.common.custom.exception;
 
-public class ActException extends Exception {
+public class ActException extends RuntimeException {
     public ActException(String msg) {
         super(msg);
     }
@@ -18,4 +18,5 @@ public class ActException extends Exception {
     public ActException(String msg, int code) {
         super(code + "@" + msg);
     }
+
 }

@@ -30,4 +30,11 @@ public interface UserSer extends Ser<User, UserDTO> {
      */
     Boolean logout(String token) throws SerException;
 
+    /**
+     * 开启自动扫描
+     * @return
+     * @throws SerException
+     */
+    Boolean stop() throws SerException;
+
 }
