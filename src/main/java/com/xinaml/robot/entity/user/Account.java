@@ -22,11 +22,11 @@ public class Account extends BaseEntity {
     private String currency;//币种，如btc
 
     @Column(columnDefinition = " DECIMAL(10,2) COMMENT '余额'")
-
     private Double balance;//余额
-    @Column(columnDefinition = " DECIMAL(10,2) COMMENT '余额'")
 
+    @Column(columnDefinition = " DECIMAL(10,2) COMMENT '余额'")
     private Double hold;//	冻结(不可用)
+
     @Column(columnDefinition = " DECIMAL(10,2) COMMENT '余额'")
     private Double available;//可用余额
 

@@ -1,0 +1,186 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>用户配置</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../bootstrap/css/bootstrap-table.min.css"/>
+    <link rel="stylesheet" href="../bootstrap/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" href="../toastr/toastr.min.css">
+    <script src="../js/jquery-3.2.1.min.js"></script>
+    <script src="../bootstrap/js/bootstrap.js"></script>
+    <script src="../bootstrap/js/bootstrap-table.min.js"></script>
+    <script src="../bootstrap/js/bootstrap-table-zh-CN.js"></script>
+    <script src="../bootstrap/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="../bootstrap/js/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="../toastr/toastr.min.js"></script>
+    <script src="../js/common/common.js"></script>
+
+</head>
+<body>
+</div>
+<div style="margin-top: 20px;text-align: center" class="container mt-3">
+
+    <div>
+        <form id="confFrom" style="margin-left: 500px">
+
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">k线粒度</span>
+                </div>
+                <input type="text" class="form-control" placeholder="k线粒度" id="minute" name="minute">
+            </div>
+
+            <br>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">保留金额</span>
+                </div>
+                <input type="text" class="form-control" placeholder="保留金额" id="account" name="account">
+            </div>
+            <br>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">币种</span>
+                </div>
+                <input type="text" class="form-control" placeholder="币种" name="type" id="type">
+            </div>
+            <br>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">买入价倍率</span>
+                </div>
+                <input type="text" class="form-control" placeholder="买入价倍率" name="buyMultiple" id="buyMultiple">
+            </div>
+            <br>
+
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">卖出价倍率</span>
+                </div>
+                <input type="text" class="form-control" placeholder="卖出价倍率" name="selfMultiple" id="selfMultiple">
+            </div>
+
+        </form>
+    </div>
+
+    <br>
+    <div>
+        <button type="submit" class="btn btn-primary" id="edit_btn" onclick="editConf()">保存数据</button>
+    </div>
+
+    <br>
+    <div>
+        <button class="btn btn-default" id="a_stop" onclick="stop()">开启定时器</button>
+    </div>
+</div>
+</body>
+<script>
+
+    $(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/user/conf/get',
+            dataType: 'json',
+            cache: false,//false是不缓存，true为缓存
+            async: true,//true为异步，false为同步
+            beforeSend: function () {
+//请求前
+            },
+            success: function (rs) {
+                if (rs.code == 0) {
+                   if(rs.data!=null){
+                       $("#minute").val(rs.data.minute)
+                       $("#account").val(rs.data.account)
+                       $("#type").val(rs.data.type)
+                       $("#buyMultiple").val(rs.data.buyMultiple)
+                       $("#selfMultiple").val(rs.data.selfMultiple)
+                   }
+                } else {
+                    toastr.error(rs.msg);
+                }
+            },
+            error: function () {
+//请求失败时
+            }
+        })
+
+        $.ajax({
+            type: 'GET',
+            url: '/user/conf/get/status',
+            dataType: 'json',
+            cache: false,//false是不缓存，true为缓存
+            async: true,//true为异步，false为同步
+            beforeSend: function () {
+//请求前
+            },
+            success: function (rs) {
+                if (rs.code == 0) {
+                    $("#a_stop").text(rs.data)
+                } else {
+                    toastr.error(rs.msg);
+                }
+            },
+            error: function () {
+//请求失败时
+            }
+        })
+    });
+
+
+
+    function editConf() {
+        var data = $('#confFrom').serialize();
+        var submitData = decodeURIComponent(data, true);
+        $.ajax({
+            type: 'POST',
+            url: '/user/conf/edit',
+            data: submitData,
+            dataType: 'json',
+            cache: false,//false是不缓存，true为缓存
+            async: true,//true为异步，false为同步
+            beforeSend: function () {
+                //请求前
+            },
+            success: function (rs) {
+                if (rs.code == 0) {
+                    toastr.success(rs.msg);
+                } else {
+                    toastr.error(rs.msg);
+                }
+            },
+            error: function () {
+                //请求失败时
+            }
+        })
+
+    }
+
+
+    function stop() {
+        $.ajax({
+            type: 'POST',
+            url: '/user/stop',
+            dataType: 'json',
+            cache: false,//false是不缓存，true为缓存
+            async: true,//true为异步，false为同步
+            beforeSend: function () {
+//请求前
+            },
+            success: function (rs) {
+                if (rs.code == 0) {
+                    $("#a_stop").text(rs.data)
+                } else {
+                    toastr.error(rs.msg);
+                }
+            },
+            error: function () {
+//请求失败时
+            }
+        })
+    }
+</script>
+
+
+</html>

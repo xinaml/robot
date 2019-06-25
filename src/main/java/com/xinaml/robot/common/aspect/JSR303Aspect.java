@@ -94,7 +94,7 @@ public class JSR303Aspect {
             if (null != fieldErrors && fieldErrors.size() > 0) {
                 ActResult actResult = new ActResult();
                 actResult.setCode(2);
-                actResult.setMsg("参数检验不通过[" + fieldErrors.get(0).getDefaultMessage() + "]");
+                actResult.setMsg(  fieldErrors.get(0).getDefaultMessage());
                 actResult.setData(null);
                 ResponseUtil.writeData(JSON.toJSONString(actResult));
                 return true;

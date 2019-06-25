@@ -147,7 +147,8 @@ public class Client {
     }
 
     public static void main(String[] args) throws Exception {
-        String rs = Client.httpGet("/api/account/v3/deposit/history");
+        String rs = Client.httpGet(" /api/swap/v3/instruments/BTC-USD-SWAP/candles?start=2019-06-24T16:00:00.000Z&end=2019-06-25T16:30:00.000Z&granularity=3600");
+//        String rs = Client.httpGet("/api/swap/v3/instruments");
         System.out.println(rs);
     }
 
