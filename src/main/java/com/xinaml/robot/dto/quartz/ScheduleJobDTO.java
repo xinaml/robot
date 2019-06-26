@@ -7,7 +7,7 @@ import com.xinaml.robot.base.dto.BaseDTO;
  * @Date:[2018-12-29 09:47]
  * @Description: [ ]
  * @Version: [3.0]
- * @Copy: [com.changbei]
+ * @Copy: [com.xinaml]
  */
 public class ScheduleJobDTO extends BaseDTO {
 }

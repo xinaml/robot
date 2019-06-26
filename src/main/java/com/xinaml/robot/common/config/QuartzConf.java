@@ -8,7 +8,7 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
  * @Date:[2018-12-29 09:56]
  * @Description: [ ]
  * @Version: [3.0]
- * @Copy: [com.changbei]
+ * @Copy: [com.xinaml]
  */
 
 @Configuration

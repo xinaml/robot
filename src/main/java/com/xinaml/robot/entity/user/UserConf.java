@@ -18,13 +18,13 @@ import java.util.concurrent.TimeUnit;
  * @Date: [19-6-25 下午4:31]
  * @Description:
  * @Version: [1.0.0]
- * @Copy: [com.changbei]
+ * @Copy: [com.xinaml]
  */
 @Entity
 @Table(name = "tb_conf")
 public class UserConf extends BaseEntity {
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "user_id", columnDefinition = "VARCHAR(36) COMMENT '所属用户' ")
     private User user;
 
@@ -42,6 +42,7 @@ public class UserConf extends BaseEntity {
 
     @Column(columnDefinition = " DECIMAL(10,2) COMMENT '卖出价倍率'")
     private Double selfMultiple;//卖出价倍率
+
     @Transient
     private Integer seconds=60;//秒
     @Transient

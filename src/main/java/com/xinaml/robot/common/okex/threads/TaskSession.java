@@ -56,8 +56,7 @@ public class TaskSession {
         try {
             return TASK_SESSION.get(key);
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            return null;
         }
-        return null;
     }
 }

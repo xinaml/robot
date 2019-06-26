@@ -24,7 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @Date: [19-6-25 下午5:04]
  * @Description:
  * @Version: [1.0.0]
- * @Copy: [com.changbei]
+ * @Copy: [com.xinaml]
  */
 @RequestMapping("user")
 @RestController

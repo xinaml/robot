@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
  * @Date:[2018-12-29 09:59]
  * @Description: [ ]
  * @Version: [3.0]
- * @Copy: [com.changbei]
+ * @Copy: [com.xinaml]
  */
 @DisallowConcurrentExecution
 public class JobFactory implements org.quartz.Job {

@@ -7,6 +7,7 @@ import com.xinaml.robot.common.okex.enums.HttpHeadersEnum;
 import com.xinaml.robot.common.okex.enums.I18nEnum;
 import com.xinaml.robot.common.okex.utils.DateUtils;
 import com.xinaml.robot.common.okex.utils.HmacSHA256Base64Utils;
+import com.xinaml.robot.common.utils.UserUtil;
 import com.xinaml.robot.entity.user.User;
 import okhttp3.*;
 import okio.Buffer;
@@ -30,13 +31,13 @@ public class Client {
     public static final MediaType JSON = MediaType.parse("application/json;charset=utf-8");
 
 
-    public static String httpGet(String url) {
+    public static String httpGet(String url,User user) {
         OkHttpClient httpClient = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(baseUrl + url.trim())
                 .build();
         String timestamp = DateUtils.getUnixTime();
-        request = initHeaders(request, timestamp);
+        request = initHeaders(request, timestamp,user);
         try {
             Response response = httpClient.newCall(request).execute();
             return response.body().string(); // 返回的是string 类型，json的mapper可以直接处理
@@ -44,10 +45,9 @@ public class Client {
             e.printStackTrace();
             return null;
         }
-
     }
 
-    public static String httpPost(String url, String json) {
+    public static String httpPost(String url, String json,User user) {
         OkHttpClient httpClient = new OkHttpClient();
         RequestBody requestBody = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
@@ -55,7 +55,7 @@ public class Client {
                 .post(requestBody)
                 .build();
         String timestamp = DateUtils.getUnixTime();
-        request = initHeaders(request, timestamp);
+        request = initHeaders(request, timestamp,user);
         try {
             Response response = httpClient.newCall(request).execute();
             return response.body().string(); // 返回的是string 类型，json的mapper可以直接处理
@@ -66,11 +66,13 @@ public class Client {
     }
 
 
-    private static Request initHeaders(final Request request, final String timestamp) {
-        User user = new User();
-        user.setApiKey("c7de75ae-a28c-433d-84da-70ab55506428");
-        user.setSecretKey("6B6640690B9A6A0D85D6D6BE872BA557");
-        user.setPassPhrase("yyguai199411");
+    private static Request initHeaders(final Request request, final String timestamp,User user) {
+        if(null==user){
+             user = new User();
+            user.setApiKey("c7de75ae-a28c-433d-84da-70ab55506428");
+            user.setSecretKey("6B6640690B9A6A0D85D6D6BE872BA557");
+            user.setPassPhrase("yyguai199411");
+        }
         return request.newBuilder().addHeader(APIConstants.ACCEPT, ContentTypeEnum.APPLICATION_JSON.contentType())
                 .addHeader(APIConstants.ACCEPT, ContentTypeEnum.APPLICATION_JSON.contentType())
                 .addHeader(APIConstants.CONTENT_TYPE, ContentTypeEnum.APPLICATION_JSON_UTF8.contentType())
@@ -147,7 +149,7 @@ public class Client {
     }
 
     public static void main(String[] args) throws Exception {
-        String rs = Client.httpGet(" /api/swap/v3/instruments/BTC-USD-SWAP/candles?start=2019-06-24T16:00:00.000Z&end=2019-06-25T16:30:00.000Z&granularity=3600");
+        String rs = Client.httpGet(" /api/swap/v3/instruments/BTC-USD-SWAP/candles?start=2019-06-24T16:00:00.000Z&end=2019-06-25T16:30:00.000Z&granularity=3600",null);
 //        String rs = Client.httpGet("/api/swap/v3/instruments");
         System.out.println(rs);
     }

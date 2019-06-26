@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
  * @Date: [19-6-25 下午5:23]
  * @Description:
  * @Version: [1.0.0]
- * @Copy: [com.changbei]
+ * @Copy: [com.xinaml]
  */
 @Service
 public class UserConfSerImpl extends ServiceImpl<UserConf, UserConfDTO> implements UserConfSer {
@@ -56,7 +56,7 @@ public class UserConfSerImpl extends ServiceImpl<UserConf, UserConfDTO> implemen
         return conf;
     }
 
-    private void setSeconds(UserConf conf){
+    public void setSeconds(UserConf conf){
         String time =conf.getTime();
         int seconds=1;
         if(time.indexOf("分钟")!=-1){

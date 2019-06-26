@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
  * @Date: [19-6-25 下午5:28]
  * @Description:
  * @Version: [1.0.0]
- * @Copy: [com.changbei]
+ * @Copy: [com.xinaml]
  */
 public class UserConfTO {
     @NotNull(groups = {ADD.class}, message = "请填写k线的粒度！")

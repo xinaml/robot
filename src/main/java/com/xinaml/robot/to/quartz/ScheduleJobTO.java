@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
  * @Date:[2018-12-29 10:18]
  * @Description: [ ]
  * @Version: [3.0]
- * @Copy: [com.changbei]
+ * @Copy: [com.xinaml]
  */
 public class ScheduleJobTO extends BaseTO {
 
