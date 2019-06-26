@@ -47,9 +47,9 @@ public class UserAct extends BaseAct {
     }
 
     @PostMapping("/stop")
-    public Result<String> info() throws ActException {
+    public Result info() throws ActException {
         boolean rs = userSer.stop();
-        return new ActResult<String>(0,"操作成功！",rs==Boolean.TRUE?"开启定时器":"关闭定时器");
+        return new ActResult(0,"操作成功！",rs);
     }
 
     @GetMapping("maps")

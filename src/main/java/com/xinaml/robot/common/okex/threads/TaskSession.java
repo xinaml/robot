@@ -5,7 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
 import java.util.Timer;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -48,12 +47,12 @@ public class TaskSession {
         if (StringUtils.isNotBlank(key)) {
             TASK_SESSION.invalidate(key);
         }
-        System.out.println("定时器剩余："+TASK_SESSION.size());
+        System.out.println("定时器剩余：" + TASK_SESSION.size());
 
     }
 
 
-    public static  Timer get(String key) {
+    public static Timer get(String key) {
         try {
             return TASK_SESSION.get(key);
         } catch (ExecutionException e) {

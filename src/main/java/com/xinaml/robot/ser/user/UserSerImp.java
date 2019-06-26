@@ -11,6 +11,7 @@ import com.xinaml.robot.common.utils.TokenUtil;
 import com.xinaml.robot.common.utils.UserUtil;
 import com.xinaml.robot.dto.user.UserDTO;
 import com.xinaml.robot.entity.user.User;
+import com.xinaml.robot.entity.user.UserConf;
 import com.xinaml.robot.rep.user.UserRep;
 import com.xinaml.robot.to.user.LoginTO;
 import com.xinaml.robot.to.user.RegisterTO;
@@ -95,8 +96,12 @@ public class UserSerImp extends ServiceImpl<User, UserDTO> implements UserSer {
     public Boolean stop() throws SerException {
         User user = UserUtil.getUser();
         user.setStop(!user.getStop());
+        String str =jRedis.get(user.getId()+user.getUsername());
+        if(null==str){
+            throw new SerException("请先配置信息！");
+        }
         this.update(user);
-        ThreadScan.scan(user.getId(),user.getStop());
+        ThreadScan.scan(user.getId(),user.getStop(),JSON.parseObject(str,UserConf.class));
         return user.getStop();
     }
 

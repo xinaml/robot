@@ -20,8 +20,8 @@ public class UserConf extends BaseEntity {
     @JoinColumn(name = "user_id", columnDefinition = "VARCHAR(36) COMMENT '所属用户' ")
     private User user;
 
-    @Column(columnDefinition = " INT(10) COMMENT 'k线的粒度'")
-    private Integer minute; //获取k线的粒度设置
+    @Column(unique = true, length = 20, columnDefinition = "VARCHAR(25) COMMENT 'k线的粒度'")
+    private String time; //获取k线的粒度设置
 
     @Column(columnDefinition = " DECIMAL(10,2) COMMENT '保留金额'")
     private Double account;//保留金额
@@ -43,12 +43,12 @@ public class UserConf extends BaseEntity {
         this.user = user;
     }
 
-    public Integer getMinute() {
-        return minute;
+    public String getTime() {
+        return time;
     }
 
-    public void setMinute(Integer minute) {
-        this.minute = minute;
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public Double getAccount() {

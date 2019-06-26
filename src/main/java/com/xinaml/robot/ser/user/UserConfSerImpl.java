@@ -1,6 +1,8 @@
 package com.xinaml.robot.ser.user;
 
+import com.alibaba.fastjson.JSON;
 import com.xinaml.robot.base.dto.RT;
+import com.xinaml.robot.base.rep.RedisRep;
 import com.xinaml.robot.base.ser.ServiceImpl;
 import com.xinaml.robot.common.utils.UserUtil;
 import com.xinaml.robot.dto.user.UserConfDTO;
@@ -8,6 +10,7 @@ import com.xinaml.robot.entity.user.User;
 import com.xinaml.robot.entity.user.UserConf;
 import com.xinaml.robot.to.user.UserConfTO;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,6 +24,8 @@ import java.time.LocalDateTime;
  */
 @Service
 public class UserConfSerImpl extends ServiceImpl<UserConf, UserConfDTO> implements UserConfSer {
+    @Autowired
+    private RedisRep redisRep;
     @Override
     public void saveConf(UserConfTO to) {
         User user = UserUtil.getUser();
@@ -38,6 +43,7 @@ public class UserConfSerImpl extends ServiceImpl<UserConf, UserConfDTO> implemen
             super.save(conf);
 
         }
+        redisRep.put(user.getId()+user.getUsername(),JSON.toJSONString(conf));//保存配置信息到redis
     }
 
     @Override

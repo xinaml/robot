@@ -13,24 +13,23 @@ import javax.validation.constraints.NotNull;
  * @Copy: [com.changbei]
  */
 public class UserConfTO {
-
-    @NotNull(groups = {ADD.class}, message = "k线的粒度不能为空！")
-    private Integer minute; //获取k线的粒度设置
-    @NotNull(groups = {ADD.class}, message = "保留金额不能为空！")
+    @NotNull(groups = {ADD.class}, message = "请填写k线的粒度！")
+    private String time; //获取k线的粒度设置
+    @NotNull(groups = {ADD.class}, message = "请填写保留金额！")
     private Double account;//保留金额
-    @NotBlank(groups = {ADD.class}, message = "币种不能为空！")
+    @NotBlank(groups = {ADD.class}, message = "请填写币种！")
     private String type;//币种
-    @NotNull(groups = {ADD.class}, message = "买入价倍率不能为空！")
+    @NotNull(groups = {ADD.class}, message = "请填写买入价倍率！")
     private Double buyMultiple;//买入价倍率
-    @NotNull(groups = {ADD.class}, message = "卖出价倍率不能为空！")
+    @NotNull(groups = {ADD.class}, message = "请填写卖出价倍率！")
     private Double selfMultiple;//卖出价倍率
 
-    public Integer getMinute() {
-        return minute;
+    public String getTime() {
+        return time;
     }
 
-    public void setMinute(Integer minute) {
-        this.minute = minute;
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public Double getAccount() {
@@ -64,4 +63,5 @@ public class UserConfTO {
     public void setSelfMultiple(Double selfMultiple) {
         this.selfMultiple = selfMultiple;
     }
+
 }

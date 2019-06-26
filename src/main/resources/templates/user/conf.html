@@ -29,7 +29,33 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text">k线粒度</span>
                 </div>
-                <input type="text" class="form-control" placeholder="k线粒度" id="minute" name="minute">
+                <select class="form-control" name="time" id="time" >
+                    <option value="1分钟">1分钟</option>
+                    <option value="3分钟">3分钟</option>
+                    <option value="5分钟">5分钟</option>
+                    <option value="15分钟">15分钟</option>
+                    <option value="1小时">1小时</option>
+                    <option value="2小时">2小时</option>
+                    <option value="4小时">4小时</option>
+                    <option value="6小时">6小时</option>
+                    <option value="12小时">12小时</option>
+                    <option value="1天">1天</option>
+                    <option value="1周">1周</option>
+                    <option value="1月">1月</option>
+                </select>
+            </div>
+
+            <br>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">交易币种</span>
+                </div>
+                <select class="form-control" name="type" id="type" >
+                    <option value="BTC">BTC</option>
+                    <option value="XMR">XMR</option>
+                    <option value="EOS">EOS</option>
+                    <option value="ETH">ETH</option>
+                </select>
             </div>
 
             <br>
@@ -37,21 +63,15 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text">保留金额</span>
                 </div>
-                <input type="text" class="form-control" placeholder="保留金额" id="account" name="account">
+                <input type="text" class="form-control"  placeholder="保留金额" id="account" name="account" onkeyup="if(isNaN(value))execCommand('undo')" onafterpaste="if(isNaN(value))execCommand('undo')" >
             </div>
-            <br>
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">币种</span>
-                </div>
-                <input type="text" class="form-control" placeholder="币种" name="type" id="type">
-            </div>
+
             <br>
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text">买入价倍率</span>
                 </div>
-                <input type="text" class="form-control" placeholder="买入价倍率" name="buyMultiple" id="buyMultiple">
+                <input type="text" class="form-control" placeholder="买入价倍率" name="buyMultiple" id="buyMultiple" onkeyup="if(isNaN(value))execCommand('undo')" onafterpaste="if(isNaN(value))execCommand('undo')" >
             </div>
             <br>
 
@@ -59,7 +79,7 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text">卖出价倍率</span>
                 </div>
-                <input type="text" class="form-control" placeholder="卖出价倍率" name="selfMultiple" id="selfMultiple">
+                <input type="text" class="form-control" placeholder="卖出价倍率" name="selfMultiple" id="selfMultiple" onkeyup="if(isNaN(value))execCommand('undo')" onafterpaste="if(isNaN(value))execCommand('undo')" >
             </div>
 
         </form>
@@ -67,12 +87,12 @@
 
     <br>
     <div>
-        <button type="submit" class="btn btn-primary" id="edit_btn" onclick="editConf()">保存数据</button>
+        <button type="submit" class="btn btn-primary" id="edit_btn" onclick="editConf()">保存配置</button>
     </div>
 
     <br>
     <div>
-        <button class="btn btn-default" id="a_stop" onclick="stop()">开启定时器</button>
+        <button class="btn btn-default" id="a_stop" onclick="stop()">开启自动交易</button>
     </div>
 </div>
 </body>
@@ -91,9 +111,10 @@
             success: function (rs) {
                 if (rs.code == 0) {
                    if(rs.data!=null){
-                       $("#minute").val(rs.data.minute)
+                       $("#time").find("option:contains('"+rs.data.time+"')").attr("selected",true);
                        $("#account").val(rs.data.account)
-                       $("#type").val(rs.data.type)
+                       $("#type").find("option:contains('"+rs.data.type+"')").attr("selected",true);
+
                        $("#buyMultiple").val(rs.data.buyMultiple)
                        $("#selfMultiple").val(rs.data.selfMultiple)
                    }
@@ -117,7 +138,8 @@
             },
             success: function (rs) {
                 if (rs.code == 0) {
-                    $("#a_stop").text(rs.data)
+                    var data  =(rs.data==true?"开启自动交易":"关闭自动交易");
+                    $("#a_stop").text(data)
                 } else {
                     toastr.error(rs.msg);
                 }
@@ -170,7 +192,8 @@
             },
             success: function (rs) {
                 if (rs.code == 0) {
-                    $("#a_stop").text(rs.data)
+                    var data  =(rs.data==true?"开启自动交易":"关闭自动交易");
+                    $("#a_stop").text(data)
                 } else {
                     toastr.error(rs.msg);
                 }

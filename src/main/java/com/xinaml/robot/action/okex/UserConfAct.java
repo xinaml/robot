@@ -55,6 +55,6 @@ public class UserConfAct {
     @GetMapping("conf/get/status")
     public Result getStatus() throws ActException {
         User user = UserUtil.getUser();
-        return new ActResult(0,"获取状态成功！",user.getStop()==Boolean.TRUE?"开启定时器":"关闭定时器");
+        return new ActResult(0,"获取状态成功！",user.getStop());
     }
 }
