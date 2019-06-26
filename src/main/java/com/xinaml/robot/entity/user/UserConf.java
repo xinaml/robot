@@ -2,8 +2,16 @@ package com.xinaml.robot.entity.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.xinaml.robot.base.entity.BaseEntity;
+import com.xinaml.robot.common.okex.utils.DateUtils;
+import com.xinaml.robot.common.utils.DateUtil;
 
 import javax.persistence.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Author: [lgq]
@@ -34,6 +42,12 @@ public class UserConf extends BaseEntity {
 
     @Column(columnDefinition = " DECIMAL(10,2) COMMENT '卖出价倍率'")
     private Double selfMultiple;//卖出价倍率
+    @Transient
+    private Integer seconds=60;//秒
+    @Transient
+    private String startDate= DateUtils.getUnixTime();
+    @Transient
+    private String endDate=DateUtils.getUnixTime();
 
     public User getUser() {
         return user;
@@ -81,5 +95,29 @@ public class UserConf extends BaseEntity {
 
     public void setSelfMultiple(Double selfMultiple) {
         this.selfMultiple = selfMultiple;
+    }
+
+    public Integer getSeconds() {
+        return seconds;
+    }
+
+    public void setSeconds(Integer seconds) {
+        this.seconds = seconds;
+    }
+
+    public String getStartDate() {
+        return  Instant.now().minus(this.seconds,ChronoUnit.SECONDS).toString();
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 }

@@ -38,12 +38,12 @@ public class ThreadScan {
             public void run() {
                 String key = null;
                 try {
-                    System.out.println("running。。。");
+                    System.out.println("running...");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        }, 0, 1000); //每1查询一次
+        }, 0, 300); //每1查询一次
         TaskSession.put(userId, timer);
     }
 }
