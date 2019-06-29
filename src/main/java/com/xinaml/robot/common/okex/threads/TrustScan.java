@@ -13,29 +13,14 @@ import java.util.concurrent.TimeUnit;
 /**
  * @Author: [lgq]
  * @Date: [19-6-14 上午10:38]
- * @Description: 线程扫描
+ * @Description: 委托订单扫描
  * @Version: [1.0.0]
  * @Copy: [com.xinaml]
  */
 @Component
-public class ThreadScan {
-    @Autowired
-    private AutoTradeSer autoTradeSer;
+public class TrustScan {
 
-    @PostConstruct
-    public void init() {
-        this.tradeSer = autoTradeSer;
-    }
 
-    private static AutoTradeSer tradeSer;
-
-    public static void scan(String userId, Boolean stop, UserConf conf) {
-        if (stop) {
-            stop(userId);
-        } else {
-            start(userId, conf);
-        }
-    }
 
     /**
      * 移除线程
@@ -58,22 +43,16 @@ public class ThreadScan {
      * @param conf
      */
     private static void start(String userId, UserConf conf) {
-        if(TaskSession.get(userId)!=null){
-            stop(userId);
-        }
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 try {
-                    if (null != tradeSer) {
-                        tradeSer.trade(conf);
-                    }
+                    System.out.println("查询委托订单是否成功");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        }, 0, 10000); //每10秒查询一次
-        TaskSession.put(userId, timer);
+        }, 0, 1000*60); //每1查询一次
     }
 }

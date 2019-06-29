@@ -1,5 +1,7 @@
 package com.xinaml.robot.common.okex;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.xinaml.robot.common.custom.exception.ActException;
 import com.xinaml.robot.common.okex.constant.APIConstants;
 import com.xinaml.robot.common.okex.enums.ContentTypeEnum;
@@ -9,11 +11,14 @@ import com.xinaml.robot.common.okex.utils.DateUtils;
 import com.xinaml.robot.common.okex.utils.HmacSHA256Base64Utils;
 import com.xinaml.robot.common.utils.UserUtil;
 import com.xinaml.robot.entity.user.User;
+import com.xinaml.robot.vo.user.KLine;
 import okhttp3.*;
 import okio.Buffer;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author: [lgq]
@@ -28,7 +33,7 @@ public class Client {
 //        config.setSecretKey("6B6640690B9A6A0D85D6D6BE872BA557");
 //        config.setPassphrase("yyguai199411");
     private static String baseUrl = "https://www.okex.me";
-    public static final MediaType JSON = MediaType.parse("application/json;charset=utf-8");
+    public static final MediaType MT = MediaType.parse("application/json;charset=utf-8");
 
 
     public static String httpGet(String url,User user) {
@@ -49,7 +54,7 @@ public class Client {
 
     public static String httpPost(String url, String json,User user) {
         OkHttpClient httpClient = new OkHttpClient();
-        RequestBody requestBody = RequestBody.create(JSON, json);
+        RequestBody requestBody = RequestBody.create(MT, json);
         Request request = new Request.Builder()
                 .url(baseUrl + url.trim())
                 .post(requestBody)
@@ -150,8 +155,8 @@ public class Client {
 
     public static void main(String[] args) throws Exception {
         String rs = Client.httpGet(" /api/swap/v3/instruments/BTC-USD-SWAP/candles?start=2019-06-24T16:00:00.000Z&end=2019-06-25T16:30:00.000Z&granularity=3600",null);
-//        String rs = Client.httpGet("/api/swap/v3/instruments");
-        System.out.println(rs);
+        JSONArray array= JSON.parseArray(rs);
+
     }
 
 

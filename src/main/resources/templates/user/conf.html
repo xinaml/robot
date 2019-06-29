@@ -81,16 +81,21 @@
         <br>
         <div class="input-group">
             <div class="input-group-prepend">
-                <span class="input-group-text">交易币种</span>
+                <span class="input-group-text">合约币种</span>
             </div>
             <select class="form-control" name="type" id="type">
-                <option value="BTC">BTC</option>
-                <option value="XMR">XMR</option>
-                <option value="EOS">EOS</option>
-                <option value="ETH">ETH</option>
+                <option value="BTC-USD">BTC-USD</option>
+                <option value="EOS-USD">EOS-USD</option>
+                <option value="LTC">LTC-USD</option>
             </select>
         </div>
-
+        <br>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">合约id</span>
+            </div>
+            <input type="text" class="form-control" placeholder="合约id" id="contract" name="contract" >
+        </div>
         <br>
         <div class="input-group">
             <div class="input-group-prepend">
@@ -99,7 +104,14 @@
             <input type="text" class="form-control" placeholder="保留金额" id="account" name="account"
                    onkeyup="if(isNaN(value))execCommand('undo')" onafterpaste="if(isNaN(value))execCommand('undo')">
         </div>
-
+        <br>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">开张数</span>
+        </div>
+            <input type="text" class="form-control" placeholder="开张数" id="count" name="count"
+                   onkeyup="if(isNaN(value))execCommand('undo')" onafterpaste="if(isNaN(value))execCommand('undo')">
+        </div>
         <br>
         <div class="input-group">
             <div class="input-group-prepend">
@@ -132,7 +144,7 @@
 
 </body>
 <script>
-
+    //加载数据
     $(function () {
         $.ajax({
             type: 'GET',
@@ -140,25 +152,20 @@
             dataType: 'json',
             cache: false,//false是不缓存，true为缓存
             async: true,//true为异步，false为同步
-            beforeSend: function () {
-//请求前
-            },
             success: function (rs) {
                 if (rs.code == 0) {
                     if (rs.data != null) {
                         $("#time").find("option:contains('" + rs.data.time + "')").attr("selected", true);
                         $("#account").val(rs.data.account)
+                        $("#count").val(rs.data.count)
+                        $("#contract").val(rs.data.contract)
                         $("#type").find("option:contains('" + rs.data.type + "')").attr("selected", true);
-
                         $("#buyMultiple").val(rs.data.buyMultiple)
                         $("#selfMultiple").val(rs.data.selfMultiple)
                     }
                 } else {
                     toastr.error(rs.msg);
                 }
-            },
-            error: function () {
-//请求失败时
             }
         })
 
@@ -168,9 +175,6 @@
             dataType: 'json',
             cache: false,//false是不缓存，true为缓存
             async: true,//true为异步，false为同步
-            beforeSend: function () {
-//请求前
-            },
             success: function (rs) {
                 if (rs.code == 0) {
                     var data = (rs.data.stop == true ? "开启自动交易" : "关闭自动交易");
@@ -182,13 +186,10 @@
                 } else {
                     toastr.error(rs.msg);
                 }
-            },
-            error: function () {
-//请求失败时
             }
         })
     });
-
+    //编辑Secret key
     function editUserSecret() {
         var data = $('#userFrom').serialize();
         var submitData = decodeURIComponent(data, true);
@@ -199,18 +200,12 @@
             dataType: 'json',
             cache: false,//false是不缓存，true为缓存
             async: true,//true为异步，false为同步
-            beforeSend: function () {
-                //请求前
-            },
             success: function (rs) {
                 if (rs.code == 0) {
                     toastr.success(rs.msg);
                 } else {
                     toastr.error(rs.msg);
                 }
-            },
-            error: function () {
-                //请求失败时
             }
         })
 
@@ -225,23 +220,16 @@
             dataType: 'json',
             cache: false,//false是不缓存，true为缓存
             async: true,//true为异步，false为同步
-            beforeSend: function () {
-                //请求前
-            },
             success: function (rs) {
                 if (rs.code == 0) {
                     toastr.success(rs.msg);
                 } else {
                     toastr.error(rs.msg);
                 }
-            },
-            error: function () {
-                //请求失败时
             }
         })
 
     }
-
 
     function stop() {
         $.ajax({
@@ -250,9 +238,6 @@
             dataType: 'json',
             cache: false,//false是不缓存，true为缓存
             async: true,//true为异步，false为同步
-            beforeSend: function () {
-//请求前
-            },
             success: function (rs) {
                 if (rs.code == 0) {
                     var data = (rs.data == true ? "开启自动交易" : "关闭自动交易");
@@ -260,13 +245,9 @@
                 } else {
                     toastr.error(rs.msg);
                 }
-            },
-            error: function () {
-//请求失败时
             }
         })
     }
 </script>
-
 
 </html>

@@ -8,6 +8,7 @@ import com.xinaml.robot.common.utils.DateUtil;
 import javax.persistence.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
@@ -33,9 +34,14 @@ public class UserConf extends BaseEntity {
 
     @Column(columnDefinition = " DECIMAL(10,2) COMMENT '保留金额'")
     private Double account;//保留金额
+     @Column(columnDefinition = " DECIMAL(10,2) COMMENT '每次开张数'")
+    private Double count;//每次开张数
 
     @Column(unique = true, length = 20, columnDefinition = "VARCHAR(25) COMMENT '币种'")
     private String type;//币种
+
+    @Column(unique = true, length = 20, columnDefinition = "VARCHAR(25) COMMENT '合约id'")
+    private String contract;//合约id
 
     @Column(columnDefinition = " DECIMAL(10,2) COMMENT '买入价倍率'")
     private Double buyMultiple;//买入价倍率
@@ -107,9 +113,8 @@ public class UserConf extends BaseEntity {
     }
 
     public String getStartDate() {
-        return  Instant.now().minus(this.seconds,ChronoUnit.SECONDS).toString();
+        return Instant.now().minus(seconds,ChronoUnit.SECONDS).toString();
     }
-
     public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
@@ -120,5 +125,21 @@ public class UserConf extends BaseEntity {
 
     public void setEndDate(String endDate) {
         this.endDate = endDate;
+    }
+
+    public Double getCount() {
+        return count;
+    }
+
+    public void setCount(Double count) {
+        this.count = count;
+    }
+
+    public String getContract() {
+        return contract;
+    }
+
+    public void setContract(String contract) {
+        this.contract = contract;
     }
 }
