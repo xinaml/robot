@@ -22,5 +22,5 @@ public class UrlConst {
     /**
      * 最后成交价
      */
-    public static  final  String COMMIT_ORDER=" /api/futures/v3/orders" ;
+    public static  final  String COMMIT_ORDER=" /api/futures/v3/order" ;
 }

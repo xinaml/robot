@@ -14,9 +14,11 @@ import com.xinaml.robot.dto.user.UserDTO;
 import com.xinaml.robot.entity.user.User;
 import com.xinaml.robot.entity.user.UserConf;
 import com.xinaml.robot.rep.user.UserRep;
+import com.xinaml.robot.ser.okex.AutoTradeSer;
 import com.xinaml.robot.to.user.LoginTO;
 import com.xinaml.robot.to.user.RegisterTO;
 import com.xinaml.robot.to.user.UserSecretTO;
+import com.xinaml.robot.vo.user.KLine;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +28,8 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.beans.Transient;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -38,6 +42,9 @@ public class UserSerImp extends ServiceImpl<User, UserDTO> implements UserSer {
     private UserRep userRep;
     @Autowired
     private UserConfSer userConfSer;
+    @Autowired
+    private AutoTradeSer autoTradeSer;
+
     @Override
     public String login(LoginTO to) throws SerException {
         UserDTO dto = new UserDTO();
@@ -97,25 +104,37 @@ public class UserSerImp extends ServiceImpl<User, UserDTO> implements UserSer {
         return true;
     }
 
+    @Transactional
     @Override
     public void editSecret(UserSecretTO to) {
         User user = super.findById(to.getId());
         BeanUtils.copyProperties(to, user);
-        super.update(user);
         UserConfDTO dto = new UserConfDTO();
         dto.addRT(RT.eq("user.id", user.getId()));
         UserConf conf = userConfSer.findOne(dto);
-        ThreadScan.scan(user.getId(),user.getStop(),conf);//重新扫描配置
+        KLine line = null;
+        try {
+            line =autoTradeSer.getLine(conf);
+            if (line != null) {
+                this.update(user);
+                ThreadScan.scan(user.getId(), user.getStop(), conf);//重新扫描配置
+            } else {
+                throw new SerException("保存错误!请检查账号、secretKey、apiKey是否正确！");
+            }
+        } catch (Exception e) {
+            throw new SerException("保存错误!请检查账号、secretKey、apiKey是否正确！");
+        }
+
     }
 
     @Override
     public Boolean stop() throws SerException {
         User user = UserUtil.getUser();
         user.setStop(!user.getStop());
-        String str =null;
+        String str = null;
         try {
             str = jRedis.get(user.getId() + user.getUsername());
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         if (null == str) {
@@ -163,7 +182,6 @@ public class UserSerImp extends ServiceImpl<User, UserDTO> implements UserSer {
         }
         super.update(entities);
     }
-
 
 
 }

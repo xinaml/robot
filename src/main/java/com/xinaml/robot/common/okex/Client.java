@@ -2,6 +2,7 @@ package com.xinaml.robot.common.okex;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.xinaml.robot.common.constant.UrlConst;
 import com.xinaml.robot.common.custom.exception.ActException;
 import com.xinaml.robot.common.okex.constant.APIConstants;
 import com.xinaml.robot.common.okex.enums.ContentTypeEnum;
@@ -12,6 +13,7 @@ import com.xinaml.robot.common.okex.utils.HmacSHA256Base64Utils;
 import com.xinaml.robot.common.utils.UserUtil;
 import com.xinaml.robot.entity.user.User;
 import com.xinaml.robot.vo.user.KLine;
+import com.xinaml.robot.vo.user.OrderVO;
 import okhttp3.*;
 import okio.Buffer;
 
@@ -154,7 +156,8 @@ public class Client {
     }
 
     public static void main(String[] args) throws Exception {
-        String rs = Client.httpGet(" /api/swap/v3/instruments/BTC-USD-SWAP/candles?start=2019-06-24T16:00:00.000Z&end=2019-06-25T16:30:00.000Z&granularity=3600",null);
+        String url = JSON.toJSONString(new OrderVO());
+        String rs = Client.httpPost("/api/futures/v3/order",url,null);
         JSONArray array= JSON.parseArray(rs);
 
     }

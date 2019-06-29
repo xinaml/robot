@@ -3,11 +3,14 @@ package com.xinaml.robot.ser.okex;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import static com.xinaml.robot.common.constant.UrlConst.*;
 import com.xinaml.robot.common.okex.Client;
+import com.xinaml.robot.entity.user.User;
 import com.xinaml.robot.entity.user.UserConf;
 import com.xinaml.robot.vo.user.KLine;
+import com.xinaml.robot.vo.user.OrderVO;
 import org.springframework.stereotype.Service;
+
+import static com.xinaml.robot.common.constant.UrlConst.*;
 
 /**
  * @Author: [lgq]
@@ -21,24 +24,38 @@ public class AutoTradeSerImpl implements AutoTradeSer {
 
     @Override
     public void trade(UserConf conf) {
-        String kLineUrl = K_LINE + "/" + conf.getType() + "-" + conf.getContract() + "/candles?start=" + conf.getStartDate() + "&end=" + conf.getEndDate() + "&granularity=" + conf.getSeconds();
-        System.out.println(kLineUrl);
-        String lastUrl =LAST + "/" + conf.getType() + "-" + conf.getContract() + "/ticker";
-        String rs = Client.httpGet(kLineUrl, conf.getUser());
-        KLine line = getLine(rs);
-        rs = Client.httpGet(lastUrl, conf.getUser());
-        Double last = getLast(rs); //最新成交价
+        KLine line = getLine(conf);
+        Double last = getLast(conf); //最新成交价
         if (line != null && last != null) {
             double buy = conf.getBuyMultiple() * line.getClose();//买入价=买入价倍率*收盘价
             if (buy >= last) {//买入价>=最新成交价
                 System.out.println("buy:" + buy + "---last:" + last);
-                String commitOrderUrl =COMMIT_ORDER;
             }
-
+            commitOrder(conf);
         }
     }
 
-    private KLine getLine(String rs) {
+    /**
+     * 下单
+     * @param conf
+     */
+    public void commitOrder(UserConf conf){
+        String commitOrderUrl =COMMIT_ORDER;
+        OrderVO orderVO = new OrderVO();
+        orderVO.setInstrument_id(conf.getInstrumentId());//合约id
+        orderVO.setSize(conf.getCount()+"");//每次开张数
+        String rs = Client.httpPost(commitOrderUrl,JSON.toJSONString(orderVO),conf.getUser());
+        System.out.println(rs);
+    }
+
+    /**
+     * 获取k线数据
+     * @param conf
+     * @return
+     */
+    public KLine getLine( UserConf conf) {
+        String kLineUrl = K_LINE + "/" + conf.getInstrumentId()+ "/candles?start=" + conf.getStartDate() + "&end=" + conf.getEndDate() + "&granularity=" + conf.getSeconds();
+        String rs = Client.httpGet(kLineUrl, conf.getUser());
         if (rs.length() > 5) {
             JSONArray array = JSON.parseArray(rs);
             for (Object o : array.toArray()) {
@@ -62,10 +79,12 @@ public class AutoTradeSerImpl implements AutoTradeSer {
     /**
      * 最新成交价
      *
-     * @param rs
+     * @param conf
      * @return
      */
-    private Double getLast(String rs) {
+    public Double getLast(UserConf  conf) {
+        String lastUrl = LAST + "/" + conf.getInstrumentId() + "/ticker";
+        String rs = Client.httpGet(lastUrl, conf.getUser());
         if (rs.length() > 5) {
             JSONObject object = JSON.parseObject(rs);
             return object.getDouble("last");

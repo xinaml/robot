@@ -4,38 +4,40 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
 
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 public class OrderVO {
     @JSONField(ordinal = 1)
-    private String instrument_id;//合约ID
+    private String client_oid = new Random().nextInt(1000000)+"";//	由您设置的订单ID来识别您的订单
 
     @JSONField(ordinal = 2)
-    private String leverage;//	杠杆倍数
-
-    @JSONField(ordinal = 3)
     private String order_type = "0";//	杠杆倍数
 
+   @JSONField(ordinal = 3)
+    private String instrument_id="1";//合约ID
+
     @JSONField(ordinal = 4)
-    private String client_oid = UUID.randomUUID().toString();//	由您设置的订单ID来识别您的订单
+    private String type="1";//		1:开多2:开空3:平多4:平空
 
     @JSONField(ordinal = 5)
-    private List<OrdersData> orders_data;
+    private String price ="0.0";//	每张合约的价格
 
-    public String getInstrument_id() {
-        return instrument_id;
+     @JSONField(ordinal = 6)
+    private String size ="1";//	买入或卖出合约的数量（以张计数）
+
+    @JSONField(ordinal = 7)
+    private String match_price ="1";//	是否以对手价下单(0:不是 1:是)，默认为0，当取值为1时。price字段无效
+
+    @JSONField(ordinal = 8)
+    private String leverage ="1";//	是否以对手价下单(0:不是 1:是)，默认为0，当取值为1时。price字段无效
+
+    public String getClient_oid() {
+        return client_oid;
     }
 
-    public void setInstrument_id(String instrument_id) {
-        this.instrument_id = instrument_id;
-    }
-
-    public String getLeverage() {
-        return leverage;
-    }
-
-    public void setLeverage(String leverage) {
-        this.leverage = leverage;
+    public void setClient_oid(String client_oid) {
+        this.client_oid = client_oid;
     }
 
     public String getOrder_type() {
@@ -46,21 +48,51 @@ public class OrderVO {
         this.order_type = order_type;
     }
 
-    public String getClient_oid() {
-        return client_oid;
+    public String getInstrument_id() {
+        return instrument_id;
     }
 
-    public void setClient_oid(String client_oid) {
-        this.client_oid = client_oid;
+    public void setInstrument_id(String instrument_id) {
+        this.instrument_id = instrument_id;
     }
 
-
-    public List<OrdersData> getOrders_data() {
-        return orders_data;
+    public String getType() {
+        return type;
     }
 
-    public void setOrders_data(List<OrdersData> orders_data) {
-        this.orders_data = orders_data;
+    public void setType(String type) {
+        this.type = type;
     }
 
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public String getMatch_price() {
+        return match_price;
+    }
+
+    public void setMatch_price(String match_price) {
+        this.match_price = match_price;
+    }
+
+    public String getLeverage() {
+        return leverage;
+    }
+
+    public void setLeverage(String leverage) {
+        this.leverage = leverage;
+    }
 }

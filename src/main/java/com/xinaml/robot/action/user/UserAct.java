@@ -9,7 +9,6 @@ import com.xinaml.robot.common.custom.exception.ActException;
 import com.xinaml.robot.common.custom.exception.SerException;
 import com.xinaml.robot.common.custom.result.ActResult;
 import com.xinaml.robot.common.custom.result.Result;
-import com.xinaml.robot.common.okex.Client;
 import com.xinaml.robot.common.utils.PassWordUtil;
 import com.xinaml.robot.common.utils.UserUtil;
 import com.xinaml.robot.dto.storage.StorageDTO;
@@ -27,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.persistence.criteria.JoinType;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -50,7 +48,7 @@ public class UserAct extends BaseAct {
     @PostMapping("/stop")
     public Result stop() throws ActException {
         boolean rs = userSer.stop();
-        return new ActResult(0,"操作成功！",rs);
+        return new ActResult(0, "操作成功！", rs);
     }
 
     @GetMapping("maps")
@@ -76,10 +74,11 @@ public class UserAct extends BaseAct {
             throw new ActException(e.getMessage());
         }
     }
+
     @GetMapping("info")
     public Result info() throws ActException {
         User user = UserUtil.getUser();
-        return new ActResult(0,"获取用户信息成功！",user);
+        return new ActResult(0, "获取用户信息成功！", user);
     }
 
     @PostMapping("add")
@@ -131,6 +130,7 @@ public class UserAct extends BaseAct {
 
     /**
      * 编辑secret apiKey
+     *
      * @param to
      * @param rs
      * @return
@@ -139,12 +139,13 @@ public class UserAct extends BaseAct {
     @PutMapping("edit/secret")
     public Result editSecret(@Validated(EDIT.class) UserSecretTO to, BindingResult rs) throws ActException {
         try {
-           userSer.editSecret(to);
+            userSer.editSecret(to);
             return new ActResult("编辑成功！");
         } catch (Exception e) {
             throw new ActException(e.getMessage());
         }
     }
+
     @PutMapping("edit")
     public Result edit(@Validated(EDIT.class) UserTO to, BindingResult rs) throws ActException {
         try {

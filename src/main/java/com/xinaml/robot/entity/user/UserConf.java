@@ -142,4 +142,10 @@ public class UserConf extends BaseEntity {
     public void setContract(String contract) {
         this.contract = contract;
     }
+
+    public String getInstrumentId(){
+        return this.type+"-"+contract;
+    }
+
+
 }

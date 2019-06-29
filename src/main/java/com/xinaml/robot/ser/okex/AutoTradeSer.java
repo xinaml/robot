@@ -1,6 +1,7 @@
 package com.xinaml.robot.ser.okex;
 
 import com.xinaml.robot.entity.user.UserConf;
+import com.xinaml.robot.vo.user.KLine;
 
 /**
  * @Author: [lgq]
@@ -16,5 +17,29 @@ public interface AutoTradeSer {
      */
     default void trade(UserConf conf) {
 
+    }
+    /**
+     * 下单
+     * @param conf
+     */
+    default void commitOrder(UserConf conf) {
+
+    }
+    /**
+     * 获取k线数据
+     * @param conf
+     * @return
+     */
+    default KLine getLine(UserConf conf) {
+        return null;
+    }
+    /**
+     * 最新成交价
+     *
+     * @param conf
+     * @return
+     */
+    default Double getLast(UserConf conf) {
+        return null;
     }
 }
