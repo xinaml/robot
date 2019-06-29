@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.xinaml.robot.base.dto.RT;
 import com.xinaml.robot.base.rep.RedisRep;
 import com.xinaml.robot.base.ser.ServiceImpl;
+import com.xinaml.robot.common.okex.threads.ThreadScan;
 import com.xinaml.robot.common.utils.UserUtil;
 import com.xinaml.robot.dto.user.UserConfDTO;
 import com.xinaml.robot.entity.user.User;
@@ -46,6 +47,7 @@ public class UserConfSerImpl extends ServiceImpl<UserConf, UserConfDTO> implemen
         }
         setSeconds(conf);
         redisRep.put(user.getId()+user.getUsername(),JSON.toJSONString(conf));//保存配置信息到redis
+        ThreadScan.scan(user.getId(),user.getStop(),conf);//重新扫描配置
     }
 
     @Override

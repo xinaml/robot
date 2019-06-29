@@ -13,10 +13,7 @@ import com.xinaml.robot.to.user.UserConfTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -38,7 +35,7 @@ public class UserConfAct {
         return new ModelAndView("user/conf");
     }
 
-    @PostMapping("conf/edit")
+    @PutMapping("conf/edit")
     public Result edit(@Validated(ADD.class) UserConfTO to, BindingResult rs) throws ActException {
         userConfSer.saveConf(to);
         return new ActResult("保存配置成功！");
@@ -52,9 +49,5 @@ public class UserConfAct {
         return new ActResult(conf);
     }
 
-    @GetMapping("conf/get/status")
-    public Result getStatus() throws ActException {
-        User user = UserUtil.getUser();
-        return new ActResult(0,"获取状态成功！",user.getStop());
-    }
+
 }

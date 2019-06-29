@@ -6,6 +6,7 @@ import com.xinaml.robot.dto.user.UserDTO;
 import com.xinaml.robot.entity.user.User;
 import com.xinaml.robot.to.user.LoginTO;
 import com.xinaml.robot.to.user.RegisterTO;
+import com.xinaml.robot.to.user.UserSecretTO;
 
 public interface UserSer extends Ser<User, UserDTO> {
     /**
@@ -37,4 +38,5 @@ public interface UserSer extends Ser<User, UserDTO> {
      */
     Boolean stop() throws SerException;
 
+    void editSecret(UserSecretTO to);
 }

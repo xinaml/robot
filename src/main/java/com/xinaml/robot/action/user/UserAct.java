@@ -17,6 +17,7 @@ import com.xinaml.robot.dto.user.UserDTO;
 import com.xinaml.robot.entity.user.User;
 import com.xinaml.robot.ser.storage.StorageSer;
 import com.xinaml.robot.ser.user.UserSer;
+import com.xinaml.robot.to.user.UserSecretTO;
 import com.xinaml.robot.to.user.UserTO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ public class UserAct extends BaseAct {
     }
 
     @PostMapping("/stop")
-    public Result info() throws ActException {
+    public Result stop() throws ActException {
         boolean rs = userSer.stop();
         return new ActResult(0,"操作成功！",rs);
     }
@@ -75,7 +76,11 @@ public class UserAct extends BaseAct {
             throw new ActException(e.getMessage());
         }
     }
-
+    @GetMapping("info")
+    public Result info() throws ActException {
+        User user = UserUtil.getUser();
+        return new ActResult(0,"获取用户信息成功！",user);
+    }
 
     @PostMapping("add")
     public Result add(@Validated(ADD.class) UserTO to, BindingResult rs) throws ActException {
@@ -124,7 +129,22 @@ public class UserAct extends BaseAct {
         }
     }
 
-
+    /**
+     * 编辑secret apiKey
+     * @param to
+     * @param rs
+     * @return
+     * @throws ActException
+     */
+    @PutMapping("edit/secret")
+    public Result editSecret(@Validated(EDIT.class) UserSecretTO to, BindingResult rs) throws ActException {
+        try {
+           userSer.editSecret(to);
+            return new ActResult("编辑成功！");
+        } catch (Exception e) {
+            throw new ActException(e.getMessage());
+        }
+    }
     @PutMapping("edit")
     public Result edit(@Validated(EDIT.class) UserTO to, BindingResult rs) throws ActException {
         try {

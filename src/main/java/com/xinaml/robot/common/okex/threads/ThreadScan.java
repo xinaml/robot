@@ -57,6 +57,9 @@ public class ThreadScan {
      * @param conf
      */
     private static void start(String userId, UserConf conf) {
+        if(TaskSession.get(userId)!=null){
+            stop(userId);
+        }
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override

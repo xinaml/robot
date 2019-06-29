@@ -55,7 +55,7 @@ public class TaskSession {
     public static Timer get(String key) {
         try {
             return TASK_SESSION.get(key);
-        } catch (ExecutionException e) {
+        } catch (Exception e) {
             return null;
         }
     }

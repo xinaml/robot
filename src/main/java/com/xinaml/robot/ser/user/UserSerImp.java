@@ -9,15 +9,18 @@ import com.xinaml.robot.common.okex.threads.ThreadScan;
 import com.xinaml.robot.common.utils.PassWordUtil;
 import com.xinaml.robot.common.utils.TokenUtil;
 import com.xinaml.robot.common.utils.UserUtil;
+import com.xinaml.robot.dto.user.UserConfDTO;
 import com.xinaml.robot.dto.user.UserDTO;
 import com.xinaml.robot.entity.user.User;
 import com.xinaml.robot.entity.user.UserConf;
 import com.xinaml.robot.rep.user.UserRep;
 import com.xinaml.robot.to.user.LoginTO;
 import com.xinaml.robot.to.user.RegisterTO;
+import com.xinaml.robot.to.user.UserSecretTO;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -33,7 +36,8 @@ public class UserSerImp extends ServiceImpl<User, UserDTO> implements UserSer {
     private RedisRep jRedis;
     @Autowired
     private UserRep userRep;
-
+    @Autowired
+    private UserConfSer userConfSer;
     @Override
     public String login(LoginTO to) throws SerException {
         UserDTO dto = new UserDTO();
@@ -52,6 +56,7 @@ public class UserSerImp extends ServiceImpl<User, UserDTO> implements UserSer {
         }
         if (isPass) {
             token = TokenUtil.create(to.getIp());
+            user.setPassword(null);
             jRedis.put(token, JSON.toJSONString(user));
             return token;
         } else {
@@ -90,6 +95,17 @@ public class UserSerImp extends ServiceImpl<User, UserDTO> implements UserSer {
             jRedis.del(token);
         }
         return true;
+    }
+
+    @Override
+    public void editSecret(UserSecretTO to) {
+        User user = super.findById(to.getId());
+        BeanUtils.copyProperties(to, user);
+        super.update(user);
+        UserConfDTO dto = new UserConfDTO();
+        dto.addRT(RT.eq("user.id", user.getId()));
+        UserConf conf = userConfSer.findOne(dto);
+        ThreadScan.scan(user.getId(),user.getStop(),conf);//重新扫描配置
     }
 
     @Override
@@ -147,6 +163,7 @@ public class UserSerImp extends ServiceImpl<User, UserDTO> implements UserSer {
         }
         super.update(entities);
     }
+
 
 
 }

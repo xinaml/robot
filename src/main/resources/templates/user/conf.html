@@ -19,72 +19,106 @@
 
 </head>
 <body>
-</div>
-<div style="margin-top: 20px;text-align: center" class="container mt-3">
-
+<div style="margin-top: 20px;float: left;width: 500px" class="container mt-3">
     <div>
-        <form id="confFrom" style="margin-left: 500px">
-
+        <form id="userFrom">
             <div class="input-group">
                 <div class="input-group-prepend">
-                    <span class="input-group-text">k线粒度</span>
+                    <span class="input-group-text">账号</span>
                 </div>
-                <select class="form-control" name="time" id="time" >
-                    <option value="1分钟">1分钟</option>
-                    <option value="3分钟">3分钟</option>
-                    <option value="5分钟">5分钟</option>
-                    <option value="15分钟">15分钟</option>
-                    <option value="30分钟">30分钟</option>
-                    <option value="1小时">1小时</option>
-                    <option value="2小时">2小时</option>
-                    <option value="4小时">4小时</option>
-                    <option value="6小时">6小时</option>
-                    <option value="12小时">12小时</option>
-                    <option value="1天">1天</option>
-                    <option value="1周">1周</option>
-                </select>
+                <input type="hidden" name="id" id="userId" >
+                <input type="text" class="form-control" placeholder="passPhrase" name="passPhrase" id="passPhrase">
             </div>
-
+            <br>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">secretKey</span>
+                </div>
+                <input type="text" class="form-control" placeholder="secretKey" id="secretKey" name="secretKey">
+            </div>
             <br>
             <div class="input-group">
                 <div class="input-group-prepend">
-                    <span class="input-group-text">交易币种</span>
+                    <span class="input-group-text">apiKey</span>
                 </div>
-                <select class="form-control" name="type" id="type" >
-                    <option value="BTC">BTC</option>
-                    <option value="XMR">XMR</option>
-                    <option value="EOS">EOS</option>
-                    <option value="ETH">ETH</option>
-                </select>
-            </div>
-
-            <br>
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">保留金额</span>
-                </div>
-                <input type="text" class="form-control"  placeholder="保留金额" id="account" name="account" onkeyup="if(isNaN(value))execCommand('undo')" onafterpaste="if(isNaN(value))execCommand('undo')" >
-            </div>
-
-            <br>
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">买入价倍率</span>
-                </div>
-                <input type="text" class="form-control" placeholder="买入价倍率" name="buyMultiple" id="buyMultiple" onkeyup="if(isNaN(value))execCommand('undo')" onafterpaste="if(isNaN(value))execCommand('undo')" >
+                <input type="text" class="form-control" placeholder="apiKey" name="apiKey" id="apiKey">
             </div>
             <br>
-
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">卖出价倍率</span>
-                </div>
-                <input type="text" class="form-control" placeholder="卖出价倍率" name="selfMultiple" id="selfMultiple" onkeyup="if(isNaN(value))execCommand('undo')" onafterpaste="if(isNaN(value))execCommand('undo')" >
-            </div>
-
         </form>
     </div>
 
+    <br>
+    <div>
+        <button type="submit" class="btn btn-primary" id="edit_user_btn" onclick="editUserSecret()">保存设置</button>
+    </div>
+
+    <br>
+
+</div>
+
+<div style="margin-top: 20px;float: left;width: 500px;margin-left: 100px" class="container mt-3">
+    <form id="confFrom">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">k线粒度</span>
+            </div>
+            <select class="form-control" name="time" id="time">
+                <option value="1分钟">1分钟</option>
+                <option value="3分钟">3分钟</option>
+                <option value="5分钟">5分钟</option>
+                <option value="15分钟">15分钟</option>
+                <option value="30分钟">30分钟</option>
+                <option value="1小时">1小时</option>
+                <option value="2小时">2小时</option>
+                <option value="4小时">4小时</option>
+                <option value="6小时">6小时</option>
+                <option value="12小时">12小时</option>
+                <option value="1天">1天</option>
+                <option value="1周">1周</option>
+            </select>
+        </div>
+
+        <br>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">交易币种</span>
+            </div>
+            <select class="form-control" name="type" id="type">
+                <option value="BTC">BTC</option>
+                <option value="XMR">XMR</option>
+                <option value="EOS">EOS</option>
+                <option value="ETH">ETH</option>
+            </select>
+        </div>
+
+        <br>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">保留金额</span>
+            </div>
+            <input type="text" class="form-control" placeholder="保留金额" id="account" name="account"
+                   onkeyup="if(isNaN(value))execCommand('undo')" onafterpaste="if(isNaN(value))execCommand('undo')">
+        </div>
+
+        <br>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">买入价倍率</span>
+            </div>
+            <input type="text" class="form-control" placeholder="买入价倍率" name="buyMultiple" id="buyMultiple"
+                   onkeyup="if(isNaN(value))execCommand('undo')" onafterpaste="if(isNaN(value))execCommand('undo')">
+        </div>
+        <br>
+
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">卖出价倍率</span>
+            </div>
+            <input type="text" class="form-control" placeholder="卖出价倍率" name="selfMultiple" id="selfMultiple"
+                   onkeyup="if(isNaN(value))execCommand('undo')" onafterpaste="if(isNaN(value))execCommand('undo')">
+        </div>
+
+    </form>
     <br>
     <div>
         <button type="submit" class="btn btn-primary" id="edit_btn" onclick="editConf()">保存配置</button>
@@ -95,6 +129,7 @@
         <button class="btn btn-default" id="a_stop" onclick="stop()">开启自动交易</button>
     </div>
 </div>
+
 </body>
 <script>
 
@@ -110,14 +145,14 @@
             },
             success: function (rs) {
                 if (rs.code == 0) {
-                   if(rs.data!=null){
-                       $("#time").find("option:contains('"+rs.data.time+"')").attr("selected",true);
-                       $("#account").val(rs.data.account)
-                       $("#type").find("option:contains('"+rs.data.type+"')").attr("selected",true);
+                    if (rs.data != null) {
+                        $("#time").find("option:contains('" + rs.data.time + "')").attr("selected", true);
+                        $("#account").val(rs.data.account)
+                        $("#type").find("option:contains('" + rs.data.type + "')").attr("selected", true);
 
-                       $("#buyMultiple").val(rs.data.buyMultiple)
-                       $("#selfMultiple").val(rs.data.selfMultiple)
-                   }
+                        $("#buyMultiple").val(rs.data.buyMultiple)
+                        $("#selfMultiple").val(rs.data.selfMultiple)
+                    }
                 } else {
                     toastr.error(rs.msg);
                 }
@@ -129,7 +164,7 @@
 
         $.ajax({
             type: 'GET',
-            url: '/user/conf/get/status',
+            url: '/user/info',
             dataType: 'json',
             cache: false,//false是不缓存，true为缓存
             async: true,//true为异步，false为同步
@@ -138,8 +173,12 @@
             },
             success: function (rs) {
                 if (rs.code == 0) {
-                    var data  =(rs.data==true?"开启自动交易":"关闭自动交易");
+                    var data = (rs.data.stop == true ? "开启自动交易" : "关闭自动交易");
                     $("#a_stop").text(data)
+                    $("#passPhrase").val(rs.data.passPhrase)
+                    $("#secretKey").val(rs.data.secretKey)
+                    $("#apiKey").val(rs.data.secretKey)
+                    $("#userId").val(rs.data.id)
                 } else {
                     toastr.error(rs.msg);
                 }
@@ -150,13 +189,37 @@
         })
     });
 
+    function editUserSecret() {
+        var data = $('#userFrom').serialize();
+        var submitData = decodeURIComponent(data, true);
+        $.ajax({
+            type: 'PUT',
+            url: '/user/edit/secret',
+            data: submitData,
+            dataType: 'json',
+            cache: false,//false是不缓存，true为缓存
+            async: true,//true为异步，false为同步
+            beforeSend: function () {
+                //请求前
+            },
+            success: function (rs) {
+                if (rs.code == 0) {
+                    toastr.success(rs.msg);
+                } else {
+                    toastr.error(rs.msg);
+                }
+            },
+            error: function () {
+                //请求失败时
+            }
+        })
 
-
+    }
     function editConf() {
         var data = $('#confFrom').serialize();
         var submitData = decodeURIComponent(data, true);
         $.ajax({
-            type: 'POST',
+            type: 'PUT',
             url: '/user/conf/edit',
             data: submitData,
             dataType: 'json',
@@ -192,7 +255,7 @@
             },
             success: function (rs) {
                 if (rs.code == 0) {
-                    var data  =(rs.data==true?"开启自动交易":"关闭自动交易");
+                    var data = (rs.data == true ? "开启自动交易" : "关闭自动交易");
                     $("#a_stop").text(data)
                 } else {
                     toastr.error(rs.msg);
