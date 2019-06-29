@@ -3,14 +3,11 @@ package com.xinaml.robot.ser.okex;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.xinaml.robot.common.constant.UrlConst;
+import static com.xinaml.robot.common.constant.UrlConst.*;
 import com.xinaml.robot.common.okex.Client;
 import com.xinaml.robot.entity.user.UserConf;
 import com.xinaml.robot.vo.user.KLine;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @Author: [lgq]
@@ -24,16 +21,20 @@ public class AutoTradeSerImpl implements AutoTradeSer {
 
     @Override
     public void trade(UserConf conf) {
-        String kLineUrl = UrlConst.K_LINE + "/"+conf.getType()+"-"+conf.getContract()+"/candles?start=" + conf.getStartDate() + "&end=" + conf.getEndDate() + "&granularity=" + conf.getSeconds();
+        String kLineUrl = K_LINE + "/" + conf.getType() + "-" + conf.getContract() + "/candles?start=" + conf.getStartDate() + "&end=" + conf.getEndDate() + "&granularity=" + conf.getSeconds();
         System.out.println(kLineUrl);
-        String lastUrl = UrlConst.LAST + "/"+conf.getType()+"-"+conf.getContract()+"/ticker";
+        String lastUrl =LAST + "/" + conf.getType() + "-" + conf.getContract() + "/ticker";
         String rs = Client.httpGet(kLineUrl, conf.getUser());
         KLine line = getLine(rs);
         rs = Client.httpGet(lastUrl, conf.getUser());
-        Double last =getLast(rs); //最新成交价
-        if(line!=null && last!=null){
-            double buy =conf.getBuyMultiple()*line.getClose();//买入价=买入价倍率*收盘价
-            System.out.println("buy:"+buy+"---last:"+last);
+        Double last = getLast(rs); //最新成交价
+        if (line != null && last != null) {
+            double buy = conf.getBuyMultiple() * line.getClose();//买入价=买入价倍率*收盘价
+            if (buy >= last) {//买入价>=最新成交价
+                System.out.println("buy:" + buy + "---last:" + last);
+                String commitOrderUrl =COMMIT_ORDER;
+            }
+
         }
     }
 
@@ -52,7 +53,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 kLine.setCurrencyVolume(list.getDouble(6));
                 return kLine;
             }
-        }else {
+        } else {
             return null;
         }
         return null;
@@ -60,6 +61,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
 
     /**
      * 最新成交价
+     *
      * @param rs
      * @return
      */
@@ -67,7 +69,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
         if (rs.length() > 5) {
             JSONObject object = JSON.parseObject(rs);
             return object.getDouble("last");
-        }else {
+        } else {
             return null;
         }
     }

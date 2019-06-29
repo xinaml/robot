@@ -120,7 +120,7 @@ public class UserConf extends BaseEntity {
     }
 
     public String getEndDate() {
-        return endDate;
+        return DateUtils.getUnixTime();
     }
 
     public void setEndDate(String endDate) {

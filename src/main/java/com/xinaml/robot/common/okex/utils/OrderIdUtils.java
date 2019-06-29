@@ -6,7 +6,7 @@ import com.xinaml.robot.common.okex.constant.APIConstants;
 import java.util.UUID;
 
 /**
- * Order Id Utils
+ * OrderVO Id Utils
  *
  * @author Tony Tian
  * @version 1.0.0
