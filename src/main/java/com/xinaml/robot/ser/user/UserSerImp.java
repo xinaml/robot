@@ -63,7 +63,6 @@ public class UserSerImp extends ServiceImpl<User, UserDTO> implements UserSer {
         }
         if (isPass) {
             token = TokenUtil.create(to.getIp());
-            user.setPassword(null);
             jRedis.put(token, JSON.toJSONString(user));
             return token;
         } else {
@@ -135,7 +134,6 @@ public class UserSerImp extends ServiceImpl<User, UserDTO> implements UserSer {
         try {
             str = jRedis.get(user.getId() + user.getUsername());
         } catch (Exception e) {
-
         }
         if (null == str) {
             throw new SerException("请先配置信息！");
