@@ -21,7 +21,7 @@ import java.util.List;
  * @Date: [19-6-26 下午2:24]
  * @Description:启动时开始用户交易扫描
  * @Version: [1.0.0]
- * @Copy: [com.changbei]
+ * @Copy: [com.xinaml]
  */
 @Component
 public class StartInit {

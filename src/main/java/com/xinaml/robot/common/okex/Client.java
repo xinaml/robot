@@ -155,12 +155,5 @@ public class Client {
         return body;
     }
 
-    public static void main(String[] args) throws Exception {
-        String url = JSON.toJSONString(new OrderVO());
-        String rs = Client.httpPost("/api/futures/v3/order",url,null);
-        JSONArray array= JSON.parseArray(rs);
-
-    }
-
 
 }

@@ -1,4 +1,4 @@
-package com.xinaml.robot.action.okex;
+package com.xinaml.robot.action.user;
 
 import com.xinaml.robot.base.entity.ADD;
 import com.xinaml.robot.common.custom.annotation.Login;
