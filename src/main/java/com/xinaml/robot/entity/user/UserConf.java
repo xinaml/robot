@@ -29,18 +29,22 @@ public class UserConf extends BaseEntity {
     @JoinColumn(name = "user_id", columnDefinition = "VARCHAR(36) COMMENT '所属用户' ")
     private User user;
 
-    @Column(unique = true, length = 20, columnDefinition = "VARCHAR(25) COMMENT 'k线的粒度'")
+    @Column( length = 20, columnDefinition = "VARCHAR(25) COMMENT 'k线的粒度'")
     private String time; //获取k线的粒度设置
+
+    @Column(length = 20, columnDefinition = "INT(3) COMMENT '挂单时间'")
+    private Integer orderTime=10; //挂单时间,默认10分钟
 
     @Column(columnDefinition = " DECIMAL(10,2) COMMENT '保留金额'")
     private Double account;//保留金额
+
      @Column(columnDefinition = " INT(5) COMMENT '每次开张数'")
     private Integer count;//每次开张数
 
-    @Column(unique = true, length = 20, columnDefinition = "VARCHAR(25) COMMENT '币种'")
+    @Column(length = 20, columnDefinition = "VARCHAR(25) COMMENT '币种'")
     private String type;//币种
 
-    @Column(unique = true, length = 20, columnDefinition = "VARCHAR(25) COMMENT '合约id'")
+    @Column( length = 20, columnDefinition = "VARCHAR(25) COMMENT '合约id'")
     private String contract;//合约id
 
     @Column(columnDefinition = " DECIMAL(10,2) COMMENT '买入价倍率'")
@@ -156,5 +160,13 @@ public class UserConf extends BaseEntity {
 
     public void setLeverage(Integer leverage) {
         this.leverage = leverage;
+    }
+
+    public Integer getOrderTime() {
+        return orderTime;
+    }
+
+    public void setOrderTime(Integer orderTime) {
+        this.orderTime = orderTime;
     }
 }

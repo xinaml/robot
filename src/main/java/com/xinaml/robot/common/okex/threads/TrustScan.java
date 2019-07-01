@@ -1,14 +1,11 @@
 package com.xinaml.robot.common.okex.threads;
 
+import com.xinaml.robot.common.session.TaskSession;
 import com.xinaml.robot.entity.user.UserConf;
-import com.xinaml.robot.ser.okex.AutoTradeSer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @Author: [lgq]
@@ -19,7 +16,6 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 public class TrustScan {
-
 
 
     /**
@@ -53,6 +49,6 @@ public class TrustScan {
                     e.printStackTrace();
                 }
             }
-        }, 0, 1000*60); //每1查询一次
+        }, 0, 1000 * 60); //每1查询一次
     }
 }

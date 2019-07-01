@@ -77,7 +77,15 @@
                 <option value="1周">1周</option>
             </select>
         </div>
-
+        <br>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">挂单时间</span>
+            </div>
+            <input type="text" class="form-control" placeholder="挂单时间" id="orderTime" name="orderTime"
+                   onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')">
+            <span class="input-group-text">分钟</span>
+        </div>
         <br>
         <div class="input-group">
             <div class="input-group-prepend">
@@ -171,6 +179,7 @@
                         $("#buyMultiple").val(rs.data.buyMultiple)
                         $("#selfMultiple").val(rs.data.selfMultiple)
                         $("#leverage").val(rs.data.leverage)
+                        $("#orderTime").val(rs.data.orderTime)
                     }
                 } else {
                     toastr.error(rs.msg);

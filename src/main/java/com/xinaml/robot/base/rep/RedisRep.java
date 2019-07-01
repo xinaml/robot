@@ -177,4 +177,13 @@ public class RedisRep {
         }
     }
 
+    public Long removeHashSetVal(String key, String value) {
+        try {
+            return template.opsForSet().remove(key, value);
+        } catch (RedisConnectionFailureException e) {
+            LOGGER.error(FAIL_MSG);
+            throw new RuntimeException(e.getCause());
+        }
+    }
+
 }

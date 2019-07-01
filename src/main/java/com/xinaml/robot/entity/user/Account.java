@@ -1,5 +1,6 @@
 package com.xinaml.robot.entity.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.xinaml.robot.base.entity.BaseEntity;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "tb_account")
 public class Account extends BaseEntity {
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", columnDefinition = "VARCHAR(36) COMMENT '所属用户' ")
     private User user;

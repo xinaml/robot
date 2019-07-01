@@ -1,4 +1,4 @@
-package com.xinaml.robot.common.okex.threads;
+package com.xinaml.robot.common.session;
 
 import com.google.common.cache.*;
 import org.apache.commons.lang3.StringUtils;
@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Timer;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**

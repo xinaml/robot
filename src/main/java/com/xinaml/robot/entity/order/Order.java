@@ -1,5 +1,6 @@
 package com.xinaml.robot.entity.order;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.xinaml.robot.base.entity.BaseEntity;
 import com.xinaml.robot.entity.user.User;
 
@@ -8,19 +9,28 @@ import javax.persistence.*;
 @Entity
 @Table(name = "tb_order")
 public class Order extends BaseEntity {
-    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "user_id", columnDefinition = "VARCHAR(36) COMMENT '所属用户' ")
     private User user;
+
     @Column(columnDefinition = "VARCHAR(56) COMMENT '合约ID'")
     private String instrumentId;//合约ID
+
     @Column(nullable = false, columnDefinition = "VARCHAR(56) COMMENT '自定义订单id'")
     private String clientOid;//自定义订单id
+
     @Column( columnDefinition = "VARCHAR(56) COMMENT '订单id'")
     private String orderId;//
+
     @Column( columnDefinition = "VARCHAR(255) COMMENT '错误信息'")
     private String errorMessage;
+
     @Column( columnDefinition = "VARCHAR(56) COMMENT '错误编号'")
     private String errorCode;
+
+    @Column( columnDefinition = "INT(2) COMMENT '订单状态:-2:失败,-1:撤单成功,0:等待成交 ,1:部分成交, 2:完全成交,3:下单中,4:撤单中'")
+    private Integer status;//1，下单未成功，2，撤单 ，3成交
 
     public User getUser() {
         return user;
@@ -68,5 +78,13 @@ public class Order extends BaseEntity {
 
     public void setErrorCode(String errorCode) {
         this.errorCode = errorCode;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 }

@@ -1,5 +1,6 @@
 package com.xinaml.robot.common.okex.threads;
 
+import com.xinaml.robot.common.session.TaskSession;
 import com.xinaml.robot.entity.user.UserConf;
 import com.xinaml.robot.ser.okex.AutoTradeSer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @Author: [lgq]
@@ -58,7 +58,7 @@ public class ThreadScan {
      * @param conf
      */
     private static void start(String userId, UserConf conf) {
-        if(TaskSession.get(userId)!=null){
+        if (TaskSession.get(userId) != null) {
             stop(userId);
         }
         Timer timer = new Timer();

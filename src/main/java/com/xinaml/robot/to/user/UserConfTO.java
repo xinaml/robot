@@ -3,8 +3,6 @@ package com.xinaml.robot.to.user;
 import com.xinaml.robot.base.entity.ADD;
 import org.hibernate.validator.constraints.Range;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -24,13 +22,15 @@ public class UserConfTO {
     private Integer count;//开张数
     @NotBlank(groups = {ADD.class}, message = "请填写币种！")
     private String type;//币种
+    @NotNull(groups = {ADD.class}, message = "请填写挂单时间！")
+    private Integer orderTime;//挂单时间
     @NotBlank(groups = {ADD.class}, message = "请填写币种！")
     private String contract;//合约id
     @NotNull(groups = {ADD.class}, message = "请填写合约id！")
     private Double buyMultiple;//买入价倍率
     @NotNull(groups = {ADD.class}, message = "请填写卖出价倍率！")
     private Double selfMultiple;//卖出价倍率
-    @Range(max = 100,min = 1,message="杠杆倍数:1-100")
+    @Range(max = 100, min = 1, message = "杠杆倍数:1-100")
     @NotNull(groups = {ADD.class}, message = "请填写杠杆倍数！")
     private Integer leverage;//杠杆倍数
 
@@ -96,5 +96,13 @@ public class UserConfTO {
 
     public void setLeverage(Integer leverage) {
         this.leverage = leverage;
+    }
+
+    public Integer getOrderTime() {
+        return orderTime;
+    }
+
+    public void setOrderTime(Integer orderTime) {
+        this.orderTime = orderTime;
     }
 }

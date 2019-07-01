@@ -3,6 +3,7 @@ package com.xinaml.robot.ser.okex;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.xinaml.robot.base.rep.RedisRep;
 import com.xinaml.robot.common.okex.Client;
 import com.xinaml.robot.common.utils.DateUtil;
 import com.xinaml.robot.common.utils.MailUtil;
@@ -35,6 +36,8 @@ public class AutoTradeSerImpl implements AutoTradeSer {
     @Autowired
     private OrderSer orderSer;
     private static Logger LOG = LoggerFactory.getLogger(AutoTradeSer.class);
+    @Autowired
+    private RedisRep redisRep;
 
     @Override
     public void trade(UserConf conf) {
@@ -42,14 +45,12 @@ public class AutoTradeSerImpl implements AutoTradeSer {
         Double last = getLast(conf); //最新成交价
         if (line != null && last != null) {
             double buy = conf.getBuyMultiple() * line.getClose();//买入价=买入价倍率*收盘价
+            LOG.info("buy:" + buy + "---last:" + last);
             if (buy >= last) {//买入价>=最新成交价
-                LOG.info("buy:" + buy + "---last:" + last);
-                commitOrder(conf, buy + ""); //提交订单
-                String orderId = commitOrder(conf, buy + ""); //提交订单
+//                Order order = commitOrder(conf, buy + ""); //提交订单
             }
 
         }
-        cancelOrder(conf, "RB318517");
     }
 
     /**
@@ -80,17 +81,20 @@ public class AutoTradeSerImpl implements AutoTradeSer {
     public void cancelOrder(UserConf conf, String orderId) {
         String url = CANCEL_ORDER + "/" + conf.getInstrumentId() + "/" + orderId;
         String rs = Client.httpPost(url, JSON.toJSONString(new OrderVO()), conf.getUser());
+        Order order = orderSer.findByOrderId(orderId);
         if (rs.indexOf("\"error_code\":\"0\"") != -1) {//撤单成功
-            Order order = orderSer.findByOrderId(orderId);
-            orderSer.remove(order);
+            order.setStatus(-1);
             String email = conf.getUser().getEmail();
             if (StringUtils.isNotBlank(email)) {
                 String msg = DateUtil.dateToString(LocalDateTime.now()) + " 撤单成功！" + "单号id为：" + orderId;
                 MailUtil.send(email, "撤单成功！", msg);
             }
         } else {
-            LOG.warn(conf.getUser().getUsername() + ":" + rs);
+            order.setStatus(2);//已成交
+            LOG.warn("撤单失败！ " + conf.getUser().getUsername() + ":" + rs);
         }
+        orderSer.update(order);
+
     }
 
     /**
@@ -98,7 +102,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
      *
      * @param conf
      */
-    public String commitOrder(UserConf conf, String buy) {
+    public Order commitOrder(UserConf conf, String buy) {
         String url = COMMIT_ORDER;
         OrderVO orderVO = new OrderVO();
         orderVO.setInstrument_id(conf.getInstrumentId());//合约id
@@ -116,13 +120,14 @@ public class AutoTradeSerImpl implements AutoTradeSer {
             order.setErrorMessage(oc.getError_message());
             order.setInstrumentId(conf.getInstrumentId());
             order.setCreateDate(LocalDateTime.now());
+            order.setStatus(0);//等待成交
             orderSer.save(order);
             String email = conf.getUser().getEmail();
             if (StringUtils.isNotBlank(email)) {
                 String msg = DateUtil.dateToString(LocalDateTime.now()) + " 下单成功！" + "单号id为：" + oc.getOrder_id();
                 MailUtil.send(email, "下单成功！", msg);
             }
-            return order.getOrderId();
+            return order;
         } else {
             LOG.warn(conf.getUser().getUsername() + "下单失败:" + rs);//下单失败
         }
