@@ -5,4 +5,5 @@ import com.xinaml.robot.dto.order.OrderDTO;
 import com.xinaml.robot.entity.order.Order;
 
 public interface OrderRep extends JapRep<Order, OrderDTO> {
+    Order findByOrderId(String orderId);
 }

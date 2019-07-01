@@ -5,4 +5,7 @@ import com.xinaml.robot.dto.order.OrderDTO;
 import com.xinaml.robot.entity.order.Order;
 
 public interface OrderSer extends Ser<Order, OrderDTO> {
+    default Order findByOrderId(String orderId){
+        return null;
+    }
 }

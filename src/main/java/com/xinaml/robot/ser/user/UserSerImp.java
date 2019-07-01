@@ -118,10 +118,10 @@ public class UserSerImp extends ServiceImpl<User, UserDTO> implements UserSer {
                 this.update(user);
                 ThreadScan.scan(user.getId(), user.getStop(), conf);//重新扫描配置
             } else {
-                throw new SerException("保存错误!请检查账号、secretKey、apiKey是否正确！");
+                throw new SerException("保存错误!请检查账号、secretKey、apiKey、合约id是否正确！");
             }
         } catch (Exception e) {
-            throw new SerException("保存错误!请检查账号、secretKey、apiKey是否正确！");
+            throw new SerException("保存错误!请检查账号、secretKey、apiKey、合约id是否正确！");
         }
 
     }

@@ -4,12 +4,16 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.xinaml.robot.common.okex.Client;
+import com.xinaml.robot.entity.order.Order;
 import com.xinaml.robot.entity.user.UserConf;
+import com.xinaml.robot.ser.order.OrderSer;
 import com.xinaml.robot.vo.user.KLine;
+import com.xinaml.robot.vo.user.OrderCommitVO;
 import com.xinaml.robot.vo.user.OrderInfo;
 import com.xinaml.robot.vo.user.OrderVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static com.xinaml.robot.common.constant.UrlConst.*;
@@ -23,7 +27,9 @@ import static com.xinaml.robot.common.constant.UrlConst.*;
  */
 @Service
 public class AutoTradeSerImpl implements AutoTradeSer {
-    private static  Logger LOG = LoggerFactory.getLogger(AutoTradeSer.class);
+    @Autowired
+    private OrderSer orderSer;
+    private static Logger LOG = LoggerFactory.getLogger(AutoTradeSer.class);
 
     @Override
     public void trade(UserConf conf) {
@@ -35,7 +41,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 LOG.info("buy:" + buy + "---last:" + last);
             }
             //提交订单
-            commitOrder(conf,buy+"");
+            commitOrder(conf, buy + "");
         }
     }
 
@@ -68,9 +74,10 @@ public class AutoTradeSerImpl implements AutoTradeSer {
         String url = CANCEL_ORDER + "/" + conf.getInstrumentId() + "/" + orderId;
         String rs = Client.httpPost(url, JSON.toJSONString(new OrderVO()), conf.getUser());
         if (rs.indexOf("\"error_code\":\"0\"") != -1) {//撤单成功
-
+            Order order = orderSer.findByOrderId(orderId);
+            orderSer.remove(order);
         } else {
-            LOG.info(rs);
+            LOG.warn(conf.getUser().getUsername() + ":" + rs);
         }
     }
 
@@ -79,18 +86,26 @@ public class AutoTradeSerImpl implements AutoTradeSer {
      *
      * @param conf
      */
-    public void commitOrder(UserConf conf,String buy) {
+    public void commitOrder(UserConf conf, String buy) {
         String url = COMMIT_ORDER;
         OrderVO orderVO = new OrderVO();
         orderVO.setInstrument_id(conf.getInstrumentId());//合约id
         orderVO.setSize(conf.getCount() + "");//每次开张数
         orderVO.setPrice(buy);
-        orderVO.setLeverage(conf.getLeverage()+"");
+        orderVO.setLeverage(conf.getLeverage() + "");
         String rs = Client.httpPost(url, JSON.toJSONString(orderVO), conf.getUser());
         if (rs.indexOf("\"error_code\":\"0\"") != -1) {//下单成功
-
+            OrderCommitVO oc = JSON.parseObject(rs, OrderCommitVO.class);
+            Order order = new Order();
+            order.setClientOid(oc.getClient_oid());
+            order.setUser(conf.getUser());
+            order.setOrderId(oc.getClient_oid());
+            order.setErrorCode(oc.getError_code());
+            order.setErrorMessage(oc.getError_message());
+            order.setInstrumentId(oc.getInstrument_id());
+            orderSer.save(order);
         } else {
-            LOG.info(rs);
+            LOG.warn(conf.getUser().getUsername() + ":" + rs);//下单失败
         }
     }
 
