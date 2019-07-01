@@ -8,7 +8,6 @@ public class OrderCommitVO {
     private  String error_message ;
     private  String client_oid ;
     private  String order_id ;
-    private  String instrument_id ;
 
     public String getError_code() {
         return error_code;
@@ -42,11 +41,4 @@ public class OrderCommitVO {
         this.order_id = order_id;
     }
 
-    public String getInstrument_id() {
-        return instrument_id;
-    }
-
-    public void setInstrument_id(String instrument_id) {
-        this.instrument_id = instrument_id;
-    }
 }

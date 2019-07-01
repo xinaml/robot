@@ -14,42 +14,51 @@ import com.xinaml.robot.vo.user.OrderInfo;
 public interface AutoTradeSer {
     /**
      * 自动交易
+     *
      * @param conf
      */
     default void trade(UserConf conf) {
 
     }
+
     /**
      * 下单
+     *
      * @param conf
-     * @param buy 买入价
+     * @param buy  买入价
      */
-    default void commitOrder(UserConf conf,String buy) {
-
+    default String commitOrder(UserConf conf, String buy) {
+        return null;
     }
 
     /**
      * 撤单
+     *
      * @param conf
      */
-    default void cancelOrder(UserConf conf,String orderId) {
+    default void cancelOrder(UserConf conf, String orderId) {
 
     }
+
     /**
      * 订单信息
+     *
      * @param conf
      */
     default OrderInfo getOrderInfo(UserConf conf, String orderId) {
         return null;
     }
+
     /**
      * 获取k线数据
+     *
      * @param conf
      * @return
      */
     default KLine getLine(UserConf conf) {
         return null;
     }
+
     /**
      * 最新成交价
      *

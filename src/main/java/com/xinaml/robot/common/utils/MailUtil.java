@@ -12,8 +12,8 @@ import javax.mail.internet.MimeMessage;
 import java.util.Date;
 import java.util.Properties;
 
-public class SendMailUtil {
-    private static Logger LOG = LoggerFactory.getLogger(SendMailUtil.class);
+public class MailUtil {
+    private static Logger LOG = LoggerFactory.getLogger(MailUtil.class);
     public static String SERVER_MAIL = "xinaml@163.com";
     public static String SERVER_PASSWORD = "liguiqin123";
     public static String SMTP_HOST = "smtp.163.com";
@@ -58,7 +58,7 @@ public class SendMailUtil {
     }
 
     public static void main(String[] args) throws Exception {
-        SendMailUtil.send("xinaml@qq.com","今天回家吃饭好吗","写代码没出息的！");
+        MailUtil.send("xinaml@qq.com","今天回家吃饭好吗","写代码没出息的！");
     }
 
 }

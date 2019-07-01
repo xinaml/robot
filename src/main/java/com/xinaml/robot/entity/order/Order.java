@@ -11,7 +11,7 @@ public class Order extends BaseEntity {
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", columnDefinition = "VARCHAR(36) COMMENT '所属用户' ")
     private User user;
-    @Column(nullable = false, columnDefinition = "VARCHAR(56) COMMENT '合约ID'")
+    @Column(columnDefinition = "VARCHAR(56) COMMENT '合约ID'")
     private String instrumentId;//合约ID
     @Column(nullable = false, columnDefinition = "VARCHAR(56) COMMENT '自定义订单id'")
     private String clientOid;//自定义订单id
