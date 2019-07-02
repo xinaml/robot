@@ -21,7 +21,15 @@ public interface AutoTradeSer {
     default void trade(UserConf conf) {
 
     }
-
+    /**
+     * 卖出
+     *
+     * @param conf
+     * @param buy  买入价
+     */
+    default Order sellOrder(UserConf conf, String buy) {
+        return null;
+    }
     /**
      * 下单
      *

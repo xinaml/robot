@@ -31,7 +31,7 @@ public class StartInit {
             User user = conf.getUser();
             if (!user.getStop()) {
                 userConfSer.setSeconds(conf);
-                ThreadScan.scan(user.getId(), false, conf);
+                ThreadScan.scan(user.getId(), user.getStop(), conf);
             }
         }
 

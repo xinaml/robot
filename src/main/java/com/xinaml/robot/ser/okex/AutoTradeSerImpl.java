@@ -59,10 +59,51 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 MsgSession.put(userId,msg);
             }
             if (buy >= last) {//买入价>=最新成交价
-//                Order order = commitOrder(conf, buy + ""); //提交订单
+               commitOrder(conf, buy + ""); //提交订单
             }
 
         }
+    }
+
+    /**
+     * 卖出
+     * @param conf
+     * @param buy  买入价
+     * @return
+     */
+    @Override
+    public Order sellOrder(UserConf conf, String buy) {
+        String url = COMMIT_ORDER;
+        OrderVO orderVO = new OrderVO();
+        orderVO.setInstrument_id(conf.getInstrumentId());//合约id
+        orderVO.setSize(conf.getCount() + "");//每次开张数
+        orderVO.setPrice(buy);
+        orderVO.setType("3");
+        orderVO.setLeverage(conf.getLeverage() + "");
+        String rs = Client.httpPost(url, JSON.toJSONString(orderVO), conf.getUser());
+        if (rs.indexOf("\"error_code\":\"0\"") != -1) {//下单成功
+            OrderCommitVO oc = JSON.parseObject(rs, OrderCommitVO.class);
+            Order order = new Order();
+            order.setClientOid(oc.getClient_oid());
+            order.setUser(conf.getUser());
+            order.setOrderId(oc.getOrder_id());
+            order.setErrorCode(oc.getError_code());
+            order.setErrorMessage(oc.getError_message());
+            order.setInstrumentId(conf.getInstrumentId());
+            order.setCreateDate(LocalDateTime.now());
+            order.setType(2);//卖出
+            order.setStatus(0);//等待成交
+            orderSer.save(order);
+            String email = conf.getUser().getEmail();
+            if (StringUtils.isNotBlank(email)) {
+                String msg = DateUtil.dateToString(LocalDateTime.now()) + " 卖出成功！" + "单号id为：" + oc.getOrder_id();
+                MailUtil.send(email, "卖出成功！", msg);
+            }
+            return order;
+        } else {
+            LOG.warn(conf.getUser().getUsername() + "卖出失败:" + rs);//下单失败
+        }
+        return null;
     }
 
     /**
@@ -120,6 +161,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
         orderVO.setInstrument_id(conf.getInstrumentId());//合约id
         orderVO.setSize(conf.getCount() + "");//每次开张数
         orderVO.setPrice(buy);
+        orderVO.setType("1");
         orderVO.setLeverage(conf.getLeverage() + "");
         String rs = Client.httpPost(url, JSON.toJSONString(orderVO), conf.getUser());
         if (rs.indexOf("\"error_code\":\"0\"") != -1) {//下单成功
@@ -132,6 +174,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
             order.setErrorMessage(oc.getError_message());
             order.setInstrumentId(conf.getInstrumentId());
             order.setCreateDate(LocalDateTime.now());
+            order.setType(1);//买入
             order.setStatus(0);//等待成交
             orderSer.save(order);
             String email = conf.getUser().getEmail();

@@ -11,19 +11,29 @@ import java.util.List;
 
 @Service
 public class OrderSerImpl extends ServiceImpl<Order, OrderDTO> implements OrderSer {
+
     @Autowired
     private OrderRep orderRep;
     public Order findByOrderId(String orderId){
         return orderRep.findByOrderId(orderId);
     }
 
+    /**
+     * 查询买入未成功的订单
+     * @return
+     */
     @Override
-    public List<Order> findUnSuccess() {
-        return orderRep.findByStatus(1);
+    public List<Order> findBuyUnSuccess() {
+        return orderRep.findByStatusAndType(1,1);
     }
 
+    /**
+     * 查询卖出未成功的订单
+     * @return
+     */
     @Override
-    public List<Order> findSuccess() {
-        return orderRep.findByStatus(2);
+    public List<Order> findSellUnSuccess() {
+        return orderRep.findByStatusAndType(1,2);
     }
+
 }

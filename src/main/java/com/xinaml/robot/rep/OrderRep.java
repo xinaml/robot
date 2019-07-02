@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface OrderRep extends JapRep<Order, OrderDTO> {
     Order findByOrderId(String orderId);
-    List<Order> findByStatus(Integer status);
+    List<Order> findByStatusAndType(Integer status,Integer type);
 }

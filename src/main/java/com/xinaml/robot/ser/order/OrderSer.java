@@ -12,18 +12,21 @@ public interface OrderSer extends Ser<Order, OrderDTO> {
     }
 
     /**
-     * 查询未成功的订单
+     * 查询买入未成功的订单
      * @return
      */
-    default List<Order> findUnSuccess(){
+    default List<Order> findBuyUnSuccess(){
         return null;
     }
 
+
     /**
-     * 查询交易成功的订单
+     * 查询卖出未成功的订单
      * @return
      */
-    default List<Order> findSuccess(){
+    default List<Order> findSellUnSuccess(){
         return null;
     }
+
+
 }

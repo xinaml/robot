@@ -32,6 +32,9 @@ public class Order extends BaseEntity {
     @Column( columnDefinition = "INT(2) COMMENT '订单状态:-2:失败,-1:撤单成功,0:等待成交 ,1:部分成交, 2:完全成交,3:下单中,4:撤单中'")
     private Integer status;//1，下单未成功，2，撤单 ，3成交
 
+    @Column( columnDefinition = "INT(2) COMMENT '订单类型，1：买入，2卖出'")
+    private Integer type;//1：买入，2卖出
+
     public User getUser() {
         return user;
     }
@@ -86,5 +89,13 @@ public class Order extends BaseEntity {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 }
