@@ -34,8 +34,8 @@ public class UserConf extends BaseEntity {
 
     @Column(columnDefinition = " DECIMAL(10,2) COMMENT '保留金额'")
     private Double account;//保留金额
-     @Column(columnDefinition = " DECIMAL(10,2) COMMENT '每次开张数'")
-    private Double count;//每次开张数
+     @Column(columnDefinition = " INT(5) COMMENT '每次开张数'")
+    private Integer count;//每次开张数
 
     @Column(unique = true, length = 20, columnDefinition = "VARCHAR(25) COMMENT '币种'")
     private String type;//币种
@@ -48,6 +48,9 @@ public class UserConf extends BaseEntity {
 
     @Column(columnDefinition = " DECIMAL(10,2) COMMENT '卖出价倍率'")
     private Double selfMultiple;//卖出价倍率
+
+   @Column(columnDefinition = "INT(5) COMMENT '杠杆倍数'")
+    private Integer leverage=1;//杠杆倍数
 
     @Transient
     private Integer seconds=60;//秒
@@ -127,11 +130,11 @@ public class UserConf extends BaseEntity {
         this.endDate = endDate;
     }
 
-    public Double getCount() {
+    public Integer getCount() {
         return count;
     }
 
-    public void setCount(Double count) {
+    public void setCount(Integer count) {
         this.count = count;
     }
 
@@ -147,5 +150,11 @@ public class UserConf extends BaseEntity {
         return this.type+"-"+contract;
     }
 
+    public Integer getLeverage() {
+        return leverage;
+    }
 
+    public void setLeverage(Integer leverage) {
+        this.leverage = leverage;
+    }
 }

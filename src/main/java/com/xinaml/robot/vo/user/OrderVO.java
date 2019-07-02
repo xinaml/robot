@@ -1,36 +1,36 @@
 package com.xinaml.robot.vo.user;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
 
-import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
+/**
+ * 提交订单构建数据
+ */
 public class OrderVO {
     @JSONField(ordinal = 1)
-    private String client_oid = new Random().nextInt(1000000)+"";//	由您设置的订单ID来识别您的订单
+    private String client_oid = "RB" + new Random().nextInt(1000000);//	由您设置的订单ID来识别您的订单
 
     @JSONField(ordinal = 2)
     private String order_type = "0";//	杠杆倍数
 
-   @JSONField(ordinal = 3)
-    private String instrument_id="1";//合约ID
+    @JSONField(ordinal = 3)
+    private String instrument_id = "1";//合约ID
 
     @JSONField(ordinal = 4)
-    private String type="1";//		1:开多2:开空3:平多4:平空
+    private String type = "1";//		1:开多2:开空3:平多4:平空
 
     @JSONField(ordinal = 5)
-    private String price ="0.0";//	每张合约的价格
+    private String price = "1.0";//	每张合约的价格
 
-     @JSONField(ordinal = 6)
-    private String size ="1";//	买入或卖出合约的数量（以张计数）
+    @JSONField(ordinal = 6)
+    private String size = "1";//	买入或卖出合约的数量（以张计数）
 
     @JSONField(ordinal = 7)
-    private String match_price ="1";//	是否以对手价下单(0:不是 1:是)，默认为0，当取值为1时。price字段无效
+    private String match_price = "0";//	是否以对手价下单(0:不是 1:是)，默认为0，当取值为1时。price字段无效
 
     @JSONField(ordinal = 8)
-    private String leverage ="1";//	是否以对手价下单(0:不是 1:是)，默认为0，当取值为1时。price字段无效
+    private String leverage = "1";//	是否以对手价下单(0:不是 1:是)，默认为0，当取值为1时。price字段无效
 
     public String getClient_oid() {
         return client_oid;

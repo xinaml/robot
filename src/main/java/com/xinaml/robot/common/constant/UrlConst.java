@@ -20,7 +20,15 @@ public class UrlConst {
     public static  final  String LAST="/api/futures/v3/instruments" ;
 
     /**
-     * 最后成交价
+     * 提交单子
      */
-    public static  final  String COMMIT_ORDER=" /api/futures/v3/order" ;
+    public static  final  String COMMIT_ORDER="/api/futures/v3/order" ;
+    /**
+     * 撤销单子
+     */
+    public static  final  String CANCEL_ORDER="/api/futures/v3/cancel_order" ;
+    /**
+     * 订单信息
+     */
+    public static  final  String ORDER_INFO="/api/futures/v3/orders" ;
 }

@@ -107,10 +107,18 @@
         <br>
         <div class="input-group">
             <div class="input-group-prepend">
+                <span class="input-group-text">杠杆倍数</span>
+            </div>
+            <input type="text" class="form-control" placeholder="杠杆倍数" id="leverage" name="leverage"
+                   onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')">
+        </div>
+        <br>
+        <div class="input-group">
+            <div class="input-group-prepend">
                 <span class="input-group-text">开张数</span>
         </div>
             <input type="text" class="form-control" placeholder="开张数" id="count" name="count"
-                   onkeyup="if(isNaN(value))execCommand('undo')" onafterpaste="if(isNaN(value))execCommand('undo')">
+                   onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')">
         </div>
         <br>
         <div class="input-group">
@@ -162,6 +170,7 @@
                         $("#type").find("option:contains('" + rs.data.type + "')").attr("selected", true);
                         $("#buyMultiple").val(rs.data.buyMultiple)
                         $("#selfMultiple").val(rs.data.selfMultiple)
+                        $("#leverage").val(rs.data.leverage)
                     }
                 } else {
                     toastr.error(rs.msg);

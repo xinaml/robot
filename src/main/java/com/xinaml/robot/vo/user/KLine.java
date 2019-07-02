@@ -1,5 +1,8 @@
 package com.xinaml.robot.vo.user;
 
+/**
+ * k线数据
+ */
 public class KLine {
 
 //    参数名	参数类型	描述

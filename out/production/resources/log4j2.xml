@@ -9,9 +9,8 @@
         </Console>
 
         <!--处理DEBUG级别的日志，并把该日志放到logs/debug.log文件中-->
-        <!--打印出DEBUG级别日志，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档-->
-        <RollingFile name="RollingFileDebug" fileName="/storage/logs/debug.log"
-                     filePattern="/storage/logs/$${date:yyyy-MM}/debug-%d{yyyy-MM-dd}-%i.log.gz">
+        <RollingFile name="debug" fileName="/storage/logs/debug.log"
+                     filePattern="/storage/logs/%d{yyyy-MM}/debug-%d{yyyy-MM-dd}.log">
             <Filters>
                 <ThresholdFilter level="DEBUG"/>
                 <ThresholdFilter level="INFO" onMatch="DENY" onMismatch="NEUTRAL"/>
@@ -19,14 +18,14 @@
             <PatternLayout
                     pattern="[%d{yyyy-MM-dd HH:mm:ss}] %-5level %class{36} %L %M - %msg%xEx%n"/>
             <Policies>
-                <SizeBasedTriggeringPolicy size="10 MB"/>
-                <TimeBasedTriggeringPolicy/>
+                <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
             </Policies>
         </RollingFile>
 
         <!--处理INFO级别的日志，并把该日志放到logs/info.log文件中-->
-        <RollingFile name="RollingFileInfo" fileName="/storage/logs/info.log"
-                     filePattern="/storage/logs/$${date:yyyy-MM}/info-%d{yyyy-MM-dd}-%i.log.gz">
+        <RollingFile name="info" fileName="/storage/logs/info.log"
+                     filePattern="/storage/logs/%d{yyyy-MM}/info-%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] %-5level %L %M - %msg%xEx%n"/>
             <Filters>
                 <!--只接受INFO级别的日志，其余的全部拒绝处理-->
                 <ThresholdFilter level="INFO"/>
@@ -35,45 +34,39 @@
             <PatternLayout
                     pattern="[%d{yyyy-MM-dd HH:mm:ss}] %-5level %class{36} %L %M - %msg%xEx%n"/>
             <Policies>
-                <SizeBasedTriggeringPolicy size="10 MB"/>
-                <TimeBasedTriggeringPolicy/>
+                <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
             </Policies>
         </RollingFile>
 
-        <!--处理WARN级别的日志，并把该日志放到logs/warn.log文件中-->
-        <RollingFile name="RollingFileWarn" fileName="/storage/logs/warn.log"
-                     filePattern="/storage/logs/$${date:yyyy-MM}/warn-%d{yyyy-MM-dd}-%i.log.gz">
+        <RollingFile name="warn" fileName="/storage/logs/warn.log"
+                     filePattern="/storage/logs/%d{yyyy-MM}/warn-%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="%-d{yyyy-MM-dd HH:mm:ss} [%thread] %m%n"/>
             <Filters>
                 <ThresholdFilter level="WARN"/>
                 <ThresholdFilter level="ERROR" onMatch="DENY" onMismatch="NEUTRAL"/>
             </Filters>
-            <PatternLayout
-                    pattern="[%d{yyyy-MM-dd HH:mm:ss}] %-5level %class{36} %L %M - %msg%xEx%n"/>
             <Policies>
-                <SizeBasedTriggeringPolicy size="10 MB"/>
-                <TimeBasedTriggeringPolicy/>
+                <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
             </Policies>
         </RollingFile>
 
         <!--处理error级别的日志，并把该日志放到logs/error.log文件中-->
-        <RollingFile name="RollingFileError" fileName="/storage/logs/error.log"
-                     filePattern="/storage/logs/$${date:yyyy-MM}/error-%d{yyyy-MM-dd}-%i.log.gz">
+        <RollingFile name="error" fileName="/storage/logs/error.log"
+                     filePattern="/storage/logs/%d{yyyy-MM}/error-%d{yyyy-MM-dd}.log">
             <ThresholdFilter level="ERROR"/>
             <PatternLayout
                     pattern="[%d{yyyy-MM-dd HH:mm:ss}] %-5level %class{36} %L %M - %msg%xEx%n"/>
             <Policies>
-                <SizeBasedTriggeringPolicy size="10 MB"/>
-                <TimeBasedTriggeringPolicy/>
+                <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
             </Policies>
         </RollingFile>
 
         <!--druid的日志记录追加器-->
-        <RollingFile name="druidSqlRollingFile" fileName="/storage/logs/druid-sql.log"
-                     filePattern="/storage/logs/$${date:yyyy-MM}/api-%d{yyyy-MM-dd}-%i.log.gz">
+        <RollingFile name="druid" fileName="/storage/logs/druid.log"
+                     filePattern="/storage/logs/%d{yyyy-MM}/druid-%d{yyyy-MM-dd}.log">
             <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] %-5level %L %M - %msg%xEx%n"/>
             <Policies>
-                <SizeBasedTriggeringPolicy size="10 MB"/>
-                <TimeBasedTriggeringPolicy/>
+                <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
             </Policies>
         </RollingFile>
     </appenders>
@@ -81,15 +74,15 @@
     <loggers>
         <root level="DEBUG">
             <appender-ref ref="Console"/>
-            <appender-ref ref="RollingFileInfo"/>
-            <appender-ref ref="RollingFileWarn"/>
-            <appender-ref ref="RollingFileError"/>
-            <!--<appender-ref ref="RollingFileDebug"/>-->
+            <appender-ref ref="info"/>
+            <appender-ref ref="warn"/>
+            <appender-ref ref="error"/>
+<!--            <appender-ref ref="debug"/>-->
         </root>
 
         <!--记录druid-sql的记录-->
         <logger name="druid.sql.Statement" level="debug" additivity="false">
-            <appender-ref ref="druidSqlRollingFile"/>
+            <appender-ref ref="druid"/>
         </logger>
 
 

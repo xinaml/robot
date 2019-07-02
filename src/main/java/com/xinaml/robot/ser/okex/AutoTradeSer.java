@@ -2,6 +2,7 @@ package com.xinaml.robot.ser.okex;
 
 import com.xinaml.robot.entity.user.UserConf;
 import com.xinaml.robot.vo.user.KLine;
+import com.xinaml.robot.vo.user.OrderInfo;
 
 /**
  * @Author: [lgq]
@@ -21,9 +22,25 @@ public interface AutoTradeSer {
     /**
      * 下单
      * @param conf
+     * @param buy 买入价
      */
-    default void commitOrder(UserConf conf) {
+    default void commitOrder(UserConf conf,String buy) {
 
+    }
+
+    /**
+     * 撤单
+     * @param conf
+     */
+    default void cancelOrder(UserConf conf,String orderId) {
+
+    }
+    /**
+     * 订单信息
+     * @param conf
+     */
+    default OrderInfo getOrderInfo(UserConf conf, String orderId) {
+        return null;
     }
     /**
      * 获取k线数据

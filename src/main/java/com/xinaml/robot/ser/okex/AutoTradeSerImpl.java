@@ -4,10 +4,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.xinaml.robot.common.okex.Client;
-import com.xinaml.robot.entity.user.User;
 import com.xinaml.robot.entity.user.UserConf;
 import com.xinaml.robot.vo.user.KLine;
+import com.xinaml.robot.vo.user.OrderInfo;
 import com.xinaml.robot.vo.user.OrderVO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import static com.xinaml.robot.common.constant.UrlConst.*;
@@ -21,6 +23,7 @@ import static com.xinaml.robot.common.constant.UrlConst.*;
  */
 @Service
 public class AutoTradeSerImpl implements AutoTradeSer {
+    private static  Logger LOG = LoggerFactory.getLogger(AutoTradeSer.class);
 
     @Override
     public void trade(UserConf conf) {
@@ -29,32 +32,76 @@ public class AutoTradeSerImpl implements AutoTradeSer {
         if (line != null && last != null) {
             double buy = conf.getBuyMultiple() * line.getClose();//买入价=买入价倍率*收盘价
             if (buy >= last) {//买入价>=最新成交价
-                System.out.println("buy:" + buy + "---last:" + last);
+                LOG.info("buy:" + buy + "---last:" + last);
             }
-            commitOrder(conf);
+            //提交订单
+            commitOrder(conf,buy+"");
+        }
+    }
+
+    /**
+     * 订单信息
+     *
+     * @param conf
+     * @param orderId
+     */
+    @Override
+    public OrderInfo getOrderInfo(UserConf conf, String orderId) {
+        String url = ORDER_INFO + "/" + conf.getInstrumentId() + "/" + orderId;
+        String rs = Client.httpGet(url, conf.getUser());
+        if (rs.indexOf("instrument_id") != -1) {//获取订单成功
+            OrderInfo info = JSON.parseObject(rs, OrderInfo.class);
+            return info;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 撤单
+     *
+     * @param conf
+     * @param orderId
+     */
+    @Override
+    public void cancelOrder(UserConf conf, String orderId) {
+        String url = CANCEL_ORDER + "/" + conf.getInstrumentId() + "/" + orderId;
+        String rs = Client.httpPost(url, JSON.toJSONString(new OrderVO()), conf.getUser());
+        if (rs.indexOf("\"error_code\":\"0\"") != -1) {//撤单成功
+
+        } else {
+            LOG.info(rs);
         }
     }
 
     /**
      * 下单
+     *
      * @param conf
      */
-    public void commitOrder(UserConf conf){
-        String commitOrderUrl =COMMIT_ORDER;
+    public void commitOrder(UserConf conf,String buy) {
+        String url = COMMIT_ORDER;
         OrderVO orderVO = new OrderVO();
         orderVO.setInstrument_id(conf.getInstrumentId());//合约id
-        orderVO.setSize(conf.getCount()+"");//每次开张数
-        String rs = Client.httpPost(commitOrderUrl,JSON.toJSONString(orderVO),conf.getUser());
-        System.out.println(rs);
+        orderVO.setSize(conf.getCount() + "");//每次开张数
+        orderVO.setPrice(buy);
+        orderVO.setLeverage(conf.getLeverage()+"");
+        String rs = Client.httpPost(url, JSON.toJSONString(orderVO), conf.getUser());
+        if (rs.indexOf("\"error_code\":\"0\"") != -1) {//下单成功
+
+        } else {
+            LOG.info(rs);
+        }
     }
 
     /**
      * 获取k线数据
+     *
      * @param conf
      * @return
      */
-    public KLine getLine( UserConf conf) {
-        String kLineUrl = K_LINE + "/" + conf.getInstrumentId()+ "/candles?start=" + conf.getStartDate() + "&end=" + conf.getEndDate() + "&granularity=" + conf.getSeconds();
+    public KLine getLine(UserConf conf) {
+        String kLineUrl = K_LINE + "/" + conf.getInstrumentId() + "/candles?start=" + conf.getStartDate() + "&end=" + conf.getEndDate() + "&granularity=" + conf.getSeconds();
         String rs = Client.httpGet(kLineUrl, conf.getUser());
         if (rs.length() > 5) {
             JSONArray array = JSON.parseArray(rs);
@@ -82,7 +129,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
      * @param conf
      * @return
      */
-    public Double getLast(UserConf  conf) {
+    public Double getLast(UserConf conf) {
         String lastUrl = LAST + "/" + conf.getInstrumentId() + "/ticker";
         String rs = Client.httpGet(lastUrl, conf.getUser());
         if (rs.length() > 5) {
@@ -92,4 +139,5 @@ public class AutoTradeSerImpl implements AutoTradeSer {
             return null;
         }
     }
+
 }
