@@ -21,4 +21,9 @@ public class OrderSerImpl extends ServiceImpl<Order, OrderDTO> implements OrderS
     public List<Order> findUnSuccess() {
         return orderRep.findByStatus(1);
     }
+
+    @Override
+    public List<Order> findSuccess() {
+        return orderRep.findByStatus(2);
+    }
 }

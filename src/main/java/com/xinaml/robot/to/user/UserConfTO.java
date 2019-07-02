@@ -24,6 +24,8 @@ public class UserConfTO {
     private String type;//币种
     @NotNull(groups = {ADD.class}, message = "请填写挂单时间！")
     private Integer orderTime;//挂单时间
+     @NotNull(groups = {ADD.class}, message = "请填写等待卖出时间！")
+    private Integer sellTime;//等待卖出时间
     @NotBlank(groups = {ADD.class}, message = "请填写币种！")
     private String contract;//合约id
     @NotNull(groups = {ADD.class}, message = "请填写合约id！")
@@ -104,5 +106,13 @@ public class UserConfTO {
 
     public void setOrderTime(Integer orderTime) {
         this.orderTime = orderTime;
+    }
+
+    public Integer getSellTime() {
+        return sellTime;
+    }
+
+    public void setSellTime(Integer sellTime) {
+        this.sellTime = sellTime;
     }
 }

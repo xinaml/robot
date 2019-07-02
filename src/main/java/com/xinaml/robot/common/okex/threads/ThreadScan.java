@@ -13,7 +13,7 @@ import java.util.TimerTask;
 /**
  * @Author: [lgq]
  * @Date: [19-6-14 上午10:38]
- * @Description: 线程扫描
+ * @Description: 自动交易线程扫描
  * @Version: [1.0.0]
  * @Copy: [com.xinaml]
  */

@@ -35,6 +35,9 @@ public class UserConf extends BaseEntity {
     @Column(length = 20, columnDefinition = "INT(3) COMMENT '挂单时间'")
     private Integer orderTime=10; //挂单时间,默认10分钟
 
+    @Column(length = 20, columnDefinition = "INT(3) COMMENT '等待卖出时间'")
+    private Integer sellTime=10; //等待卖出时间,默认10分钟
+
     @Column(columnDefinition = " DECIMAL(10,2) COMMENT '保留金额'")
     private Double account;//保留金额
 
@@ -168,5 +171,13 @@ public class UserConf extends BaseEntity {
 
     public void setOrderTime(Integer orderTime) {
         this.orderTime = orderTime;
+    }
+
+    public Integer getSellTime() {
+        return sellTime;
+    }
+
+    public void setSellTime(Integer sellTime) {
+        this.sellTime = sellTime;
     }
 }

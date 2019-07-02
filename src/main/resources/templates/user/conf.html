@@ -82,9 +82,18 @@
         <br>
         <div class="input-group">
             <div class="input-group-prepend">
-                <span class="input-group-text">挂单时间</span>
+                <span class="input-group-text">挂单等待时间</span>
             </div>
-            <input type="text" class="form-control" placeholder="挂单时间" id="orderTime" name="orderTime"
+            <input type="text" class="form-control" placeholder="挂单等待时间" id="orderTime" name="orderTime"
+                   onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')">
+            <span class="input-group-text">分钟</span>
+        </div>
+        <br>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">卖出等待时间</span>
+            </div>
+            <input type="text" class="form-control" placeholder="等待卖出时间" id="sellTime" name="sellTime"
                    onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')">
             <span class="input-group-text">分钟</span>
         </div>
@@ -182,6 +191,7 @@
                         $("#selfMultiple").val(rs.data.selfMultiple)
                         $("#leverage").val(rs.data.leverage)
                         $("#orderTime").val(rs.data.orderTime)
+                        $("#sellTime").val(rs.data.sellTime)
                     }
                 } else {
                     toastr.error(rs.msg);

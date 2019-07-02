@@ -1,9 +1,16 @@
 package com.xinaml.robot.common.okex.threads;
 
-import com.xinaml.robot.common.session.TaskSession;
+import com.xinaml.robot.entity.order.Order;
 import com.xinaml.robot.entity.user.UserConf;
+import com.xinaml.robot.ser.okex.AutoTradeSer;
+import com.xinaml.robot.ser.order.OrderSer;
+import com.xinaml.robot.ser.user.UserConfSer;
+import com.xinaml.robot.vo.user.OrderInfo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -16,39 +23,81 @@ import java.util.TimerTask;
  */
 @Component
 public class TrustScan {
+    @Autowired
+    private UserConfSer userConfSer;
+    @Autowired
+    private AutoTradeSer autoTradeSer;
+    @Autowired
+    private OrderSer orderSer;
 
-
-    /**
-     * 移除线程
-     *
-     * @param userId
-     */
-    private static void stop(String userId) {
-        Timer timer = TaskSession.get(userId);
-        if (null != timer) {
-            timer.cancel();
-            timer.purge();
-            TaskSession.remove(userId);
-        }
+    public void init() {
+        cancelOrder();//撤销订单
+        sellOrder();//卖出订单
     }
 
     /**
-     * 开始线程
-     *
-     * @param userId
-     * @param conf
+     * 每分钟查询未完成订单以便撤单
      */
-    private static void start(String userId, UserConf conf) {
+    private void cancelOrder() {
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 try {
-                    System.out.println("查询委托订单是否成功");
+                    List<Order> orders = orderSer.findUnSuccess();
+                    if (null != orders && orders.size() > 0) {
+                        for (Order order : orders) {
+                            UserConf conf = userConfSer.findByUserId(order.getUser().getId());
+                            OrderInfo info = autoTradeSer.getOrderInfo(conf, order.getOrderId());
+                            if (null != info) {
+                                //开始判断订单状态
+                                if (!info.getState().equals("0")) {
+                                    order.setStatus(Integer.parseInt(info.getState()));//
+                                    orderSer.update(order);
+                                } else {//如果状态是0，代表没有撤销
+                                    int minutes = conf.getOrderTime() != null ? conf.getOrderTime() : 0;
+                                    if (order.getCreateDate().plusMinutes(minutes).isAfter(LocalDateTime.now())) {//订单超时，撤销
+                                        autoTradeSer.cancelOrder(conf, order.getOrderId());
+                                        info = autoTradeSer.getOrderInfo(conf, order.getOrderId());//撤单后重查状态
+                                        order.setStatus(Integer.parseInt(info.getState()));//
+                                        orderSer.update(order);//更新订单状态
+                                    }
+                                }
+
+                            } else {//找不到订单，删除本地的
+                                orderSer.remove(order);
+                            }
+                        }
+                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        }, 0, 1000 * 60); //每1查询一次
+        }, 0, 60000); //每分钟查询一次未完成的订单
     }
+
+    /**
+     * 每分钟查询已完成订单以便卖出
+     */
+    private void sellOrder() {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    List<Order> orders = orderSer.findSuccess();
+                    if (null != orders && orders.size() > 0) {
+                        for (Order order : orders) {
+
+                        }
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 0, 60000); //每分钟查询一次已完成的订单
+    }
+
 }
