@@ -49,7 +49,6 @@ public class Client {
             Response response = httpClient.newCall(request).execute();
             return response.body().string(); // 返回的是string 类型，json的mapper可以直接处理
         } catch (IOException e) {
-            e.printStackTrace();
             return null;
         }
     }

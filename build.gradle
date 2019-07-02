@@ -22,8 +22,8 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-log4j2')
     compile('org.springframework.boot:spring-boot-starter-cache')
     compile('org.springframework.boot:spring-boot-starter-quartz')
+    compile('org.springframework.boot:spring-boot-starter-websocket')
     compile group: 'javax.mail', name: 'mail', version: '1.4.7'
-
 
     runtime('mysql:mysql-connector-java')
     compile group: 'com.alibaba', name: 'druid-spring-boot-starter', version: "$druid_v" //连接池

@@ -3,10 +3,11 @@ package com.xinaml.robot.ser.okex;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.xinaml.robot.base.rep.RedisRep;
 import com.xinaml.robot.common.okex.Client;
+import com.xinaml.robot.common.session.MsgSession;
 import com.xinaml.robot.common.utils.DateUtil;
 import com.xinaml.robot.common.utils.MailUtil;
+import com.xinaml.robot.common.webscoket.WebSocketServer;
 import com.xinaml.robot.entity.order.Order;
 import com.xinaml.robot.entity.user.UserConf;
 import com.xinaml.robot.ser.order.OrderSer;
@@ -37,7 +38,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
     private OrderSer orderSer;
     private static Logger LOG = LoggerFactory.getLogger(AutoTradeSer.class);
     @Autowired
-    private RedisRep redisRep;
+    private WebSocketServer webSocketServer;
 
     @Override
     public void trade(UserConf conf) {
@@ -45,7 +46,18 @@ public class AutoTradeSerImpl implements AutoTradeSer {
         Double last = getLast(conf); //最新成交价
         if (line != null && last != null) {
             double buy = conf.getBuyMultiple() * line.getClose();//买入价=买入价倍率*收盘价
-            LOG.info("buy:" + buy + "---last:" + last);
+            LOG.debug("buy:" + buy + "---last:" + last);
+            String msg ="买入价为:" + buy + ",最新成交价为:" + last;
+            String userId = conf.getUser().getId();
+            String old = MsgSession.get(userId);
+            if(!msg.equals(old)){
+                if(old==null){
+                    MsgSession.put(userId,msg);
+                }
+                webSocketServer.sendMessage(userId,msg);
+            }else {
+                MsgSession.put(userId,msg);
+            }
             if (buy >= last) {//买入价>=最新成交价
 //                Order order = commitOrder(conf, buy + ""); //提交订单
             }
@@ -172,7 +184,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
     public Double getLast(UserConf conf) {
         String lastUrl = LAST + "/" + conf.getInstrumentId() + "/ticker";
         String rs = Client.httpGet(lastUrl, conf.getUser());
-        if (rs.length() > 5) {
+        if (rs!=null && rs.length() > 5) {
             JSONObject object = JSON.parseObject(rs);
             return object.getDouble("last");
         } else {
