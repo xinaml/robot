@@ -70,7 +70,9 @@ var Order = (function () {
                         rs = "撤单中";
                     }
                     return rs;
-                }
+                },
+                align: 'center'
+
             }, {
                 field: 'type',
                 title: '订单类型', formatter: function (value, row, index) {
@@ -81,7 +83,24 @@ var Order = (function () {
                         return "卖出"
                     }
                     return "未知";
-                }
+                },
+                align: 'center'
+
+            }, {
+                field: 'price',
+                title: '买入/卖出价格',
+                align: 'center'
+
+            }, {
+                field: 'profit',
+                title: '盈利',
+                align: 'center'
+
+            }, {
+                field: 'sellId',
+                title: '卖出id',
+                align: 'center'
+
             }, {
                 type: 'text',
                 field: 'orderId',
@@ -89,7 +108,9 @@ var Order = (function () {
                 align: 'center'
             }, {
                 field: 'createDate',
-                title: '创建时间'
+                title: '创建时间',
+                align: 'center'
+
             }]
             ,
             onLoadSuccess: function (rs) {  //加载成功时执行

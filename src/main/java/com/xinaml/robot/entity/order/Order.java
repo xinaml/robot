@@ -29,6 +29,15 @@ public class Order extends BaseEntity {
     @Column( columnDefinition = "VARCHAR(56) COMMENT '错误编号'")
     private String errorCode;
 
+    @Column( columnDefinition = "VARCHAR(56) COMMENT '买入价'")
+    private String price;
+
+    @Column( columnDefinition = "VARCHAR(56) COMMENT '盈利'")
+    private String profit="0";
+
+    @Column( columnDefinition = "VARCHAR(56) COMMENT '卖出id'")
+    private String sellId;
+
     @Column( columnDefinition = "INT(2) COMMENT '订单状态:-2:失败,-1:撤单成功,0:等待成交 ,1:部分成交, 2:完全成交,3:下单中,4:撤单中'")
     private Integer status;//1，下单未成功，2，撤单 ，3成交
 
@@ -97,5 +106,29 @@ public class Order extends BaseEntity {
 
     public void setType(Integer type) {
         this.type = type;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public String getProfit() {
+        return profit;
+    }
+
+    public void setProfit(String profit) {
+        this.profit = profit;
+    }
+
+    public String getSellId() {
+        return sellId;
+    }
+
+    public void setSellId(String sellId) {
+        this.sellId = sellId;
     }
 }

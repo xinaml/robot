@@ -1,8 +1,9 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <html>
 <head>
     <title>监控</title>
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../bootstrap/css/bootstrap.css"/>
     <link rel="stylesheet" href="../bootstrap/css/bootstrap-table.min.css"/>
     <link rel="stylesheet" href="../bootstrap/css/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" href="../toastr/toastr.min.css">
@@ -17,9 +18,7 @@
 </head>
 
 <body>
-<!--<input id="text" type="text"/>-->
-<!--<button onclick="send()">Send</button>-->
-<!--<button onclick="closeWebSocket()">Close</button>-->
+<div id="head" th:replace="/common/head::html"  style="text-align: center"></div>
 <div id="message" style="text-align: center;width: 800px;height: 900px;overflow: auto;
 border: 1px solid #000;margin: 20px">
 

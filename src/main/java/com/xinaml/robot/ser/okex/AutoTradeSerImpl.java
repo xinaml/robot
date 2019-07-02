@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.xinaml.robot.common.constant.UrlConst.*;
 
@@ -59,48 +60,77 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 MsgSession.put(userId, msg);
             }
             if (buy >= last) {//买入价>=最新成交价
-                commitBuyOrder(conf, buy + ""); //提交订单
+//                commitBuyOrder(conf, buy + ""); //提交订单
+                System.out.println(msg);
+            }
+            if (null != last) {
+                checkSell(conf, last);
             }
 
         }
     }
 
     /**
+     * 检测是否可以卖出
+     *
+     * @param conf
+     * @param last
+     */
+    private void checkSell(UserConf conf, Double last) {
+        List<Order> orders = orderSer.findBuySuccess(conf.getUser().getId());
+        for (Order order : orders) {
+            double sell = Double.parseDouble(order.getPrice()) * conf.getSelfMultiple();////卖出价=买入价*卖出价倍率
+            if (last >= sell) {
+                Order sOrder = commitSellOrder(conf);//卖出
+                if (sOrder != null && sOrder.getErrorCode().equals("0")) {
+                    order.setProfit(last - Double.parseDouble(order.getPrice()) + "");//设置盈利
+                    order.setSellId(sOrder.getId());//设置卖出id
+                    orderSer.update(order);
+                }
+            }
+        }
+
+    }
+
+    /**
      * 卖出，下单
      *
      * @param conf
-     * @param buy  买入价
      * @return
      */
     @Override
-    public Order commitSellOrder(UserConf conf, String buy) {
+    public Order commitSellOrder(UserConf conf) {
         String url = COMMIT_ORDER;
         OrderVO orderVO = new OrderVO();
         orderVO.setInstrument_id(conf.getInstrumentId());//合约id
         orderVO.setSize(conf.getCount() + "");//每次开张数
-        orderVO.setPrice(buy);
         orderVO.setType("3");
+        orderVO.setMatch_price("1");
+
         orderVO.setLeverage(conf.getLeverage() + "");
         String rs = Client.httpPost(url, JSON.toJSONString(orderVO), conf.getUser());
         if (rs.indexOf("\"error_code\":\"0\"") != -1) {//下单成功
             OrderCommitVO oc = JSON.parseObject(rs, OrderCommitVO.class);
-            Order order = new Order();
-            order.setClientOid(oc.getClient_oid());
-            order.setUser(conf.getUser());
-            order.setOrderId(oc.getOrder_id());
-            order.setErrorCode(oc.getError_code());
-            order.setErrorMessage(oc.getError_message());
-            order.setInstrumentId(conf.getInstrumentId());
-            order.setCreateDate(LocalDateTime.now());
-            order.setType(2);//卖出
-            order.setStatus(0);//等待成交
-            orderSer.save(order);
-            String email = conf.getUser().getEmail();
-            if (StringUtils.isNotBlank(email)) {
-                String msg = DateUtil.dateToString(LocalDateTime.now()) + " 卖出下单成功！" + "单号id为：" + oc.getOrder_id();
-                MailUtil.send(email, "卖出下单成功！", msg);
+            if (oc.getOrder_id() != "-1") {
+                Order order = new Order();
+                order.setClientOid(oc.getClient_oid());
+                order.setUser(conf.getUser());
+                order.setOrderId(oc.getOrder_id());
+                order.setErrorCode(oc.getError_code());
+                order.setErrorMessage(oc.getError_message());
+                order.setInstrumentId(conf.getInstrumentId());
+                order.setCreateDate(LocalDateTime.now());
+                order.setType(2);//卖出
+                order.setStatus(0);//等待成交
+                orderSer.save(order);
+                String email = conf.getUser().getEmail();
+                if (StringUtils.isNotBlank(email)) {
+                    String msg = DateUtil.dateToString(LocalDateTime.now()) + " 卖出下单成功！" + "单号id为：" + oc.getOrder_id();
+                    MailUtil.send(email, "卖出下单成功！", msg);
+                }
+                return order;
             }
-            return order;
+
         } else {
             LOG.warn(conf.getUser().getUsername() + "卖出下单失败:" + rs);//下单失败
         }
@@ -123,23 +153,27 @@ public class AutoTradeSerImpl implements AutoTradeSer {
         String rs = Client.httpPost(url, JSON.toJSONString(orderVO), conf.getUser());
         if (rs.indexOf("\"error_code\":\"0\"") != -1) {//下单成功
             OrderCommitVO oc = JSON.parseObject(rs, OrderCommitVO.class);
-            Order order = new Order();
-            order.setClientOid(oc.getClient_oid());
-            order.setUser(conf.getUser());
-            order.setOrderId(oc.getOrder_id());
-            order.setErrorCode(oc.getError_code());
-            order.setErrorMessage(oc.getError_message());
-            order.setInstrumentId(conf.getInstrumentId());
-            order.setCreateDate(LocalDateTime.now());
-            order.setType(1);//买入
-            order.setStatus(0);//等待成交
-            orderSer.save(order);
-            String email = conf.getUser().getEmail();
-            if (StringUtils.isNotBlank(email)) {
-                String msg = DateUtil.dateToString(LocalDateTime.now()) + " 买入下单成功！" + "单号id为：" + oc.getOrder_id();
-                MailUtil.send(email, "买入下单成功！", msg);
+            if (oc.getOrder_id() != "-1") {
+
+                Order order = new Order();
+                order.setClientOid(oc.getClient_oid());
+                order.setUser(conf.getUser());
+                order.setOrderId(oc.getOrder_id());
+                order.setErrorCode(oc.getError_code());
+                order.setErrorMessage(oc.getError_message());
+                order.setInstrumentId(conf.getInstrumentId());
+                order.setCreateDate(LocalDateTime.now());
+                order.setPrice(buy);
+                order.setType(1);//买入
+                order.setStatus(0);//等待成交
+                orderSer.save(order);
+                String email = conf.getUser().getEmail();
+                if (StringUtils.isNotBlank(email)) {
+                    String msg = DateUtil.dateToString(LocalDateTime.now()) + " 买入下单成功！" + "单号id为：" + oc.getOrder_id();
+                    MailUtil.send(email, "买入下单成功！", msg);
+                }
+                return order;
             }
-            return order;
         } else {
             LOG.warn(conf.getUser().getUsername() + "买入下单失败:" + rs);//下单失败
         }

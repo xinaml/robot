@@ -26,9 +26,8 @@ public interface AutoTradeSer {
      * 卖出，下单
      *
      * @param conf
-     * @param buy  买入价
      */
-    default Order commitSellOrder(UserConf conf, String buy) {
+    default Order commitSellOrder(UserConf conf) {
         return null;
     }
 

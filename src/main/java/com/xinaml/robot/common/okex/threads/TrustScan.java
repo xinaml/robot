@@ -9,6 +9,7 @@ import com.xinaml.robot.vo.user.OrderInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Timer;
@@ -30,6 +31,7 @@ public class TrustScan {
     @Autowired
     private OrderSer orderSer;
 
+    @PostConstruct
     public void init() {
         cancelBuyOrder();//撤销买入订单
         cancelSellOrder();//撤销卖出订单
@@ -44,7 +46,7 @@ public class TrustScan {
             @Override
             public void run() {
                 try {
-                    List<Order> orders = orderSer.findBuyUnSuccess();
+                    List<Order> orders = orderSer.findBuyUnSuccess("");
                     if (null != orders && orders.size() > 0) {
                         for (Order order : orders) {
                             UserConf conf = userConfSer.findByUserId(order.getUser().getId());
@@ -86,7 +88,7 @@ public class TrustScan {
             @Override
             public void run() {
                 try {
-                    List<Order> orders = orderSer.findSellUnSuccess();
+                    List<Order> orders = orderSer.findSellUnSuccess("");
                     if (null != orders && orders.size() > 0) {
                         for (Order order : orders) {
                             UserConf conf = userConfSer.findByUserId(order.getUser().getId());
