@@ -57,7 +57,7 @@ public class TrustScan {
                                 } else {//如果状态是0，代表没有撤销
                                     int minutes = conf.getOrderTime() != null ? conf.getOrderTime() : 0;
                                     if (order.getCreateDate().plusMinutes(minutes).isAfter(LocalDateTime.now())) {//订单超时，撤销
-                                        autoTradeSer.cancelOrder(conf, order.getOrderId());
+                                        autoTradeSer.cancelOrder(conf, order.getOrderId(), "买入");
                                         info = autoTradeSer.getOrderInfo(conf, order.getOrderId());//撤单后重查状态
                                         order.setStatus(Integer.parseInt(info.getState()));//
                                         orderSer.update(order);//更新订单状态
@@ -99,7 +99,7 @@ public class TrustScan {
                                 } else {//如果状态是0，代表没有撤销
                                     int minutes = conf.getSellTime() != null ? conf.getSellTime() : 0;
                                     if (order.getCreateDate().plusMinutes(minutes).isAfter(LocalDateTime.now())) {//订单超时，撤销
-                                        autoTradeSer.cancelOrder(conf, order.getOrderId());
+                                        autoTradeSer.cancelOrder(conf, order.getOrderId(), "卖出");
                                         info = autoTradeSer.getOrderInfo(conf, order.getOrderId());//撤单后重查状态
                                         order.setStatus(Integer.parseInt(info.getState()));//
                                         orderSer.update(order);//更新订单状态

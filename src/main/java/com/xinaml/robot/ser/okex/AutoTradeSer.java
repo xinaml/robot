@@ -21,22 +21,24 @@ public interface AutoTradeSer {
     default void trade(UserConf conf) {
 
     }
+
     /**
-     * 卖出
+     * 卖出，下单
      *
      * @param conf
      * @param buy  买入价
      */
-    default Order sellOrder(UserConf conf, String buy) {
+    default Order commitSellOrder(UserConf conf, String buy) {
         return null;
     }
+
     /**
-     * 下单
+     * 买入，下单
      *
-     * @param conf
+     * @param conf 配置
      * @param buy  买入价
      */
-    default Order commitOrder(UserConf conf, String buy) {
+    default Order commitBuyOrder(UserConf conf, String buy) {
         return null;
     }
 
@@ -44,15 +46,18 @@ public interface AutoTradeSer {
      * 撤单
      *
      * @param conf
+     * @param orderId 订单id
+     * @param type    买入，卖出
      */
-    default void cancelOrder(UserConf conf, String orderId) {
-
+    default String cancelOrder(UserConf conf, String orderId, String type) {
+        return null;
     }
 
     /**
      * 订单信息
      *
-     * @param conf
+     * @param conf    配置
+     * @param orderId 订单id
      */
     default OrderInfo getOrderInfo(UserConf conf, String orderId) {
         return null;

@@ -47,32 +47,33 @@ public class AutoTradeSerImpl implements AutoTradeSer {
         if (line != null && last != null) {
             double buy = conf.getBuyMultiple() * line.getClose();//买入价=买入价倍率*收盘价
             LOG.debug("buy:" + buy + "---last:" + last);
-            String msg ="买入价为:" + buy + ",最新成交价为:" + last;
+            String msg = "买入价为:" + buy + ",最新成交价为:" + last;
             String userId = conf.getUser().getId();
             String old = MsgSession.get(userId);
-            if(!msg.equals(old)){
-                if(old==null){
-                    MsgSession.put(userId,msg);
+            if (!msg.equals(old)) {
+                if (old == null) {
+                    MsgSession.put(userId, msg);
                 }
-                webSocketServer.sendMessage(userId,msg);
-            }else {
-                MsgSession.put(userId,msg);
+                webSocketServer.sendMessage(userId, msg);
+            } else {
+                MsgSession.put(userId, msg);
             }
             if (buy >= last) {//买入价>=最新成交价
-               commitOrder(conf, buy + ""); //提交订单
+                commitBuyOrder(conf, buy + ""); //提交订单
             }
 
         }
     }
 
     /**
-     * 卖出
+     * 卖出，下单
+     *
      * @param conf
      * @param buy  买入价
      * @return
      */
     @Override
-    public Order sellOrder(UserConf conf, String buy) {
+    public Order commitSellOrder(UserConf conf, String buy) {
         String url = COMMIT_ORDER;
         OrderVO orderVO = new OrderVO();
         orderVO.setInstrument_id(conf.getInstrumentId());//合约id
@@ -96,15 +97,55 @@ public class AutoTradeSerImpl implements AutoTradeSer {
             orderSer.save(order);
             String email = conf.getUser().getEmail();
             if (StringUtils.isNotBlank(email)) {
-                String msg = DateUtil.dateToString(LocalDateTime.now()) + " 卖出成功！" + "单号id为：" + oc.getOrder_id();
-                MailUtil.send(email, "卖出成功！", msg);
+                String msg = DateUtil.dateToString(LocalDateTime.now()) + " 卖出下单成功！" + "单号id为：" + oc.getOrder_id();
+                MailUtil.send(email, "卖出下单成功！", msg);
             }
             return order;
         } else {
-            LOG.warn(conf.getUser().getUsername() + "卖出失败:" + rs);//下单失败
+            LOG.warn(conf.getUser().getUsername() + "卖出下单失败:" + rs);//下单失败
         }
         return null;
     }
+
+    /**
+     * 买入，下单
+     *
+     * @param conf
+     */
+    public Order commitBuyOrder(UserConf conf, String buy) {
+        String url = COMMIT_ORDER;
+        OrderVO orderVO = new OrderVO();
+        orderVO.setInstrument_id(conf.getInstrumentId());//合约id
+        orderVO.setSize(conf.getCount() + "");//每次开张数
+        orderVO.setPrice(buy);
+        orderVO.setType("1");
+        orderVO.setLeverage(conf.getLeverage() + "");
+        String rs = Client.httpPost(url, JSON.toJSONString(orderVO), conf.getUser());
+        if (rs.indexOf("\"error_code\":\"0\"") != -1) {//下单成功
+            OrderCommitVO oc = JSON.parseObject(rs, OrderCommitVO.class);
+            Order order = new Order();
+            order.setClientOid(oc.getClient_oid());
+            order.setUser(conf.getUser());
+            order.setOrderId(oc.getOrder_id());
+            order.setErrorCode(oc.getError_code());
+            order.setErrorMessage(oc.getError_message());
+            order.setInstrumentId(conf.getInstrumentId());
+            order.setCreateDate(LocalDateTime.now());
+            order.setType(1);//买入
+            order.setStatus(0);//等待成交
+            orderSer.save(order);
+            String email = conf.getUser().getEmail();
+            if (StringUtils.isNotBlank(email)) {
+                String msg = DateUtil.dateToString(LocalDateTime.now()) + " 买入下单成功！" + "单号id为：" + oc.getOrder_id();
+                MailUtil.send(email, "买入下单成功！", msg);
+            }
+            return order;
+        } else {
+            LOG.warn(conf.getUser().getUsername() + "买入下单失败:" + rs);//下单失败
+        }
+        return null;
+    }
+
 
     /**
      * 订单信息
@@ -131,63 +172,30 @@ public class AutoTradeSerImpl implements AutoTradeSer {
      * @param orderId
      */
     @Override
-    public void cancelOrder(UserConf conf, String orderId) {
+    public String cancelOrder(UserConf conf, String orderId, String type) {
+        type = type.equals("1") ? "买入" : type;
+        type = type.equals("2") ? "卖出" : type;
         String url = CANCEL_ORDER + "/" + conf.getInstrumentId() + "/" + orderId;
         String rs = Client.httpPost(url, JSON.toJSONString(new OrderVO()), conf.getUser());
         Order order = orderSer.findByOrderId(orderId);
+        String rsMsg = "";
         if (rs.indexOf("\"error_code\":\"0\"") != -1) {//撤单成功
             order.setStatus(-1);
             String email = conf.getUser().getEmail();
             if (StringUtils.isNotBlank(email)) {
-                String msg = DateUtil.dateToString(LocalDateTime.now()) + " 撤单成功！" + "单号id为：" + orderId;
-                MailUtil.send(email, "撤单成功！", msg);
+                String msg = DateUtil.dateToString(LocalDateTime.now()) + " " + type + "订单撤单成功！" + "单号id为：" + orderId;
+                MailUtil.send(email, type + "订单撤单成功！", msg);
             }
+            rsMsg = "撤单成功！";
         } else {
             order.setStatus(2);//已成交
             LOG.warn("撤单失败！ " + conf.getUser().getUsername() + ":" + rs);
+            rsMsg = "撤单失败！ " + rs;
         }
         orderSer.update(order);
-
+        return rsMsg;
     }
 
-    /**
-     * 下单
-     *
-     * @param conf
-     */
-    public Order commitOrder(UserConf conf, String buy) {
-        String url = COMMIT_ORDER;
-        OrderVO orderVO = new OrderVO();
-        orderVO.setInstrument_id(conf.getInstrumentId());//合约id
-        orderVO.setSize(conf.getCount() + "");//每次开张数
-        orderVO.setPrice(buy);
-        orderVO.setType("1");
-        orderVO.setLeverage(conf.getLeverage() + "");
-        String rs = Client.httpPost(url, JSON.toJSONString(orderVO), conf.getUser());
-        if (rs.indexOf("\"error_code\":\"0\"") != -1) {//下单成功
-            OrderCommitVO oc = JSON.parseObject(rs, OrderCommitVO.class);
-            Order order = new Order();
-            order.setClientOid(oc.getClient_oid());
-            order.setUser(conf.getUser());
-            order.setOrderId(oc.getOrder_id());
-            order.setErrorCode(oc.getError_code());
-            order.setErrorMessage(oc.getError_message());
-            order.setInstrumentId(conf.getInstrumentId());
-            order.setCreateDate(LocalDateTime.now());
-            order.setType(1);//买入
-            order.setStatus(0);//等待成交
-            orderSer.save(order);
-            String email = conf.getUser().getEmail();
-            if (StringUtils.isNotBlank(email)) {
-                String msg = DateUtil.dateToString(LocalDateTime.now()) + " 下单成功！" + "单号id为：" + oc.getOrder_id();
-                MailUtil.send(email, "下单成功！", msg);
-            }
-            return order;
-        } else {
-            LOG.warn(conf.getUser().getUsername() + "下单失败:" + rs);//下单失败
-        }
-        return null;
-    }
 
     /**
      * 获取k线数据
@@ -227,7 +235,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
     public Double getLast(UserConf conf) {
         String lastUrl = LAST + "/" + conf.getInstrumentId() + "/ticker";
         String rs = Client.httpGet(lastUrl, conf.getUser());
-        if (rs!=null && rs.length() > 5) {
+        if (rs != null && rs.length() > 5) {
             JSONObject object = JSON.parseObject(rs);
             return object.getDouble("last");
         } else {
