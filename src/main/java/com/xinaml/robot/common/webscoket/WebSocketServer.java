@@ -81,7 +81,9 @@ public class WebSocketServer {
         try {
             Session session =webSocketMap.get(userId);
             if(null!=session){
-                session.getBasicRemote().sendText(message);
+                if(session.isOpen()){
+                    session.getBasicRemote().sendText(message);
+                }
             }
         } catch (IOException e) {
             LOG.error("websocket IO异常");

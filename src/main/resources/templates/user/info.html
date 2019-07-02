@@ -20,7 +20,7 @@
 <!--<input id="text" type="text"/>-->
 <!--<button onclick="send()">Send</button>-->
 <!--<button onclick="closeWebSocket()">Close</button>-->
-<div id="message" style="text-align: center;width: 800px;height: 600px;overflow: auto;
+<div id="message" style="text-align: center;width: 800px;height: 900px;overflow: auto;
 border: 1px solid #000;margin: 20px">
 
 </div>
@@ -66,12 +66,12 @@ border: 1px solid #000;margin: 20px">
     //将消息显示在网页上
     function setMessageInnerHTML(innerHTML) {
         var  text = $("#message").html();
-        if(text.length>700){
-            text=text.substr(text.indexOf('<br>')+4);
-            text+=innerHTML+'<br>';
+        if(text.length>400){
+            text=text.substr(text.indexOf('<hr>')+4);
+            text+=innerHTML+'<hr>';
             $("#message").html(text)
         }else {
-            document.getElementById('message').innerHTML += innerHTML + '<br>';
+            document.getElementById('message').innerHTML += innerHTML + '<hr>';
         }
     }
 
