@@ -12,7 +12,8 @@ import com.xinaml.robot.common.okex.Client;
  */
 public class Test {
     public static void main(String[] args) {
-        String rs = Client.httpGet(UrlConst.ACCOUNT_INFO, null);
+        String url="/api/futures/v3/position";
+        String rs = Client.httpGet(url, null);
         System.out.println(rs);
     }
 }

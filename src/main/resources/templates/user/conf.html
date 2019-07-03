@@ -175,6 +175,13 @@
             <input type="text" class="form-control" placeholder="卖出价倍率" name="selfMultiple" id="selfMultiple"
                    onkeyup="if(isNaN(value))execCommand('undo')" onafterpaste="if(isNaN(value))execCommand('undo')">
         </div>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">亏损多少卖出</span>
+            </div>
+            <input type="text" class="form-control" placeholder="亏损多少卖出" name="loss" id="loss"
+                   onkeyup="if(isNaN(value))execCommand('undo')" onafterpaste="if(isNaN(value))execCommand('undo')">
+        </div>
         <br>
         <div class="input-group">
             <span class="input-group-text">只等待卖出</span>
@@ -218,6 +225,7 @@
                         $("#sellTime").val(rs.data.sellTime)
                         $("#onlySell").attr('checked',rs.data.onlySell)
                         $("#onlySell").val(rs.data.onlySell)
+                        $("#loss").val(rs.data.loss)
 
                     }
                 } else {

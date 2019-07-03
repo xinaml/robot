@@ -63,6 +63,9 @@ public class UserConf extends BaseEntity {
     @Column(name = "is_only_sell", columnDefinition = "TINYINT(2) DEFAULT 1 COMMENT '只等待卖出'", nullable = false, insertable = false)
     private Boolean onlySell;
 
+    @Column(columnDefinition = " DECIMAL(10,5) COMMENT '亏损多少卖出'")
+    private Double loss=0.1;//亏损多少卖出
+
     @Transient
     private Integer seconds=60;//秒
     @Transient
@@ -191,5 +194,13 @@ public class UserConf extends BaseEntity {
 
     public void setOnlySell(Boolean onlySell) {
         this.onlySell = onlySell;
+    }
+
+    public Double getLoss() {
+        return loss;
+    }
+
+    public void setLoss(Double loss) {
+        this.loss = loss;
     }
 }

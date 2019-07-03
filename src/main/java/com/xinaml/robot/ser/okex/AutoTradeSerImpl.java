@@ -61,11 +61,11 @@ public class AutoTradeSerImpl implements AutoTradeSer {
             } else {
                 MsgSession.put(userId, msg);
             }
-            if ( line.getClose() >= last) {//买入价>=最新成交价
+            if (line.getClose() >= last) {//买入价>=最新成交价
                 String time = PriceSession.get(userId);//上次成交价
                 if (null == time || !(line.getTimestamp()).equals(time)) {
-                    if(!conf.getOnlySell()){//如果非只卖出，可以继续下单
-                    commitBuyOrder(conf, buy + ""); //提交订单
+                    if (!conf.getOnlySell()) {//如果非只卖出，可以继续下单
+                        commitBuyOrder(conf, buy + ""); //提交订单
                     }
                     PriceSession.put(userId, line.getTimestamp());
                 }
@@ -87,7 +87,8 @@ public class AutoTradeSerImpl implements AutoTradeSer {
     private void checkSell(UserConf conf, Double last) {
         List<Order> orders = orderSer.findBuySuccess(conf.getUser().getId());
         for (Order order : orders) {
-            double sell = Double.parseDouble(order.getPrice()) * conf.getSelfMultiple();////卖出价=买入价*卖出价倍率
+            double buy = Double.parseDouble(order.getPrice());
+            double sell = buy * conf.getSelfMultiple();////卖出价=买入价*卖出价倍率
             if (last >= sell) {
                 Order sOrder = commitSellOrder(conf);//卖出
                 if (sOrder != null && sOrder.getErrorCode().equals("0")) {
@@ -96,6 +97,15 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                     orderSer.update(order);
                 }
             }
+            double loss = (buy - last) / buy;
+//            if (conf.getLoss() > loss) { //止损卖出
+//                Order sOrder = commitSellOrder(conf);//卖出
+//                if (sOrder != null && sOrder.getErrorCode().equals("0")) {
+//                    order.setProfit(StringUtil.formatDouble(last - Double.parseDouble(order.getPrice())));//设置盈利
+//                    order.setSellId(sOrder.getId());//设置卖出id
+//                    orderSer.update(order);
+//                }
+//            }
         }
 
     }
