@@ -10,7 +10,7 @@
 
         <!--处理DEBUG级别的日志，并把该日志放到logs/debug.log文件中-->
         <RollingFile name="debug" fileName="/storage/logs/debug.log"
-                     filePattern="/storage/logs/%d{yyyy-MM}/debug-%d{yyyy-MM-dd}.log">
+                     filePattern="/storage/logs/%d{yyyy-MM}/%d{yyyy-MM-dd}.debug.log">
             <Filters>
                 <ThresholdFilter level="DEBUG"/>
                 <ThresholdFilter level="INFO" onMatch="DENY" onMismatch="NEUTRAL"/>
@@ -24,7 +24,7 @@
 
         <!--处理INFO级别的日志，并把该日志放到logs/info.log文件中-->
         <RollingFile name="info" fileName="/storage/logs/info.log"
-                     filePattern="/storage/logs/%d{yyyy-MM}/info-%d{yyyy-MM-dd}.log">
+                     filePattern="/storage/logs/%d{yyyy-MM}/%d{yyyy-MM-dd}.info.log">
             <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] %-5level %L %M - %msg%xEx%n"/>
             <Filters>
                 <!--只接受INFO级别的日志，其余的全部拒绝处理-->
@@ -39,7 +39,7 @@
         </RollingFile>
 
         <RollingFile name="warn" fileName="/storage/logs/warn.log"
-                     filePattern="/storage/logs/%d{yyyy-MM}/warn-%d{yyyy-MM-dd}.log">
+                     filePattern="/storage/logs/%d{yyyy-MM}/%d{yyyy-MM-dd}.warn.log">
             <PatternLayout pattern="%-d{yyyy-MM-dd HH:mm:ss} [%thread] %m%n"/>
             <Filters>
                 <ThresholdFilter level="WARN"/>
@@ -52,7 +52,7 @@
 
         <!--处理error级别的日志，并把该日志放到logs/error.log文件中-->
         <RollingFile name="error" fileName="/storage/logs/error.log"
-                     filePattern="/storage/logs/%d{yyyy-MM}/error-%d{yyyy-MM-dd}.log">
+                     filePattern="/storage/logs/%d{yyyy-MM}/%d{yyyy-MM-dd}.error.log">
             <ThresholdFilter level="ERROR"/>
             <PatternLayout
                     pattern="[%d{yyyy-MM-dd HH:mm:ss}] %-5level %class{36} %L %M - %msg%xEx%n"/>
@@ -63,7 +63,7 @@
 
         <!--druid的日志记录追加器-->
         <RollingFile name="druid" fileName="/storage/logs/druid.log"
-                     filePattern="/storage/logs/%d{yyyy-MM}/druid-%d{yyyy-MM-dd}.log">
+                     filePattern="/storage/logs/%d{yyyy-MM}/%d{yyyy-MM-dd}.druid.log">
             <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] %-5level %L %M - %msg%xEx%n"/>
             <Policies>
                 <TimeBasedTriggeringPolicy modulate="true" interval="1"/>

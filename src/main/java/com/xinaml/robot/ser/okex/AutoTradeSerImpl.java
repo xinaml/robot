@@ -61,11 +61,12 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 MsgSession.put(userId, msg);
             }
             if (buy >= last) {//买入价>=最新成交价
-                String prevLast = PriceSession.get(userId);//上次成交价
-                if (null!=prevLast && !prevLast.equals(last + "")) {
-                    //                commitBuyOrder(conf, buy + ""); //提交订单
-                    PriceSession.put(userId, last + "");
+                String time = PriceSession.get(userId);//上次成交价
+                if(null==time || !(line.getTimestamp()).equals(time)){
+                    commitBuyOrder(conf, buy + ""); //提交订单
+                    PriceSession.put(userId, line.getTimestamp());
                 }
+
                 System.out.println(msg);
             }
             if (null != last) {
