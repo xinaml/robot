@@ -36,6 +36,9 @@ public class UserConfTO {
     @NotNull(groups = {ADD.class}, message = "请填写杠杆倍数！")
     private Integer leverage;//杠杆倍数
 
+    private Boolean onlySell=false;
+
+
     public String getTime() {
         return time;
     }
@@ -114,5 +117,13 @@ public class UserConfTO {
 
     public void setSellTime(Integer sellTime) {
         this.sellTime = sellTime;
+    }
+
+    public Boolean getOnlySell() {
+        return onlySell;
+    }
+
+    public void setOnlySell(Boolean onlySell) {
+        this.onlySell = onlySell;
     }
 }

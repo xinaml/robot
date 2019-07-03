@@ -172,6 +172,11 @@
             <input type="text" class="form-control" placeholder="卖出价倍率" name="selfMultiple" id="selfMultiple"
                    onkeyup="if(isNaN(value))execCommand('undo')" onafterpaste="if(isNaN(value))execCommand('undo')">
         </div>
+        <br>
+        <div class="input-group">
+            <span class="input-group-text">只等待卖出</span>
+                <input id="onlySell" name="onlySell" value="true" type="checkbox" onchange="changeOnly()"  style="margin-left: 10px;width: 40px;height:40px">
+        </div>
 
     </form>
     <br>
@@ -208,6 +213,9 @@
                         $("#leverage").val(rs.data.leverage)
                         $("#orderTime").val(rs.data.orderTime)
                         $("#sellTime").val(rs.data.sellTime)
+                        $("#onlySell").attr('checked',rs.data.onlySell)
+                        $("#onlySell").val(rs.data.onlySell)
+
                     }
                 } else {
                     toastr.error(rs.msg);
@@ -293,6 +301,14 @@
                 }
             }
         })
+    }
+    function changeOnly() {
+        var a =  $("#onlySell").prop('checked');
+        if(a==true){
+            $("#onlySell").val('true')
+        }else {
+            $("#onlySell").val('false')
+        }
     }
 </script>
 

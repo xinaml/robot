@@ -59,6 +59,10 @@ public class UserConf extends BaseEntity {
    @Column(columnDefinition = "INT(5) COMMENT '杠杆倍数'")
     private Integer leverage=1;//杠杆倍数
 
+    //常用类型 ：只等待卖出
+    @Column(name = "is_only_sell", columnDefinition = "TINYINT(2) DEFAULT 1 COMMENT '只等待卖出'", nullable = false, insertable = false)
+    private Boolean onlySell;
+
     @Transient
     private Integer seconds=60;//秒
     @Transient
@@ -179,5 +183,13 @@ public class UserConf extends BaseEntity {
 
     public void setSellTime(Integer sellTime) {
         this.sellTime = sellTime;
+    }
+
+    public Boolean getOnlySell() {
+        return onlySell;
+    }
+
+    public void setOnlySell(Boolean onlySell) {
+        this.onlySell = onlySell;
     }
 }

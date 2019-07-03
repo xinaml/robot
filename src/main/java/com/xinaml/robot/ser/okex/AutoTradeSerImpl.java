@@ -64,7 +64,9 @@ public class AutoTradeSerImpl implements AutoTradeSer {
             if ( line.getClose() >= last) {//买入价>=最新成交价
                 String time = PriceSession.get(userId);//上次成交价
                 if (null == time || !(line.getTimestamp()).equals(time)) {
-//                    commitBuyOrder(conf, buy + ""); //提交订单
+                    if(!conf.getOnlySell()){//如果非只卖出，可以继续下单
+                    commitBuyOrder(conf, buy + ""); //提交订单
+                    }
                     PriceSession.put(userId, line.getTimestamp());
                 }
 

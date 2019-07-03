@@ -49,7 +49,7 @@ public class User extends BaseEntity {
     private Boolean expired;
 
     //常用类型 ：默认停止自动买卖
-    @Column(name = "is_stop", columnDefinition = "TINYINT(1) DEFAULT 1 COMMENT '是否停止'", nullable = false, insertable = false)
+    @Column(name = "is_stop", columnDefinition = "TINYINT(2) DEFAULT 1 COMMENT '是否停止'", nullable = false, insertable = false)
     private Boolean stop;
 
     //常用类型 ：Date
