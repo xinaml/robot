@@ -8,6 +8,7 @@ import com.xinaml.robot.common.session.MsgSession;
 import com.xinaml.robot.common.session.PriceSession;
 import com.xinaml.robot.common.utils.DateUtil;
 import com.xinaml.robot.common.utils.MailUtil;
+import com.xinaml.robot.common.utils.StringUtil;
 import com.xinaml.robot.common.webscoket.WebSocketServer;
 import com.xinaml.robot.entity.order.Order;
 import com.xinaml.robot.entity.user.UserConf;
@@ -89,8 +90,8 @@ public class AutoTradeSerImpl implements AutoTradeSer {
             if (last >= sell) {
                 Order sOrder = commitSellOrder(conf);//卖出
                 if (sOrder != null && sOrder.getErrorCode().equals("0")) {
-                    order.setProfit(last - Double.parseDouble(order.getPrice()) + "");//设置盈利
-                    order.setSellId(sOrder.getId());//设置卖出id
+                    order.setProfit(StringUtil.formatDouble(last - Double.parseDouble(order.getPrice()) ));//设置盈利
+                    order.setSellId(sOrder.getOrderId());//设置卖出id
                     orderSer.update(order);
                 }
             }
@@ -203,7 +204,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
     public OrderInfo getOrderInfo(UserConf conf, String orderId) {
         String url = ORDER_INFO + "/" + conf.getInstrumentId() + "/" + orderId;
         String rs = Client.httpGet(url, conf.getUser());
-        if (rs.indexOf("instrument_id") != -1) {//获取订单成功
+        if (null!=rs && rs.indexOf("instrument_id") != -1) {//获取订单成功
             OrderInfo info = JSON.parseObject(rs, OrderInfo.class);
             return info;
         } else {
@@ -225,7 +226,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
         String rs = Client.httpPost(url, JSON.toJSONString(new OrderVO()), conf.getUser());
         Order order = orderSer.findByOrderId(orderId);
         String rsMsg = "";
-        if (rs.indexOf("\"error_code\":\"0\"") != -1) {//撤单成功
+        if (null!=rs && rs.indexOf("\"error_code\":\"0\"") != -1) {//撤单成功
             order.setStatus(-1);
             String email = conf.getUser().getEmail();
             if (StringUtils.isNotBlank(email)) {

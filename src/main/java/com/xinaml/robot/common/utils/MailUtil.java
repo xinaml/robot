@@ -19,6 +19,9 @@ public class MailUtil {
     public static String SMTP_HOST = "smtp.163.com";
 
     public static void send(String mail, String subject, String content) {
+        if(StringUtils.isNotBlank(content)){
+            return;
+        }
         if (StringUtils.isNotBlank(mail) && StringUtils.isNotBlank(subject) && StringUtils.isNotBlank(content)) {
             Session session = getSession();
             try {

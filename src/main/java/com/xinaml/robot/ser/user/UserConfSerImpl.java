@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -28,6 +29,7 @@ import java.time.LocalDateTime;
 public class UserConfSerImpl extends ServiceImpl<UserConf, UserConfDTO> implements UserConfSer {
     @Autowired
     private RedisRep redisRep;
+    @Transactional
     @Override
     public void saveConf(UserConfTO to) {
         User user = UserUtil.getUser();

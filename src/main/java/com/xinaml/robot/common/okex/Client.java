@@ -1,8 +1,5 @@
 package com.xinaml.robot.common.okex;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.xinaml.robot.common.constant.UrlConst;
 import com.xinaml.robot.common.custom.exception.ActException;
 import com.xinaml.robot.common.okex.constant.APIConstants;
 import com.xinaml.robot.common.okex.enums.ContentTypeEnum;
@@ -10,17 +7,14 @@ import com.xinaml.robot.common.okex.enums.HttpHeadersEnum;
 import com.xinaml.robot.common.okex.enums.I18nEnum;
 import com.xinaml.robot.common.okex.utils.DateUtils;
 import com.xinaml.robot.common.okex.utils.HmacSHA256Base64Utils;
-import com.xinaml.robot.common.utils.UserUtil;
 import com.xinaml.robot.entity.user.User;
-import com.xinaml.robot.vo.user.KLine;
-import com.xinaml.robot.vo.user.OrderVO;
 import okhttp3.*;
 import okio.Buffer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @Author: [lgq]
@@ -30,6 +24,7 @@ import java.util.List;
  * @Copy: [com.xinaml]
  */
 public class Client {
+    static Logger LOG = LoggerFactory.getLogger(Client.class);
     //        config.setEndpoint("https://www.okex.com");
 //        config.setApiKey("c7de75ae-a28c-433d-84da-70ab55506428");
 //        config.setSecretKey("6B6640690B9A6A0D85D6D6BE872BA557");
@@ -38,22 +33,23 @@ public class Client {
     public static final MediaType MT = MediaType.parse("application/json;charset=utf-8");
 
 
-    public static String httpGet(String url,User user) {
+    public static String httpGet(String url, User user) {
         OkHttpClient httpClient = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(baseUrl + url.trim())
                 .build();
         String timestamp = DateUtils.getUnixTime();
-        request = initHeaders(request, timestamp,user);
+        request = initHeaders(request, timestamp, user);
         try {
             Response response = httpClient.newCall(request).execute();
             return response.body().string(); // 返回的是string 类型，json的mapper可以直接处理
         } catch (IOException e) {
+            LOG.error("网络连接异常！");
             return null;
         }
     }
 
-    public static String httpPost(String url, String json,User user) {
+    public static String httpPost(String url, String json, User user) {
         OkHttpClient httpClient = new OkHttpClient();
         RequestBody requestBody = RequestBody.create(MT, json);
         Request request = new Request.Builder()
@@ -61,20 +57,20 @@ public class Client {
                 .post(requestBody)
                 .build();
         String timestamp = DateUtils.getUnixTime();
-        request = initHeaders(request, timestamp,user);
+        request = initHeaders(request, timestamp, user);
         try {
             Response response = httpClient.newCall(request).execute();
             return response.body().string(); // 返回的是string 类型，json的mapper可以直接处理
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("网络连接异常！");
             return null;
         }
     }
 
 
-    private static Request initHeaders(final Request request, final String timestamp,User user) {
-        if(null==user){
-             user = new User();
+    private static Request initHeaders(final Request request, final String timestamp, User user) {
+        if (null == user) {
+            user = new User();
             user.setApiKey("c7de75ae-a28c-433d-84da-70ab55506428");
             user.setSecretKey("6B6640690B9A6A0D85D6D6BE872BA557");
             user.setPassPhrase("yyguai199411");
