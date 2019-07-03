@@ -49,6 +49,9 @@ public class OrderAct {
     public Map<String, Object> maps(OrderDTO dto) throws ActException {
         try {
             dto.addRT(RT.eq("user.id", UserUtil.getUser().getId()));
+            dto.addRT(RT.eq("type", "1"));
+            dto.addRT(RT.eq("status", "2"));
+            dto.addRT(RT.isNull("sellId"));
             dto.addSort("createDate");
             Map<String, Object> maps = orderSer.findByPage(dto);
             return maps;

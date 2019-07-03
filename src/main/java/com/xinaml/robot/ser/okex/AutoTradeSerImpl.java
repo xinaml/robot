@@ -49,10 +49,10 @@ public class AutoTradeSerImpl implements AutoTradeSer {
         Double last = getLast(conf); //最新成交价
         if (line != null && last != null) {
             double buy = conf.getBuyMultiple() * line.getClose();//买入价=买入价倍率*收盘价
-            LOG.debug("buy:" + buy + "---last:" + last);
-            String msg = "买入价为:" + buy + ",最新成交价为:" + last;
+            String msg = "收盘价为:" + line.getClose() + ",最新成交价为:" + last;
             String userId = conf.getUser().getId();
             String old = MsgSession.get(userId);
+//            System.out.println(msg);
             if (!msg.equals(old)) {
                 if (old == null) {
                     MsgSession.put(userId, msg);
@@ -61,14 +61,13 @@ public class AutoTradeSerImpl implements AutoTradeSer {
             } else {
                 MsgSession.put(userId, msg);
             }
-            if (buy >= last) {//买入价>=最新成交价
+            if ( line.getClose() >= last) {//买入价>=最新成交价
                 String time = PriceSession.get(userId);//上次成交价
-                if(null==time || !(line.getTimestamp()).equals(time)){
-                    commitBuyOrder(conf, buy + ""); //提交订单
+                if (null == time || !(line.getTimestamp()).equals(time)) {
+//                    commitBuyOrder(conf, buy + ""); //提交订单
                     PriceSession.put(userId, line.getTimestamp());
                 }
 
-                System.out.println(msg);
             }
             if (null != last) {
                 checkSell(conf, last);
@@ -90,8 +89,8 @@ public class AutoTradeSerImpl implements AutoTradeSer {
             if (last >= sell) {
                 Order sOrder = commitSellOrder(conf);//卖出
                 if (sOrder != null && sOrder.getErrorCode().equals("0")) {
-                    order.setProfit(StringUtil.formatDouble(last - Double.parseDouble(order.getPrice()) ));//设置盈利
-                    order.setSellId(sOrder.getOrderId());//设置卖出id
+                    order.setProfit(StringUtil.formatDouble(last - Double.parseDouble(order.getPrice())));//设置盈利
+                    order.setSellId(sOrder.getId());//设置卖出id
                     orderSer.update(order);
                 }
             }
@@ -128,8 +127,8 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 order.setInstrumentId(conf.getInstrumentId());
                 order.setCreateDate(LocalDateTime.now());
                 order.setType(2);//卖出
-                OrderInfo info = getOrderInfo(conf,oc.getOrder_id());
-                if(null!=info){
+                OrderInfo info = getOrderInfo(conf, oc.getOrder_id());
+                if (null != info) {
                     order.setStatus(Integer.parseInt(info.getState()));//已成交
                 }
                 orderSer.save(order);
@@ -175,8 +174,8 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 order.setCreateDate(LocalDateTime.now());
                 order.setPrice(buy);
                 order.setType(1);//买入
-                OrderInfo info = getOrderInfo(conf,oc.getOrder_id());
-                if(null!=info){
+                OrderInfo info = getOrderInfo(conf, oc.getOrder_id());
+                if (null != info) {
                     order.setStatus(Integer.parseInt(info.getState()));//已成交
                 }
                 orderSer.save(order);
@@ -204,7 +203,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
     public OrderInfo getOrderInfo(UserConf conf, String orderId) {
         String url = ORDER_INFO + "/" + conf.getInstrumentId() + "/" + orderId;
         String rs = Client.httpGet(url, conf.getUser());
-        if (null!=rs && rs.indexOf("instrument_id") != -1) {//获取订单成功
+        if (null != rs && rs.indexOf("instrument_id") != -1) {//获取订单成功
             OrderInfo info = JSON.parseObject(rs, OrderInfo.class);
             return info;
         } else {
@@ -226,7 +225,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
         String rs = Client.httpPost(url, JSON.toJSONString(new OrderVO()), conf.getUser());
         Order order = orderSer.findByOrderId(orderId);
         String rsMsg = "";
-        if (null!=rs && rs.indexOf("\"error_code\":\"0\"") != -1) {//撤单成功
+        if (null != rs && rs.indexOf("\"error_code\":\"0\"") != -1) {//撤单成功
             order.setStatus(-1);
             String email = conf.getUser().getEmail();
             if (StringUtils.isNotBlank(email)) {
@@ -235,8 +234,8 @@ public class AutoTradeSerImpl implements AutoTradeSer {
             }
             rsMsg = "撤单成功！";
         } else {
-            OrderInfo info = getOrderInfo(conf,orderId);
-            if(null!=info){
+            OrderInfo info = getOrderInfo(conf, orderId);
+            if (null != info) {
                 order.setStatus(Integer.parseInt(info.getState()));//已成交
             }
             LOG.warn("撤单失败！ " + conf.getUser().getUsername() + ":" + rs);
