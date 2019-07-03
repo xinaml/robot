@@ -39,7 +39,7 @@ border: 1px solid #000;margin: 20px">
     //判断当前浏览器是否支持WebSocket
     if ('WebSocket' in window) {
         var id ='[[${userId}]]';
-        websocket = new WebSocket("ws://btc.lgqfun.top/websocket/"+id);
+        websocket = new WebSocket("ws://btc.lgqfun.top:8088/websocket/"+id);
     }
     else {
         alert('Not support websocket')
