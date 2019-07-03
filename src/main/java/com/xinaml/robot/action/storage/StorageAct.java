@@ -37,7 +37,7 @@ public class StorageAct extends BaseAct {
 
     @GetMapping("page")
     public ModelAndView page() throws ActException {
-        return new ModelAndView("/storage/storage");
+        return new ModelAndView("storage/storage");
     }
 
     /**

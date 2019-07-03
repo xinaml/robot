@@ -20,12 +20,12 @@ public class RegisterAct extends BaseAct {
     @Autowired
     private UserSer userSer;
 
-    @GetMapping("/register")
+    @GetMapping("register")
     public ModelAndView register() throws ActException {
-        return new ModelAndView("/register");//跳转注册页
+        return new ModelAndView("register");//跳转注册页
     }
 
-    @PostMapping("/register")
+    @PostMapping("register")
     public Result register(@Validated(ADD.class) RegisterTO to) throws ActException {
         try {
             userSer.register(to);

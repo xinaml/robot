@@ -19,7 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class IndexAct {
 
 
-    @GetMapping("/")
+    @GetMapping("")
     public ModelAndView index(String data) throws SerException {
         print(data);
         return new ModelAndView("index");

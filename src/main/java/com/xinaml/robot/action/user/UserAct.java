@@ -40,12 +40,12 @@ public class UserAct extends BaseAct {
     @Autowired
     private StorageSer storageSer;
 
-    @GetMapping({"/", ""})
+    @GetMapping({"page"})
     public ModelAndView user() throws ActException {
         return new ModelAndView("user/user");
     }
 
-    @PostMapping("/stop")
+    @PostMapping("stop")
     public Result stop() throws ActException {
         boolean rs = userSer.stop();
         return new ActResult(0, "操作成功！", rs);

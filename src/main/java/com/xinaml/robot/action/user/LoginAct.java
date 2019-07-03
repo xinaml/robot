@@ -30,7 +30,6 @@ import java.util.Map;
 public class LoginAct extends BaseAct {
     @Autowired
     private UserSer userSer;
-
     /**
      * 转登录页
      *
@@ -39,7 +38,7 @@ public class LoginAct extends BaseAct {
      * @return
      * @throws ActException
      */
-    @GetMapping("/login")
+    @GetMapping("login")
     public ModelAndView login(Model model, HttpServletRequest request) throws ActException {
         try {
             Object prevUrl = request.getSession().getAttribute(PathConst.PREV_URL);//获取上次请求页
@@ -47,14 +46,14 @@ public class LoginAct extends BaseAct {
                 if (null != prevUrl) {
                     return new ModelAndView("redirect:" + prevUrl);
                 }
-                return new ModelAndView("redirect:/");
+                return new ModelAndView("redirect:index");
             } else {
                 model.addAttribute(PathConst.PREV_URL, prevUrl);
-                return new ModelAndView("/login"); //跳转登录页
+                return new ModelAndView("login"); //跳转登录页
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return new ModelAndView("/login");//跳转登录页
+            return new ModelAndView("login");//跳转登录页
         }
     }
 
@@ -67,7 +66,7 @@ public class LoginAct extends BaseAct {
      * @return
      * @throws ActException
      */
-    @PostMapping("/login")
+    @PostMapping("login")
     public Result login(@Validated(ADD.class) LoginTO to, HttpServletRequest request, HttpServletResponse response) throws ActException {
         try {
             to.setIp(IpUtil.getIp(request));
@@ -92,7 +91,7 @@ public class LoginAct extends BaseAct {
      * @return
      * @throws ActException
      */
-    @GetMapping("/logout")
+    @GetMapping("logout")
     public ModelAndView logout(HttpServletRequest request, HttpServletResponse response) throws ActException {
         try {
             String token = UserUtil.getToken(request);
@@ -102,7 +101,7 @@ public class LoginAct extends BaseAct {
                 cookie.setMaxAge(0);
                 response.addCookie(cookie);
             }
-            return new ModelAndView("redirect:/login");
+            return new ModelAndView("redirect:login");
 
         } catch (SerException e) {
             throw new ActException(e.getMessage());
