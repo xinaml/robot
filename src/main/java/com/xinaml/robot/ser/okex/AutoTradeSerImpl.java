@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.xinaml.robot.common.okex.Client;
 import com.xinaml.robot.common.session.MsgSession;
+import com.xinaml.robot.common.session.PriceSession;
 import com.xinaml.robot.common.utils.DateUtil;
 import com.xinaml.robot.common.utils.MailUtil;
 import com.xinaml.robot.common.webscoket.WebSocketServer;
@@ -60,7 +61,11 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 MsgSession.put(userId, msg);
             }
             if (buy >= last) {//买入价>=最新成交价
-//                commitBuyOrder(conf, buy + ""); //提交订单
+                String prevLast = PriceSession.get(userId);//上次成交价
+                if (null!=prevLast && !prevLast.equals(last + "")) {
+                    //                commitBuyOrder(conf, buy + ""); //提交订单
+                    PriceSession.put(userId, last + "");
+                }
                 System.out.println(msg);
             }
             if (null != last) {
@@ -121,7 +126,10 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 order.setInstrumentId(conf.getInstrumentId());
                 order.setCreateDate(LocalDateTime.now());
                 order.setType(2);//卖出
-                order.setStatus(0);//等待成交
+                OrderInfo info = getOrderInfo(conf,oc.getOrder_id());
+                if(null!=info){
+                    order.setStatus(Integer.parseInt(info.getState()));//已成交
+                }
                 orderSer.save(order);
                 String email = conf.getUser().getEmail();
                 if (StringUtils.isNotBlank(email)) {
@@ -165,7 +173,10 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 order.setCreateDate(LocalDateTime.now());
                 order.setPrice(buy);
                 order.setType(1);//买入
-                order.setStatus(0);//等待成交
+                OrderInfo info = getOrderInfo(conf,oc.getOrder_id());
+                if(null!=info){
+                    order.setStatus(Integer.parseInt(info.getState()));//已成交
+                }
                 orderSer.save(order);
                 String email = conf.getUser().getEmail();
                 if (StringUtils.isNotBlank(email)) {
@@ -222,7 +233,10 @@ public class AutoTradeSerImpl implements AutoTradeSer {
             }
             rsMsg = "撤单成功！";
         } else {
-            order.setStatus(2);//已成交
+            OrderInfo info = getOrderInfo(conf,orderId);
+            if(null!=info){
+                order.setStatus(Integer.parseInt(info.getState()));//已成交
+            }
             LOG.warn("撤单失败！ " + conf.getUser().getUsername() + ":" + rs);
             rsMsg = "撤单失败！ " + rs;
         }
