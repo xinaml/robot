@@ -26,7 +26,7 @@ allprojects {
         swagger2_v = '2.9.2'
         druid_v='1.1.9'
         log4j2_v='2.0.1.RELEASE'
-        thymeleaf_v='2.0.1.RELEASE'
+        thymeleaf_v='3.0.11.RELEASE'
         nekohtml_v='1.9.22'
         beelt_v='2.8.1'
         commonsIo_v='2.6'
