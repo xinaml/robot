@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -62,26 +61,19 @@ public class TrustScan {
                             } else {
                                 conf = userConfSer.findByUserId(userId);
                             }
-
-                            OrderInfo info = autoTradeSer.getOrderInfo(conf, order.getOrderId());
-                            if (null != info) {
-                                //开始判断订单状态
-                                String state = info.getState();
-                                if (state.equals("2")) {
-                                    order.setStatus(Integer.parseInt(info.getState()));//
-                                    orderSer.update(order);
-                                } else if (state.equals("0") || state.equals("1") || state.equals("3")) {//如果状态是0，1,3 代表没有撤销
-                                    int minutes = conf.getOrderTime() != null ? conf.getOrderTime() : 0;
-                                    if (order.getCreateDate().plusMinutes(minutes).isAfter(LocalDateTime.now())) {//订单超时，撤销
-                                        autoTradeSer.cancelOrder(conf, order.getOrderId(), "买入");
-                                        info = autoTradeSer.getOrderInfo(conf, order.getOrderId());//撤单后重查状态
-                                        order.setStatus(Integer.parseInt(info.getState()));//
-                                        orderSer.update(order);//更新订单状态
-                                    }
-                                }
-
-                            } else {//找不到订单，删除本地的
+                            String rs = autoTradeSer.cancelOrder(conf, order.getOrderId(), "买入");//撤单
+                            if (rs.indexOf("撤单失败") != 1) {//撤单失败，说明成交成功了
+                                order.setStatus(2);
+                                orderSer.update(order);
+                            } else {//撤单成功，直接删除数据
                                 orderSer.remove(order);
+                            }
+                            OrderInfo info = autoTradeSer.getOrderInfo(conf, order.getOrderId());
+                            if (null == info) {
+                                info = autoTradeSer.getOrderInfo(conf, order.getOrderId());
+                                if (null == info) {
+                                    orderSer.remove(order);
+                                }
                             }
                         }
                     }
@@ -113,26 +105,19 @@ public class TrustScan {
                             } else {
                                 conf = userConfSer.findByUserId(userId);
                             }
-                            OrderInfo info = autoTradeSer.getOrderInfo(conf, order.getOrderId());
-                            if (null != info) {
-                                String state = info.getState();
-                                //开始判断订单状态
-                                if (state.equals("2")) {
-                                    order.setStatus(Integer.parseInt(info.getState()));//
-                                    orderSer.update(order);
-                                }
-                                if (state.equals("0") || state.equals("1") || state.equals("3")) {//如果状态是0，1,3 代表没有撤销
-                                    int minutes = conf.getSellTime() != null ? conf.getSellTime() : 0;
-                                    if (order.getCreateDate().plusMinutes(minutes).isAfter(LocalDateTime.now())) {//订单超时，撤销
-                                        autoTradeSer.cancelOrder(conf, order.getOrderId(), "卖出");
-                                        info = autoTradeSer.getOrderInfo(conf, order.getOrderId());//撤单后重查状态
-                                        order.setStatus(Integer.parseInt(info.getState()));//
-                                        orderSer.update(order);//更新订单状态
-                                    }
-                                }
-
-                            } else {//找不到订单，删除本地的
+                            String rs = autoTradeSer.cancelOrder(conf, order.getOrderId(), "卖出");//撤单
+                            if (rs.indexOf("撤单失败") != 1) {//撤单失败，说明成交成功了
+                                order.setStatus(2);
+                                orderSer.update(order);
+                            } else {//撤单成功，直接删除数据
                                 orderSer.remove(order);
+                            }
+                            OrderInfo info = autoTradeSer.getOrderInfo(conf, order.getOrderId());
+                            if (null == info) {
+                                info = autoTradeSer.getOrderInfo(conf, order.getOrderId());
+                                if (null == info) {
+                                    orderSer.remove(order);
+                                }
                             }
                         }
                     }

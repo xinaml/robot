@@ -143,8 +143,8 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 if (null != info) {
                     order.setStatus(Integer.parseInt(info.getState()));//已成交
                 }
+                orderSer.save(order);
                 if (info.getState().equals("2")) {//卖出成功才保存
-                    orderSer.save(order);
                     String email = conf.getUser().getEmail();
                     if (StringUtils.isNotBlank(email)) {
                         String msg = DateUtil.dateToString(LocalDateTime.now()) + " 卖出下单成功！" + "单号id为：" + oc.getOrder_id();
@@ -192,8 +192,8 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 if (null != info) {
                     order.setStatus(Integer.parseInt(info.getState()));//已成交
                 }
+                orderSer.save(order);
                 if (info.getState().equals("2")) {//成功的
-                    orderSer.save(order);
                     String email = conf.getUser().getEmail();
                     if (StringUtils.isNotBlank(email)) {
                         String msg = DateUtil.dateToString(LocalDateTime.now()) + " 买入下单成功！" + "单号id为：" + oc.getOrder_id();
@@ -243,22 +243,24 @@ public class AutoTradeSerImpl implements AutoTradeSer {
         Order order = orderSer.findByOrderId(orderId);
         String rsMsg = "";
         if (null != rs && rs.indexOf("\"error_code\":\"0\"") != -1) {//撤单成功
-            order.setStatus(-1);
             String email = conf.getUser().getEmail();
             if (StringUtils.isNotBlank(email)) {
                 String msg = DateUtil.dateToString(LocalDateTime.now()) + " " + type + "订单撤单成功！" + "单号id为：" + orderId;
                 MailUtil.send(email, type + "订单撤单成功！", msg);
             }
             rsMsg = "撤单成功！";
+            orderSer.remove(order);
         } else {
             OrderInfo info = getOrderInfo(conf, orderId);
-            if (null != info) {
+            if (null != info && info.getState().equals("2")) {
                 order.setStatus(Integer.parseInt(info.getState()));//已成交
+                orderSer.update(order);
+            }else {
+                orderSer.remove(order);
             }
             LOG.warn("撤单失败！ " + conf.getUser().getUsername() + ":" + rs);
             rsMsg = "撤单失败！ " + rs;
         }
-        orderSer.update(order);
         return rsMsg;
     }
 
