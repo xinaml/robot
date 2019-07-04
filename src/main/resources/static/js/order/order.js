@@ -75,7 +75,7 @@ var Order = (function () {
                 align: 'center'
 
             }, {
-                field: 'price',
+                field: 'sell',
                 title: '卖出价格',
                 align: 'center'
 
@@ -136,6 +136,17 @@ var Order = (function () {
             minView: 2//日期时间选择器所能够提供的最精确的时间选择视图
         });
     };
+    Order.prototype.changeStatus = function (arg) {
+       var status =  $("#status").val();
+        var opt = {
+            url: "/order/maps",
+            silent: true,
+            query:{
+                status:status
+            }
+        };
+        $('#order_table').bootstrapTable('refresh',opt)
+    }
     Order.prototype.cancel = function (arg) {
         var rows = $('#order_table').bootstrapTable("getSelections");
         if (arg) {
