@@ -16,9 +16,9 @@ public interface OrderRep extends JapRep<Order, OrderDTO> {
     @Query(value = "select a.* from tb_order a  where   type=?1  and status='2' and sell_id is null ",nativeQuery = true)
     List<Order> findSuccess( Integer type);
 
-    @Query(value = "select a.* from tb_order a  where   status in('0','1','3') and  type=?1 and sell_id is null",nativeQuery = true)
+    @Query(value = "select a.* from tb_order a  where   status='1' and  type=?1 and sell_id is null",nativeQuery = true)
     List<Order> findUnSuccess(Integer type);
 
-    @Query(value = "select a.* from tb_order a  where  status in('0','1','3') and user_id=?1 and type=?2 and sell_id is null",nativeQuery = true)
+    @Query(value = "select a.* from tb_order a  where  status='1' and user_id=?1 and type=?2 and sell_id is null",nativeQuery = true)
     List<Order> findUnSuccess(String userId, Integer type);
 }

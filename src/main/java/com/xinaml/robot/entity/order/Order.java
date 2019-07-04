@@ -5,6 +5,7 @@ import com.xinaml.robot.base.entity.BaseEntity;
 import com.xinaml.robot.entity.user.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tb_order")
@@ -35,6 +36,9 @@ public class Order extends BaseEntity {
     @Column( columnDefinition = "VARCHAR(56) COMMENT '买入价'")
     private String price;
 
+    @Column( columnDefinition = "VARCHAR(56) COMMENT '卖出价'")
+    private String sell;
+
     @Column( columnDefinition = "VARCHAR(56) COMMENT '盈利'")
     private String profit="0";
 
@@ -46,7 +50,8 @@ public class Order extends BaseEntity {
 
     @Column( columnDefinition = "INT(2) COMMENT '订单类型，1：买入，2卖出'")
     private Integer type;//1：买入，2卖出
-
+    @Column(nullable = false, columnDefinition = "DATETIME  COMMENT '卖出时间'")
+    private LocalDateTime sellDate;
     public User getUser() {
         return user;
     }
@@ -141,5 +146,21 @@ public class Order extends BaseEntity {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public String getSell() {
+        return sell;
+    }
+
+    public void setSell(String sell) {
+        this.sell = sell;
+    }
+
+    public LocalDateTime getSellDate() {
+        return sellDate;
+    }
+
+    public void setSellDate(LocalDateTime sellDate) {
+        this.sellDate = sellDate;
     }
 }

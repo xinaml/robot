@@ -52,24 +52,7 @@ var Order = (function () {
             }, {
                 field: 'status',
                 title: '订单状态', formatter: function (value, row, index) {
-                    // '订单状态:-2:失败,-1:撤单成功,0:等待成交 ,1:部分成交, 2:完全成交,3:下单中,4:撤单中'
-                    var rs = "未知"
-                    if (value == "-2") {
-                        rs = "失败";
-                    } else if (value == "-1") {
-                        rs = "撤单成功";
-                    } else if (value == "0") {
-                        rs = "等待成交";
-                    } else if (value == "1") {
-                        rs = "部分成交";
-                    } else if (value == "2") {
-                        rs = "完全成交";
-                    } else if (value == "3") {
-                        rs = "下单中";
-                    } else if (value == "4") {
-                        rs = "撤单中";
-                    }
-                    return rs;
+                    return "待卖出";
                 },
                 align: 'center'
 
@@ -88,7 +71,12 @@ var Order = (function () {
 
             }, {
                 field: 'price',
-                title: '买入/卖出价格',
+                title: '买入价格',
+                align: 'center'
+
+            }, {
+                field: 'price',
+                title: '卖出价格',
                 align: 'center'
 
             }, {
@@ -108,7 +96,12 @@ var Order = (function () {
                 align: 'center'
             }, {
                 field: 'createDate',
-                title: '创建时间',
+                title: '买入时间',
+                align: 'center'
+
+            }, {
+                field: 'sellDate',
+                title: '卖出时间',
                 align: 'center'
 
             }]

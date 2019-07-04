@@ -61,20 +61,8 @@ public class TrustScan {
                             } else {
                                 conf = userConfSer.findByUserId(userId);
                             }
-                            String rs = autoTradeSer.cancelOrder(conf, order.getOrderId(), "买入");//撤单
-                            if (rs.indexOf("撤单失败") != 1) {//撤单失败，说明成交成功了
-                                order.setStatus(2);
-                                orderSer.update(order);
-                            } else {//撤单成功，直接删除数据
-                                orderSer.remove(order);
-                            }
-                            OrderInfo info = autoTradeSer.getOrderInfo(conf, order.getOrderId());
-                            if (null == info) {
-                                info = autoTradeSer.getOrderInfo(conf, order.getOrderId());
-                                if (null == info) {
-                                    orderSer.remove(order);
-                                }
-                            }
+                            autoTradeSer.cancelOrder(conf, order.getOrderId(), "买入");//撤单
+
                         }
                     }
 
@@ -105,20 +93,7 @@ public class TrustScan {
                             } else {
                                 conf = userConfSer.findByUserId(userId);
                             }
-                            String rs = autoTradeSer.cancelOrder(conf, order.getOrderId(), "卖出");//撤单
-                            if (rs.indexOf("撤单失败") != 1) {//撤单失败，说明成交成功了
-                                order.setStatus(2);
-                                orderSer.update(order);
-                            } else {//撤单成功，直接删除数据
-                                orderSer.remove(order);
-                            }
-                            OrderInfo info = autoTradeSer.getOrderInfo(conf, order.getOrderId());
-                            if (null == info) {
-                                info = autoTradeSer.getOrderInfo(conf, order.getOrderId());
-                                if (null == info) {
-                                    orderSer.remove(order);
-                                }
-                            }
+                             autoTradeSer.cancelOrder(conf, order.getOrderId(), "卖出");//撤单
                         }
                     }
 
