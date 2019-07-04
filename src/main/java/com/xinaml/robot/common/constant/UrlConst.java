@@ -31,4 +31,8 @@ public class UrlConst {
      * 订单信息
      */
     public static  final  String ORDER_INFO="/api/futures/v3/orders" ;
+    /**
+     * 合约持仓信息
+     */
+    public static  final  String HOLD_INFO="/api/futures/v3/position" ;
 }

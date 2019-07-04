@@ -3,6 +3,7 @@ package com.xinaml.robot.ser.okex;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.xinaml.robot.common.constant.UrlConst;
 import com.xinaml.robot.common.okex.Client;
 import com.xinaml.robot.common.session.MsgSession;
 import com.xinaml.robot.common.session.PriceSession;
@@ -11,6 +12,7 @@ import com.xinaml.robot.common.utils.MailUtil;
 import com.xinaml.robot.common.utils.StringUtil;
 import com.xinaml.robot.common.webscoket.WebSocketServer;
 import com.xinaml.robot.entity.order.Order;
+import com.xinaml.robot.entity.user.User;
 import com.xinaml.robot.entity.user.UserConf;
 import com.xinaml.robot.ser.order.OrderSer;
 import com.xinaml.robot.vo.user.KLine;
@@ -110,6 +112,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
         }
 
     }
+
 
     /**
      * 卖出，下单
@@ -317,6 +320,26 @@ public class AutoTradeSerImpl implements AutoTradeSer {
         } else {
             return null;
         }
+    }
+
+
+    /**
+     * 获取持仓信息
+     *
+     * @param user
+     */
+    private Integer getHoldInfo(User user) {
+        try {
+            String rs = Client.httpGet(UrlConst.HOLD_INFO, user);
+            JSONObject ob = JSON.parseObject(rs);
+            JSONArray array = (JSONArray) ob.get("holding");
+            Object num = array.getJSONArray(0).getJSONObject(0).get("long_avail_qty");
+            Integer i = Integer.parseInt(num.toString());
+            return i;
+        } catch (Exception e) {
+            return null;
+        }
+
     }
 
 }

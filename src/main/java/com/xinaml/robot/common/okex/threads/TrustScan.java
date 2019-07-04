@@ -1,13 +1,17 @@
 package com.xinaml.robot.common.okex.threads;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.xinaml.robot.base.rep.RedisRep;
+import com.xinaml.robot.common.constant.UrlConst;
+import com.xinaml.robot.common.okex.Client;
 import com.xinaml.robot.entity.order.Order;
+import com.xinaml.robot.entity.user.User;
 import com.xinaml.robot.entity.user.UserConf;
 import com.xinaml.robot.ser.okex.AutoTradeSer;
 import com.xinaml.robot.ser.order.OrderSer;
 import com.xinaml.robot.ser.user.UserConfSer;
-import com.xinaml.robot.vo.user.OrderInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,6 +43,7 @@ public class TrustScan {
     public void init() {
         cancelBuyOrder();//撤销买入订单
         cancelSellOrder();//撤销卖出订单
+
     }
 
     /**
@@ -93,7 +98,7 @@ public class TrustScan {
                             } else {
                                 conf = userConfSer.findByUserId(userId);
                             }
-                             autoTradeSer.cancelOrder(conf, order.getOrderId(), "卖出");//撤单
+                            autoTradeSer.cancelOrder(conf, order.getOrderId(), "卖出");//撤单
                         }
                     }
 
@@ -103,6 +108,7 @@ public class TrustScan {
             }
         }, 0, 60000); //每分钟查询一次未完成的订单
     }
+
 
 
 }
