@@ -79,10 +79,7 @@ public class OrderSerImpl extends ServiceImpl<Order, OrderDTO> implements OrderS
     @CacheEvict(value = "orders", beforeInvocation = true, allEntries = true)
     @Override
     public void remove(Order... entities) throws SerException {
-        for (Order order : entities) {
-            order.setStatus(-6);//订单不存在
-        }
-        super.update(entities);
+        super.remove(entities);
     }
 
     @CacheEvict(value = "orders", beforeInvocation = true, allEntries = true)

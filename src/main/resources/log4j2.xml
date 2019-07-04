@@ -81,7 +81,7 @@
         </root>
 
         <!--记录druid-sql的记录-->
-        <logger name="druid.sql.Statement" level="debug" additivity="false">
+        <logger name="druid.sql.Statement" level="error" additivity="false">
             <appender-ref ref="druid"/>
         </logger>
 

@@ -137,6 +137,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 order.setErrorCode(oc.getError_code());
                 order.setErrorMessage(oc.getError_message());
                 order.setInstrumentId(conf.getInstrumentId());
+                order.setUid(conf.getUser().getId());
                 order.setCreateDate(LocalDateTime.now());
                 order.setType(2);//卖出
                 OrderInfo info = getOrderInfo(conf, oc.getOrder_id());
@@ -183,6 +184,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 order.setErrorCode(oc.getError_code());
                 order.setErrorMessage(oc.getError_message());
                 order.setInstrumentId(conf.getInstrumentId());
+                order.setUid(conf.getUser().getId());
                 order.setCreateDate(LocalDateTime.now());
                 order.setPrice(buy);
                 order.setType(1);//买入

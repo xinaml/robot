@@ -1,11 +1,15 @@
 package com.xinaml.robot.common.okex.threads;
 
+import com.alibaba.fastjson.JSON;
+import com.xinaml.robot.base.rep.RedisRep;
+import com.xinaml.robot.common.utils.StringUtil;
 import com.xinaml.robot.entity.order.Order;
 import com.xinaml.robot.entity.user.UserConf;
 import com.xinaml.robot.ser.okex.AutoTradeSer;
 import com.xinaml.robot.ser.order.OrderSer;
 import com.xinaml.robot.ser.user.UserConfSer;
 import com.xinaml.robot.vo.user.OrderInfo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +34,8 @@ public class TrustScan {
     private AutoTradeSer autoTradeSer;
     @Autowired
     private OrderSer orderSer;
+    @Autowired
+    private RedisRep redisRep;
 
     @PostConstruct
     public void init() {
@@ -49,7 +55,15 @@ public class TrustScan {
                     List<Order> orders = orderSer.findBuyUnSuccess("");
                     if (null != orders && orders.size() > 0) {
                         for (Order order : orders) {
-                            UserConf conf = userConfSer.findByUserId(order.getUser().getId());
+                            String userId =order.getUid();
+                            String s = redisRep.get(userId+"orders");//redis取配置信息
+                            UserConf conf =null;
+                            if(StringUtils.isNotBlank(s)){
+                                conf = JSON.parseObject(s,UserConf.class);
+                            }else {
+                                conf = userConfSer.findByUserId(userId);
+                            }
+
                             OrderInfo info = autoTradeSer.getOrderInfo(conf, order.getOrderId());
                             if (null != info) {
                                 //开始判断订单状态
@@ -91,7 +105,14 @@ public class TrustScan {
                     List<Order> orders = orderSer.findSellUnSuccess("");
                     if (null != orders && orders.size() > 0) {
                         for (Order order : orders) {
-                            UserConf conf = userConfSer.findByUserId(order.getUser().getId());
+                            String userId =order.getUid();
+                            String s = redisRep.get(userId+"orders");//redis取配置信息
+                            UserConf conf =null;
+                            if(StringUtils.isNotBlank(s)){
+                                conf = JSON.parseObject(s,UserConf.class);
+                            }else {
+                                conf = userConfSer.findByUserId(userId);
+                            }
                             OrderInfo info = autoTradeSer.getOrderInfo(conf, order.getOrderId());
                             if (null != info) {
                                 //开始判断订单状态

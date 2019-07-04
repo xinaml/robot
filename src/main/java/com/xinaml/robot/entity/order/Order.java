@@ -10,9 +10,12 @@ import javax.persistence.*;
 @Table(name = "tb_order")
 public class Order extends BaseEntity {
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne(cascade = CascadeType.REFRESH,fetch=FetchType.LAZY)
     @JoinColumn(name = "user_id", columnDefinition = "VARCHAR(36) COMMENT '所属用户' ")
     private User user;
+
+    @JoinColumn(name = "uid", columnDefinition = "VARCHAR(36) COMMENT '所属用户id' ")
+    private String uid;
 
     @Column(columnDefinition = "VARCHAR(56) COMMENT '合约ID'")
     private String instrumentId;//合约ID
@@ -130,5 +133,13 @@ public class Order extends BaseEntity {
 
     public void setSellId(String sellId) {
         this.sellId = sellId;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }

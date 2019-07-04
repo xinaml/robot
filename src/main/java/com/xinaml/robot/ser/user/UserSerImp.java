@@ -130,16 +130,16 @@ public class UserSerImp extends ServiceImpl<User, UserDTO> implements UserSer {
     public Boolean stop() throws SerException {
         User user = UserUtil.getUser();
         user.setStop(!user.getStop());
-        String str = null;
+        String conf = null;
         try {
-            str = jRedis.get(user.getId() + user.getUsername());
+            conf = jRedis.get(user.getId() + "orders");
         } catch (Exception e) {
         }
-        if (null == str) {
+        if (null == conf) {
             throw new SerException("请先配置信息！");
         }
         this.update(user);
-        ThreadScan.scan(user.getId(), user.getStop(), JSON.parseObject(str, UserConf.class));
+        ThreadScan.scan(user.getId(), user.getStop(), JSON.parseObject(conf, UserConf.class));
         return user.getStop();
     }
 

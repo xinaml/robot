@@ -48,7 +48,7 @@ public class UserConfSerImpl extends ServiceImpl<UserConf, UserConfDTO> implemen
 
         }
         setSeconds(conf);
-        redisRep.put(user.getId()+user.getUsername(),JSON.toJSONString(conf));//保存配置信息到redis
+        redisRep.put(user.getId()+"orders",JSON.toJSONString(conf));//保存配置信息到redis
         ThreadScan.scan(user.getId(),user.getStop(),conf);//重新扫描配置
     }
 
