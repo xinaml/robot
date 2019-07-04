@@ -21,7 +21,7 @@ public class Order extends BaseEntity {
     @Column(columnDefinition = "VARCHAR(56) COMMENT '合约ID'")
     private String instrumentId;//合约ID
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(56) COMMENT '自定义订单id'")
+    @Column(columnDefinition = "VARCHAR(56) COMMENT '自定义订单id'")
     private String clientOid;//自定义订单id
 
     @Column( columnDefinition = "VARCHAR(56) COMMENT '订单id'")
@@ -50,7 +50,7 @@ public class Order extends BaseEntity {
 
     @Column( columnDefinition = "INT(2) COMMENT '订单类型，1：买入，2卖出'")
     private Integer type;//1：买入，2卖出
-    @Column(nullable = false, columnDefinition = "DATETIME  COMMENT '卖出时间'")
+    @Column(columnDefinition = "DATETIME  COMMENT '卖出时间'")
     private LocalDateTime sellDate;
     public User getUser() {
         return user;
