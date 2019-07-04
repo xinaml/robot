@@ -52,7 +52,6 @@ public class AutoTradeSerImpl implements AutoTradeSer {
             String msg = "收盘价为:" + line.getClose() + ",最新成交价为:" + last;
             String userId = conf.getUser().getId();
             String old = MsgSession.get(userId);
-//            System.out.println(msg);
             if (!msg.equals(old)) {
                 if (old == null) {
                     MsgSession.put(userId, msg);
@@ -144,13 +143,15 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 if (null != info) {
                     order.setStatus(Integer.parseInt(info.getState()));//已成交
                 }
-                orderSer.save(order);
-                String email = conf.getUser().getEmail();
-                if (StringUtils.isNotBlank(email)) {
-                    String msg = DateUtil.dateToString(LocalDateTime.now()) + " 卖出下单成功！" + "单号id为：" + oc.getOrder_id();
-                    MailUtil.send(email, "卖出下单成功！", msg);
+                if (info.getState().equals("2")) {//卖出成功才保存
+                    orderSer.save(order);
+                    String email = conf.getUser().getEmail();
+                    if (StringUtils.isNotBlank(email)) {
+                        String msg = DateUtil.dateToString(LocalDateTime.now()) + " 卖出下单成功！" + "单号id为：" + oc.getOrder_id();
+                        MailUtil.send(email, "卖出下单成功！", msg);
+                    }
+                    return order;
                 }
-                return order;
             }
 
         } else {
@@ -169,14 +170,13 @@ public class AutoTradeSerImpl implements AutoTradeSer {
         OrderVO orderVO = new OrderVO();
         orderVO.setInstrument_id(conf.getInstrumentId());//合约id
         orderVO.setSize(conf.getCount() + "");//每次开张数
-        orderVO.setPrice(buy);
+        orderVO.setPrice(buy);//买入价格
         orderVO.setType("1");
         orderVO.setLeverage(conf.getLeverage() + "");
         String rs = Client.httpPost(url, JSON.toJSONString(orderVO), conf.getUser());
         if (rs.indexOf("\"error_code\":\"0\"") != -1) {//下单成功
             OrderCommitVO oc = JSON.parseObject(rs, OrderCommitVO.class);
             if (oc.getOrder_id() != "-1") {
-
                 Order order = new Order();
                 order.setClientOid(oc.getClient_oid());
                 order.setUser(conf.getUser());
@@ -192,13 +192,16 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 if (null != info) {
                     order.setStatus(Integer.parseInt(info.getState()));//已成交
                 }
-                orderSer.save(order);
-                String email = conf.getUser().getEmail();
-                if (StringUtils.isNotBlank(email)) {
-                    String msg = DateUtil.dateToString(LocalDateTime.now()) + " 买入下单成功！" + "单号id为：" + oc.getOrder_id();
-                    MailUtil.send(email, "买入下单成功！", msg);
+                if (info.getState().equals("2")) {//成功的
+                    orderSer.save(order);
+                    String email = conf.getUser().getEmail();
+                    if (StringUtils.isNotBlank(email)) {
+                        String msg = DateUtil.dateToString(LocalDateTime.now()) + " 买入下单成功！" + "单号id为：" + oc.getOrder_id();
+                        MailUtil.send(email, "买入下单成功！", msg);
+                    }
+                    return order;
                 }
-                return order;
+
             }
         } else {
             LOG.warn(conf.getUser().getUsername() + "买入下单失败:" + rs);//下单失败

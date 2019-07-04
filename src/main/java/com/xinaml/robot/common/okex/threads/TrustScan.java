@@ -2,7 +2,6 @@ package com.xinaml.robot.common.okex.threads;
 
 import com.alibaba.fastjson.JSON;
 import com.xinaml.robot.base.rep.RedisRep;
-import com.xinaml.robot.common.utils.StringUtil;
 import com.xinaml.robot.entity.order.Order;
 import com.xinaml.robot.entity.user.UserConf;
 import com.xinaml.robot.ser.okex.AutoTradeSer;
@@ -55,22 +54,23 @@ public class TrustScan {
                     List<Order> orders = orderSer.findBuyUnSuccess("");
                     if (null != orders && orders.size() > 0) {
                         for (Order order : orders) {
-                            String userId =order.getUid();
-                            String s = redisRep.get(userId+"orders");//redis取配置信息
-                            UserConf conf =null;
-                            if(StringUtils.isNotBlank(s)){
-                                conf = JSON.parseObject(s,UserConf.class);
-                            }else {
+                            String userId = order.getUid();
+                            String s = redisRep.get(userId + "orders");//redis取配置信息
+                            UserConf conf = null;
+                            if (StringUtils.isNotBlank(s)) {
+                                conf = JSON.parseObject(s, UserConf.class);
+                            } else {
                                 conf = userConfSer.findByUserId(userId);
                             }
 
                             OrderInfo info = autoTradeSer.getOrderInfo(conf, order.getOrderId());
                             if (null != info) {
                                 //开始判断订单状态
-                                if (!info.getState().equals("0")) {
+                                String state = info.getState();
+                                if (state.equals("2")) {
                                     order.setStatus(Integer.parseInt(info.getState()));//
                                     orderSer.update(order);
-                                } else {//如果状态是0，代表没有撤销
+                                } else if (state.equals("0") || state.equals("1") || state.equals("3")) {//如果状态是0，1,3 代表没有撤销
                                     int minutes = conf.getOrderTime() != null ? conf.getOrderTime() : 0;
                                     if (order.getCreateDate().plusMinutes(minutes).isAfter(LocalDateTime.now())) {//订单超时，撤销
                                         autoTradeSer.cancelOrder(conf, order.getOrderId(), "买入");
@@ -105,21 +105,23 @@ public class TrustScan {
                     List<Order> orders = orderSer.findSellUnSuccess("");
                     if (null != orders && orders.size() > 0) {
                         for (Order order : orders) {
-                            String userId =order.getUid();
-                            String s = redisRep.get(userId+"orders");//redis取配置信息
-                            UserConf conf =null;
-                            if(StringUtils.isNotBlank(s)){
-                                conf = JSON.parseObject(s,UserConf.class);
-                            }else {
+                            String userId = order.getUid();
+                            String s = redisRep.get(userId + "orders");//redis取配置信息
+                            UserConf conf = null;
+                            if (StringUtils.isNotBlank(s)) {
+                                conf = JSON.parseObject(s, UserConf.class);
+                            } else {
                                 conf = userConfSer.findByUserId(userId);
                             }
                             OrderInfo info = autoTradeSer.getOrderInfo(conf, order.getOrderId());
                             if (null != info) {
+                                String state = info.getState();
                                 //开始判断订单状态
-                                if (!info.getState().equals("0")) {
+                                if (state.equals("2")) {
                                     order.setStatus(Integer.parseInt(info.getState()));//
                                     orderSer.update(order);
-                                } else {//如果状态是0，代表没有撤销
+                                }
+                                if (state.equals("0") || state.equals("1") || state.equals("3")) {//如果状态是0，1,3 代表没有撤销
                                     int minutes = conf.getSellTime() != null ? conf.getSellTime() : 0;
                                     if (order.getCreateDate().plusMinutes(minutes).isAfter(LocalDateTime.now())) {//订单超时，撤销
                                         autoTradeSer.cancelOrder(conf, order.getOrderId(), "卖出");
