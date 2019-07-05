@@ -95,13 +95,14 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                     order.setSellDate(LocalDateTime.now());//设置卖出时间
                     orderSer.update(order);
                 }
-                OrderInfo orderInfo = getOrderInfo(conf, order.getOrderId());
-                if (null != orderInfo && orderInfo.getState() == "2") {//线上已经卖出了
-                    orderSer.remove(order);
-                } else if (null == orderInfo) {//找不到订单
-                    orderSer.remove(order);
-                }
             }
+            OrderInfo orderInfo = getOrderInfo(conf, order.getOrderId());
+            if (null != orderInfo && orderInfo.getState() == "2") {//线上已经卖出了
+                orderSer.remove(order);
+            } else if (null == orderInfo) {//找不到订单
+                orderSer.remove(order);
+            }
+
         }
         handleLoss(conf, orders, last);//止损
     }
