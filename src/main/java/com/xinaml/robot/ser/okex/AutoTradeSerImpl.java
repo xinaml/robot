@@ -58,7 +58,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
             } else {
                 MsgSession.put(userId, msg);
             }
-            if (line.getClose() >= last) {//买入价>=最新成交价
+            if (buy >= last) {//买入价>=最新成交价
                 String time = PriceSession.get(userId);//上次成交价
                 if (null == time || !(line.getTimestamp()).equals(time)) {
                     if (!conf.getOnlySell()) {//如果非只卖出，可以继续下单
@@ -121,19 +121,22 @@ public class AutoTradeSerImpl implements AutoTradeSer {
             double loss = conf.getLoss();
             if (0 > profit && loss > profit) { //如果设定的损值大于实际的损值,profit少于0的时候就是亏损了
                 if (StringUtils.isNotBlank(info.getLong_avail_qty())) {//获取平仓数
-                    conf.setCount(Integer.parseInt(info.getLong_avail_qty()));
-                    commitSellOrder(conf);//全部卖出
-                    Order[] list = new Order[orders.size()];
-                    int index = 0;
-                    for (Order order : orders) {
-                        list[index++] = order;
+                    if(Integer.parseInt(info.getLong_avail_qty())>0){
+                        conf.setCount(Integer.parseInt(info.getLong_avail_qty()));
+                        commitSellOrder(conf);//全部卖出
+                        Order[] list = new Order[orders.size()];
+                        int index = 0;
+                        for (Order order : orders) {
+                            list[index++] = order;
+                        }
+                        orderSer.remove(list);
+                        String email = conf.getUser().getEmail();
+                        if (StringUtils.isNotBlank(email)) {
+                            String msg = DateUtil.dateToString(LocalDateTime.now()) + " 已全部平仓卖出！" + "卖出张数为：" + conf.getCount();
+                            MailUtil.send(email, "亏损率达到设定值"+loss+",平仓卖出！", msg);
+                        }
                     }
-                    orderSer.remove(list);
-                    String email = conf.getUser().getEmail();
-                    if (StringUtils.isNotBlank(email)) {
-                        String msg = DateUtil.dateToString(LocalDateTime.now()) + " 已全部平仓卖出！" + "卖出张数为：" + conf.getCount();
-                        MailUtil.send(email, "亏损率达到设定值"+loss+",平仓卖出！", msg);
-                    }
+
                 }
             }
         }
@@ -142,19 +145,23 @@ public class AutoTradeSerImpl implements AutoTradeSer {
             Double sellPrice = Double.parseDouble(info.getLong_avg_cost()) * conf.getSelfMultiple();//卖出价=开仓平均价*卖出倍率
             if (sellPrice >= last) { //当前价>=最新价
                 if(StringUtils.isNotBlank(info.getLong_avail_qty())){
-                    conf.setCount(Integer.parseInt(info.getLong_avail_qty()));//获取平仓数
-                    commitSellOrder(conf);//全部卖出
-                    Order[] list = new Order[orders.size()];
-                    int oIndex = 0;
-                    for (Order order : orders) {
-                        list[oIndex++] = order;
+                    Integer count = Integer.parseInt(info.getLong_avail_qty());
+                    if(count>0){
+                        conf.setCount(count);//获取平仓数
+                        commitSellOrder(conf);//全部卖出
+                        Order[] list = new Order[orders.size()];
+                        int oIndex = 0;
+                        for (Order order : orders) {
+                            list[oIndex++] = order;
+                        }
+                        orderSer.remove(list);
+                        String email = conf.getUser().getEmail();
+                        if (StringUtils.isNotBlank(email)) {
+                            String msg = DateUtil.dateToString(LocalDateTime.now()) + " 已全部平仓卖出！" + "卖出张数为：" + conf.getCount();
+                            MailUtil.send(email, "当前价达到卖出价，平仓卖出!", msg);
+                        }
                     }
-                    orderSer.remove(list);
-                    String email = conf.getUser().getEmail();
-                    if (StringUtils.isNotBlank(email)) {
-                        String msg = DateUtil.dateToString(LocalDateTime.now()) + " 已全部平仓卖出！" + "卖出张数为：" + conf.getCount();
-                        MailUtil.send(email, "当前价达到卖出价，平仓卖出!", msg);
-                    }
+
                 }
 
             }
