@@ -16,12 +16,7 @@ import static com.xinaml.robot.common.constant.UrlConst.ORDER_INFO;
  */
 public class Test {
     public static void main(String[] args) {
-        System.out.println(JSON.toJSONString(getOrderInfo("3112214567990272")));
-        System.out.println(JSON.toJSONString(getOrderInfo("3112222504949760")));
-        System.out.println(JSON.toJSONString(getOrderInfo("3112584599609344")));
-        System.out.println(JSON.toJSONString(getOrderInfo("3112592466189312")));
-        System.out.println(JSON.toJSONString(getOrderInfo("3112616502309888")));
-        System.out.println(JSON.toJSONString(getOrderInfo("3112620332821504")));
+        System.out.println(JSON.toJSONString(getOrderInfo("3112618070320128")));
     }
 
     public static OrderInfo getOrderInfo(String orderId) {

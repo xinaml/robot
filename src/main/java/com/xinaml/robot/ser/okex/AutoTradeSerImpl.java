@@ -15,10 +15,7 @@ import com.xinaml.robot.entity.order.Order;
 import com.xinaml.robot.entity.user.User;
 import com.xinaml.robot.entity.user.UserConf;
 import com.xinaml.robot.ser.order.OrderSer;
-import com.xinaml.robot.vo.user.KLine;
-import com.xinaml.robot.vo.user.OrderCommitVO;
-import com.xinaml.robot.vo.user.OrderInfo;
-import com.xinaml.robot.vo.user.OrderVO;
+import com.xinaml.robot.vo.user.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,12 +141,16 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 order.setCreateDate(LocalDateTime.now());
                 order.setType(2);//卖出
                 OrderInfo info = getOrderInfo(conf, oc.getOrder_id());
-                if (null != info && info.getState().equals("2")) {
-                    order.setStatus(2);//已成交
-                } else {
-                    order.setStatus(1);//卖出未成功
+                if (null != info) {
+                    if (info.getState().equals("2")) {
+                        order.setStatus(2);//已成交
+                    } else {
+                        order.setStatus(1);
+                    }
+                    orderSer.save(order);
+                } else if (null == info) {
+                    orderSer.remove(order);//没有订单信息直接删除
                 }
-                orderSer.save(order);
                 if (info.getState().equals("2")) {//卖出成功
                     String email = conf.getUser().getEmail();
                     if (StringUtils.isNotBlank(email)) {
@@ -158,6 +159,8 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                     }
                     return order;
                 }
+
+
             }
 
         } else {
@@ -195,12 +198,16 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 order.setPrice(buy);
                 order.setType(1);//买入
                 OrderInfo info = getOrderInfo(conf, oc.getOrder_id());
-                if (null != info && info.getState().equals("2")) {
-                    order.setStatus(2);//已成交
-                } else {
-                    order.setStatus(1);//买入未成功
+                if (null != info) {
+                    if (info.getState().equals("2")) {
+                        order.setStatus(2);//已成交
+                    } else {
+                        order.setStatus(1);
+                    }
+                    orderSer.save(order);
+                } else if (null == info) {
+                    orderSer.remove(order);//没有订单信息直接删除
                 }
-                orderSer.save(order);
                 if (info.getState().equals("2")) {//成功的
                     String email = conf.getUser().getEmail();
                     if (StringUtils.isNotBlank(email)) {
@@ -266,8 +273,8 @@ public class AutoTradeSerImpl implements AutoTradeSer {
             if (null != info && info.getState().equals("2")) {
                 order.setStatus(2);//已成交
                 orderSer.update(order);
-            } else {
-                order.setStatus(1);//订单未成交
+            } else if (null == info) {
+                orderSer.remove(order);
             }
             LOG.warn("撤单失败！ " + conf.getUser().getUsername() + ":" + rs);
             rsMsg = "撤单失败！ " + rs;
@@ -283,26 +290,31 @@ public class AutoTradeSerImpl implements AutoTradeSer {
      * @return
      */
     public KLine getLine(UserConf conf) {
-        String kLineUrl = K_LINE + "/" + conf.getInstrumentId() + "/candles?start=" + conf.getStartDate() + "&end=" + conf.getEndDate() + "&granularity=" + conf.getSeconds();
-        String rs = Client.httpGet(kLineUrl, conf.getUser());
-        if (null != rs && rs.length() > 5) {
-            JSONArray array = JSON.parseArray(rs);
-            for (Object o : array.toArray()) {
-                JSONArray list = (JSONArray) o;
-                KLine kLine = new KLine();
-                kLine.setTimestamp(list.getString(0));
-                kLine.setOpen(list.getDouble(1));
-                kLine.setHigh(list.getDouble(2));
-                kLine.setLow(list.getDouble(3));
-                kLine.setClose(list.getDouble(4));
-                kLine.setVolume(list.getDouble(5));
-                kLine.setCurrencyVolume(list.getDouble(6));
-                return kLine;
+        try {
+            String kLineUrl = K_LINE + "/" + conf.getInstrumentId() + "/candles?start=" + conf.getStartDate() + "&end=" + conf.getEndDate() + "&granularity=" + conf.getSeconds();
+            String rs = Client.httpGet(kLineUrl, conf.getUser());
+            if (null != rs && rs.length() > 5) {
+                JSONArray array = JSON.parseArray(rs);
+                for (Object o : array.toArray()) {
+                    JSONArray list = (JSONArray) o;
+                    KLine kLine = new KLine();
+                    kLine.setTimestamp(list.getString(0));
+                    kLine.setOpen(list.getDouble(1));
+                    kLine.setHigh(list.getDouble(2));
+                    kLine.setLow(list.getDouble(3));
+                    kLine.setClose(list.getDouble(4));
+                    kLine.setVolume(list.getDouble(5));
+                    kLine.setCurrencyVolume(list.getDouble(6));
+                    return kLine;
+                }
+            } else {
+                return null;
             }
-        } else {
+        } catch (Exception e) {
             return null;
         }
         return null;
+
     }
 
     /**
@@ -313,13 +325,18 @@ public class AutoTradeSerImpl implements AutoTradeSer {
      */
     public Double getLast(UserConf conf) {
         String lastUrl = LAST + "/" + conf.getInstrumentId() + "/ticker";
-        String rs = Client.httpGet(lastUrl, conf.getUser());
-        if (rs != null && rs.length() > 5) {
-            JSONObject object = JSON.parseObject(rs);
-            return object.getDouble("last");
-        } else {
+        try {
+            String rs = Client.httpGet(lastUrl, conf.getUser());
+            if (rs != null && rs.length() > 5) {
+                JSONObject object = JSON.parseObject(rs);
+                return object.getDouble("last");
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
             return null;
         }
+
     }
 
 
@@ -328,18 +345,17 @@ public class AutoTradeSerImpl implements AutoTradeSer {
      *
      * @param user
      */
-    private Integer getHoldInfo(User user) {
+    public HoldInfo getHoldInfo(User user) {
         try {
             String rs = Client.httpGet(UrlConst.HOLD_INFO, user);
             JSONObject ob = JSON.parseObject(rs);
             JSONArray array = (JSONArray) ob.get("holding");
-            Object num = array.getJSONArray(0).getJSONObject(0).get("long_avail_qty");
-            Integer i = Integer.parseInt(num.toString());
-            return i;
+            List<HoldInfo> list = array.getJSONArray(0).toJavaList(HoldInfo.class);
+            return list.get(0);
         } catch (Exception e) {
-            return null;
+            return new HoldInfo();
         }
-
     }
+
 
 }

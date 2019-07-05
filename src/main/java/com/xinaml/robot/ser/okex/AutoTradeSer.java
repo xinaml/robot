@@ -1,7 +1,9 @@
 package com.xinaml.robot.ser.okex;
 
 import com.xinaml.robot.entity.order.Order;
+import com.xinaml.robot.entity.user.User;
 import com.xinaml.robot.entity.user.UserConf;
+import com.xinaml.robot.vo.user.HoldInfo;
 import com.xinaml.robot.vo.user.KLine;
 import com.xinaml.robot.vo.user.OrderInfo;
 
@@ -79,6 +81,15 @@ public interface AutoTradeSer {
      * @return
      */
     default Double getLast(UserConf conf) {
+        return null;
+    }
+
+    /**
+     * 获取持仓信息
+     *
+     * @param user
+     */
+    default HoldInfo getHoldInfo(User user) {
         return null;
     }
 }

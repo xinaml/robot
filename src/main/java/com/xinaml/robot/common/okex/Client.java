@@ -1,6 +1,7 @@
 package com.xinaml.robot.common.okex;
 
 import com.xinaml.robot.common.custom.exception.ActException;
+import com.xinaml.robot.common.custom.exception.SerException;
 import com.xinaml.robot.common.okex.constant.APIConstants;
 import com.xinaml.robot.common.okex.enums.ContentTypeEnum;
 import com.xinaml.robot.common.okex.enums.HttpHeadersEnum;
@@ -8,14 +9,12 @@ import com.xinaml.robot.common.okex.enums.I18nEnum;
 import com.xinaml.robot.common.okex.utils.DateUtils;
 import com.xinaml.robot.common.okex.utils.HmacSHA256Base64Utils;
 import com.xinaml.robot.entity.user.User;
-import io.netty.handler.timeout.ReadTimeoutException;
 import okhttp3.*;
 import okio.Buffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.security.InvalidKeyException;
 
 /**
@@ -45,17 +44,10 @@ public class Client {
         try {
             Response response = httpClient.newCall(request).execute();
             return response.body().string(); // 返回的是string 类型，json的mapper可以直接处理
-        } catch (UnknownHostException e) {
-            LOG.error("网络连接异常！");
-            return null;
-        } catch (ReadTimeoutException e) {
-            LOG.error("网络连接超时异常！");
-
-        } catch (IOException e) {
-            LOG.error("请求解析异常！");
-
+        } catch (IOException e) { //异常，说明网络问题
+            LOG.error("网络错误！");
+            throw new SerException(e.getMessage());
         }
-        return null;
     }
 
     public static String httpPost(String url, String json, User user) {
@@ -70,17 +62,10 @@ public class Client {
         try {
             Response response = httpClient.newCall(request).execute();
             return response.body().string(); // 返回的是string 类型，json的mapper可以直接处理
-        } catch (UnknownHostException e) {
-            LOG.error("网络连接异常！");
-            return null;
-        } catch (ReadTimeoutException e) {
-            LOG.error("网络连接超时异常！");
-
-        } catch (IOException e) {
-            LOG.error("请求解析异常！");
-
+        } catch (IOException e) { //异常，说明网络问题
+            LOG.error("网络错误！");
+            throw new SerException(e.getMessage());
         }
-        return null;
     }
 
 

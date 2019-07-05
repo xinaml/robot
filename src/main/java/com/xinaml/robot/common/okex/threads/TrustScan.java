@@ -59,7 +59,7 @@ public class TrustScan {
                     if (null != orders && orders.size() > 0) {
                         for (Order order : orders) {
                             String userId = order.getUid();
-                            String s = redisRep.get(userId + "orders");//redis取配置信息
+                            String s = redisRep.get(userId + "conf");//redis取配置信息
                             UserConf conf = null;
                             if (StringUtils.isNotBlank(s)) {
                                 conf = JSON.parseObject(s, UserConf.class);
@@ -91,7 +91,7 @@ public class TrustScan {
                     if (null != orders && orders.size() > 0) {
                         for (Order order : orders) {
                             String userId = order.getUid();
-                            String s = redisRep.get(userId + "orders");//redis取配置信息
+                            String s = redisRep.get(userId + "conf");//redis取配置信息
                             UserConf conf = null;
                             if (StringUtils.isNotBlank(s)) {
                                 conf = JSON.parseObject(s, UserConf.class);

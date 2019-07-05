@@ -132,7 +132,7 @@ public class UserSerImp extends ServiceImpl<User, UserDTO> implements UserSer {
         user.setStop(!user.getStop());
         String conf = null;
         try {
-            conf = jRedis.get(user.getId() + "orders");
+            conf = jRedis.get(user.getId() + "conf");
         } catch (Exception e) {
         }
         if (null == conf) {
