@@ -3,6 +3,7 @@ package com.xinaml.robot;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.xinaml.robot.common.okex.Client;
+import com.xinaml.robot.common.okex.utils.DateUtils;
 import com.xinaml.robot.entity.user.UserConf;
 import com.xinaml.robot.vo.user.KLine;
 
@@ -17,8 +18,11 @@ import static com.xinaml.robot.common.constant.UrlConst.K_LINE;
  */
 public class Test {
     public static void main(String[] args) {
+        out();
+    }
+    private static void out(){
         UserConf conf = new UserConf();
-        int s = 3 * 60;
+        int s = 60* 60;
         conf.setSeconds(s);
         String start = conf.getStartDate();
         String end = conf.getEndDate();
@@ -42,8 +46,6 @@ public class Test {
                 break;
             }
         }
-
-
     }
 
 

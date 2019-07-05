@@ -130,14 +130,17 @@ public class UserConf extends BaseEntity {
     }
 
     public String getStartDate() {
-        return Instant.now().minus(seconds,ChronoUnit.SECONDS).toString();
+        String time = Instant.now().minus(seconds*2,ChronoUnit.SECONDS).toString();
+        return time;
     }
     public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
 
     public String getEndDate() {
-        return DateUtils.getUnixTime();
+
+        String time= Instant.now().minus(seconds,ChronoUnit.SECONDS).toString();
+        return time;
     }
 
     public void setEndDate(String endDate) {
