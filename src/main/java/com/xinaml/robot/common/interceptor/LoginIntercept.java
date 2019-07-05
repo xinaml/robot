@@ -35,6 +35,9 @@ public class LoginIntercept extends HandlerInterceptorAdapter {
         Class<?> clazz = method.getDeclaringClass();
         //该类或者方法上是否有登录安全认证注解
         String url = StringUtils.substringAfterLast(request.getRequestURI(), "/");
+        if("".equals(url)||"index".equals(url)){//首页
+            return validateLogin(request, response);
+        }
         if (clazz.isAnnotationPresent(Login.class) || method.isAnnotationPresent(Login.class)) {
             Annotation an = clazz.getAnnotation(Login.class);
             if (null != an) { //过滤登录方法
