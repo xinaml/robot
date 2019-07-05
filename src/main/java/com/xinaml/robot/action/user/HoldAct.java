@@ -53,6 +53,7 @@ public class HoldAct extends BaseAct {
                 time = time.substring(0, 19).replace("T", " ");
                 time = DateUtil.parseDateTime(time).plusHours(8).toString().replace("T", " ");
                 kLine.setTimestamp(time);
+                return new ActResult(kLine);
 
             }
         }
