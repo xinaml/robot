@@ -33,6 +33,7 @@
     <span>最高价格：</span><span style="padding-left: 15px;padding-right: 15px" id="high">-</span>
     <span>最低价格：</span><span style="padding-left: 15px;padding-right: 15px" id="low">-</span>
     <span>收盘价格：</span><span style="padding-left: 15px;padding-right: 15px" id="close">-</span>
+    <span>时间：</span><span style="padding-left: 15px;padding-right: 15px" id="timestamp">-</span>
     <table class="table" style="width: 500px;margin-left: 50px">
         <caption>持仓信息</caption>
         <thead>
@@ -166,6 +167,7 @@
                             $("#close").text(rs.data.close);
                             $("#high").text(rs.data.high);
                             $("#low").text(rs.data.low);
+                            $("#timestamp").text(rs.data.timestamp);
                         }
                     } else {
                         toastr.error(rs.msg);

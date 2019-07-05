@@ -1,11 +1,12 @@
 package com.xinaml.robot;
 
 import com.alibaba.fastjson.JSON;
-import com.xinaml.robot.common.constant.UrlConst;
+import com.alibaba.fastjson.JSONArray;
 import com.xinaml.robot.common.okex.Client;
-import com.xinaml.robot.vo.user.OrderInfo;
+import com.xinaml.robot.entity.user.UserConf;
+import com.xinaml.robot.vo.user.KLine;
 
-import static com.xinaml.robot.common.constant.UrlConst.ORDER_INFO;
+import static com.xinaml.robot.common.constant.UrlConst.K_LINE;
 
 /**
  * @Author: [lgq]
@@ -16,19 +17,34 @@ import static com.xinaml.robot.common.constant.UrlConst.ORDER_INFO;
  */
 public class Test {
     public static void main(String[] args) {
-        String url = UrlConst.HOLD_INFO + "BTC-USD-190927" + "/position";
-        String rs = Client.httpGet(url, null);
-        System.out.println(rs);
+        UserConf conf = new UserConf();
+        int s = 3 * 60;
+        conf.setSeconds(s);
+        String start = conf.getStartDate();
+        String end = conf.getEndDate();
+        String kLineUrl = K_LINE + "/" + "BTC-USD-190927" + "/candles?" + start + "&end=" + end + "&granularity=" + s;
+        String rs = Client.httpGet(kLineUrl, null);
+        System.out.println(start);
+        System.out.println(end);
+        if (null != rs && rs.length() > 5) {
+            JSONArray array = JSON.parseArray(rs);
+            for (Object o : array.toArray()) {
+                JSONArray list = (JSONArray) o;
+                KLine kLine = new KLine();
+                kLine.setTimestamp(list.getString(0));
+                kLine.setOpen(list.getDouble(1));
+                kLine.setHigh(list.getDouble(2));
+                kLine.setLow(list.getDouble(3));
+                kLine.setClose(list.getDouble(4));
+                kLine.setVolume(list.getDouble(5));
+                kLine.setCurrencyVolume(list.getDouble(6));
+                System.out.println(JSON.toJSONString(kLine));
+                break;
+            }
+        }
+
+
     }
 
-    public static OrderInfo getOrderInfo(String orderId) {
-        String url = ORDER_INFO + "/" + "BTC-USD-190927" + "/" + orderId;
-        String rs = Client.httpGet(url, null);
-        if (null != rs && rs.indexOf("instrument_id") != -1) {//获取订单成功
-            OrderInfo info = JSON.parseObject(rs, OrderInfo.class);
-            return info;
-        } else {
-            return null;
-        }
-    }
+
 }
