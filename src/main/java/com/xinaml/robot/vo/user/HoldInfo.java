@@ -1,5 +1,8 @@
 package com.xinaml.robot.vo.user;
 
+import com.xinaml.robot.common.utils.StringUtil;
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.Serializable;
 
 /**
@@ -53,7 +56,7 @@ public class HoldInfo implements Serializable {
     }
 
     public String getLong_qty() {
-        return long_qty;
+        return StringUtil.formatDoubleStr(long_qty);
     }
 
     public void setLong_qty(String long_qty) {
@@ -61,7 +64,7 @@ public class HoldInfo implements Serializable {
     }
 
     public String getLong_avail_qty() {
-        return long_avail_qty;
+        return  StringUtil.formatDoubleStr(long_avail_qty);
     }
 
     public void setLong_avail_qty(String long_avail_qty) {
@@ -69,7 +72,7 @@ public class HoldInfo implements Serializable {
     }
 
     public String getLong_avg_cost() {
-        return long_avg_cost;
+        return  StringUtil.formatDoubleStr(long_avg_cost);
     }
 
     public void setLong_avg_cost(String long_avg_cost) {
@@ -77,7 +80,7 @@ public class HoldInfo implements Serializable {
     }
 
     public String getLong_settlement_price() {
-        return long_settlement_price;
+        return  StringUtil.formatDoubleStr(long_settlement_price);
     }
 
     public void setLong_settlement_price(String long_settlement_price) {
@@ -85,7 +88,7 @@ public class HoldInfo implements Serializable {
     }
 
     public String getRealised_pnl() {
-        return realised_pnl;
+        return  StringUtil.formatDoubleStr(realised_pnl);
     }
 
     public void setRealised_pnl(String realised_pnl) {
@@ -93,7 +96,7 @@ public class HoldInfo implements Serializable {
     }
 
     public String getShort_qty() {
-        return short_qty;
+        return  StringUtil.formatDoubleStr(short_qty);
     }
 
     public void setShort_qty(String short_qty) {
@@ -101,7 +104,7 @@ public class HoldInfo implements Serializable {
     }
 
     public String getShort_avail_qty() {
-        return short_avail_qty;
+        return  StringUtil.formatDoubleStr(short_avail_qty);
     }
 
     public void setShort_avail_qty(String short_avail_qty) {
@@ -109,7 +112,7 @@ public class HoldInfo implements Serializable {
     }
 
     public String getShort_avg_cost() {
-        return short_avg_cost;
+        return  StringUtil.formatDoubleStr(short_avg_cost);
     }
 
     public void setShort_avg_cost(String short_avg_cost) {
@@ -117,7 +120,7 @@ public class HoldInfo implements Serializable {
     }
 
     public String getShort_settlement_price() {
-        return short_settlement_price;
+        return  StringUtil.formatDoubleStr(short_settlement_price);
     }
 
     public void setShort_settlement_price(String short_settlement_price) {
@@ -165,7 +168,7 @@ public class HoldInfo implements Serializable {
     }
 
     public String getShort_pnl() {
-        return short_pnl;
+        return  StringUtil.formatDoubleStr(short_pnl);
     }
 
     public void setShort_pnl(String short_pnl) {
@@ -173,7 +176,7 @@ public class HoldInfo implements Serializable {
     }
 
     public String getShort_pnl_ratio() {
-        return short_pnl_ratio;
+        return  StringUtil.formatDoubleStr(short_pnl_ratio);
     }
 
     public void setShort_pnl_ratio(String short_pnl_ratio) {
@@ -181,7 +184,7 @@ public class HoldInfo implements Serializable {
     }
 
     public String getShort_unrealised_pnl() {
-        return short_unrealised_pnl;
+        return  StringUtil.formatDoubleStr(short_unrealised_pnl);
     }
 
     public void setShort_unrealised_pnl(String short_unrealised_pnl) {
@@ -189,7 +192,7 @@ public class HoldInfo implements Serializable {
     }
 
     public String getLong_margin() {
-        return long_margin;
+        return StringUtil.formatDoubleStr(long_margin);
     }
 
     public void setLong_margin(String long_margin) {
@@ -197,7 +200,7 @@ public class HoldInfo implements Serializable {
     }
 
     public String getLong_pnl() {
-        return long_pnl;
+        return  StringUtil.formatDoubleStr(long_pnl);
     }
 
     public void setLong_pnl(String long_pnl) {
@@ -205,7 +208,7 @@ public class HoldInfo implements Serializable {
     }
 
     public String getLong_pnl_ratio() {
-        return long_pnl_ratio;
+        return  StringUtil.formatDoubleStr(long_pnl_ratio);
     }
 
     public void setLong_pnl_ratio(String long_pnl_ratio) {
@@ -213,7 +216,7 @@ public class HoldInfo implements Serializable {
     }
 
     public String getLong_unrealised_pnl() {
-        return long_unrealised_pnl;
+        return  StringUtil.formatDoubleStr(long_unrealised_pnl);
     }
 
     public void setLong_unrealised_pnl(String long_unrealised_pnl) {

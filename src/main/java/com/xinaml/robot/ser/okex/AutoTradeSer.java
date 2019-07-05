@@ -87,9 +87,9 @@ public interface AutoTradeSer {
     /**
      * 获取持仓信息
      *
-     * @param user
+     * @param conf
      */
-    default HoldInfo getHoldInfo(User user) {
+    default HoldInfo getHoldInfo(UserConf conf) {
         return null;
     }
 }

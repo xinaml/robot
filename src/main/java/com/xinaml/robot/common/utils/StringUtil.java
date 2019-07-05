@@ -75,4 +75,28 @@ public final class StringUtil {
         }
 
     }
+
+    /**
+     * 去掉科学计数法
+     * @param val
+     * @return
+     */
+    public static String formatDoubleStr(String val) {
+        if(StringUtils.isBlank(val)){
+            return "";
+        }
+        try {
+            double d= new BigDecimal(val).setScale(5, BigDecimal.ROUND_HALF_UP).doubleValue();
+            NumberFormat nf = NumberFormat.getInstance();
+            //设置保留多少位小数
+            nf.setMaximumFractionDigits(20);
+            // 取消科学计数法
+            nf.setGroupingUsed(false);
+            //返回结果
+            return nf.format(d);
+        } catch (Exception e) {
+            return val;
+        }
+
+    }
 }

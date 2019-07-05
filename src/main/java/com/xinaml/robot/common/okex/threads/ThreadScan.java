@@ -73,7 +73,7 @@ public class ThreadScan {
                     e.printStackTrace();
                 }
             }
-        }, 0, 300); //每10秒查询一次
+        }, 0, 100); //每100毫秒查询一次
         TaskSession.put(userId, timer);
     }
 }

@@ -12,7 +12,6 @@ import com.xinaml.robot.common.utils.MailUtil;
 import com.xinaml.robot.common.utils.StringUtil;
 import com.xinaml.robot.common.webscoket.WebSocketServer;
 import com.xinaml.robot.entity.order.Order;
-import com.xinaml.robot.entity.user.User;
 import com.xinaml.robot.entity.user.UserConf;
 import com.xinaml.robot.ser.order.OrderSer;
 import com.xinaml.robot.vo.user.*;
@@ -80,7 +79,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
      * 检测是否可以卖出
      *
      * @param conf
-     * @param last
+     * @param last 最新成交价
      */
     private void checkSell(UserConf conf, Double last) {
         List<Order> orders = orderSer.findBuySuccess(conf.getUser().getId());
@@ -96,20 +95,72 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                     order.setSellDate(LocalDateTime.now());//设置卖出时间
                     orderSer.update(order);
                 }
+                OrderInfo orderInfo = getOrderInfo(conf, order.getOrderId());
+                if (null != orderInfo && orderInfo.getState() == "2") {//线上已经卖出了
+                    orderSer.remove(order);
+                } else if (null == orderInfo) {//找不到订单
+                    orderSer.remove(order);
+                }
             }
-            double loss = (buy - last) / buy;
-//            if (conf.getLoss() > loss) { //止损卖出
-//                Order sOrder = commitSellOrder(conf);//卖出
-//                if (sOrder != null && sOrder.getErrorCode().equals("0")) {
-//                    order.setProfit(StringUtil.formatDouble(last - Double.parseDouble(order.getPrice())));//设置盈利
-//                    order.setSellId(sOrder.getId());//设置卖出id
-//                    orderSer.update(order);
-//                }
-//            }
+        }
+        handleLoss(conf, orders, last);//止损
+    }
+
+    /**
+     * 止损
+     *
+     * @param conf
+     * @param orders
+     * @param last   最新成交价
+     */
+    private void handleLoss(UserConf conf, List<Order> orders, Double last) {
+        HoldInfo info = getHoldInfo(conf);
+        if (StringUtils.isNotBlank(info.getLong_pnl_ratio()) && StringUtils.isNotBlank(info.getLeverage())) {
+            double profit = Double.parseDouble(info.getLong_pnl_ratio()) * Double.parseDouble(info.getLeverage()); //负数为亏损
+            profit = Math.abs(profit);
+            double loss = conf.getLoss();
+            if (0 > profit && loss > profit) { //如果设定的损值大于实际的损值,profit少于0的时候就是亏损了
+                if (StringUtils.isNotBlank(info.getLong_avail_qty())) {//获取平仓数
+                    conf.setCount(Integer.parseInt(info.getLong_avail_qty()));
+                    commitSellOrder(conf);//全部卖出
+                    Order[] list = new Order[orders.size()];
+                    int index = 0;
+                    for (Order order : orders) {
+                        list[index++] = order;
+                    }
+                    orderSer.remove(list);
+                    String email = conf.getUser().getEmail();
+                    if (StringUtils.isNotBlank(email)) {
+                        String msg = DateUtil.dateToString(LocalDateTime.now()) + " 已全部平仓卖出！" + "卖出张数为：" + conf.getCount();
+                        MailUtil.send(email, "亏损率达到设定值"+loss+",平仓卖出！", msg);
+                    }
+                }
+            }
+        }
+        //卖出价>最新价
+        if (StringUtils.isNotBlank(info.getLong_avg_cost())) {//开仓平均价不为空
+            Double sellPrice = Double.parseDouble(info.getLong_avg_cost()) * conf.getSelfMultiple();//卖出价=开仓平均价*卖出倍率
+            if (sellPrice >= last) { //当前价>=最新价
+                if(StringUtils.isNotBlank(info.getLong_avail_qty())){
+                    conf.setCount(Integer.parseInt(info.getLong_avail_qty()));//获取平仓数
+                    commitSellOrder(conf);//全部卖出
+                    Order[] list = new Order[orders.size()];
+                    int oIndex = 0;
+                    for (Order order : orders) {
+                        list[oIndex++] = order;
+                    }
+                    orderSer.remove(list);
+                    String email = conf.getUser().getEmail();
+                    if (StringUtils.isNotBlank(email)) {
+                        String msg = DateUtil.dateToString(LocalDateTime.now()) + " 已全部平仓卖出！" + "卖出张数为：" + conf.getCount();
+                        MailUtil.send(email, "当前价达到卖出价，平仓卖出!", msg);
+                    }
+                }
+
+            }
         }
 
     }
-
 
     /**
      * 卖出，下单
@@ -147,20 +198,16 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                     } else {
                         order.setStatus(1);
                     }
-                    orderSer.save(order);
-                } else if (null == info) {
-                    orderSer.remove(order);//没有订单信息直接删除
                 }
-                if (info.getState().equals("2")) {//卖出成功
+                orderSer.save(order);
+                if (info.getState().equals("2")) {//卖出成功,发送邮件
                     String email = conf.getUser().getEmail();
                     if (StringUtils.isNotBlank(email)) {
                         String msg = DateUtil.dateToString(LocalDateTime.now()) + " 卖出下单成功！" + "单号id为：" + oc.getOrder_id();
                         MailUtil.send(email, "卖出下单成功！", msg);
                     }
-                    return order;
                 }
-
-
+                return order;
             }
 
         } else {
@@ -204,19 +251,8 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                     } else {
                         order.setStatus(1);
                     }
-                    orderSer.save(order);
-                } else if (null == info) {
-                    orderSer.remove(order);//没有订单信息直接删除
                 }
-                if (info.getState().equals("2")) {//成功的
-                    String email = conf.getUser().getEmail();
-                    if (StringUtils.isNotBlank(email)) {
-                        String msg = DateUtil.dateToString(LocalDateTime.now()) + " 买入下单成功！" + "单号id为：" + oc.getOrder_id();
-                        MailUtil.send(email, "买入下单成功！", msg);
-                    }
-                    return order;
-                }
-
+                orderSer.save(order);
             }
         } else {
             LOG.warn(conf.getUser().getUsername() + "买入下单失败:" + rs);//下单失败
@@ -343,14 +379,14 @@ public class AutoTradeSerImpl implements AutoTradeSer {
     /**
      * 获取持仓信息
      *
-     * @param user
+     * @param conf
      */
-    public HoldInfo getHoldInfo(User user) {
+    public HoldInfo getHoldInfo(UserConf conf) {
         try {
-            String rs = Client.httpGet(UrlConst.HOLD_INFO, user);
+            String rs = Client.httpGet(UrlConst.HOLD_INFO + conf.getInstrumentId() + "/position", conf.getUser());
             JSONObject ob = JSON.parseObject(rs);
             JSONArray array = (JSONArray) ob.get("holding");
-            List<HoldInfo> list = array.getJSONArray(0).toJavaList(HoldInfo.class);
+            List<HoldInfo> list = array.toJavaList(HoldInfo.class);
             return list.get(0);
         } catch (Exception e) {
             return new HoldInfo();

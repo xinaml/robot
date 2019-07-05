@@ -32,12 +32,13 @@ public class HoldAct extends BaseAct {
     @GetMapping("hold/info")
     public Result getInfo() {
         User user = UserUtil.getUser();
-        if (null == user) {
-            return new ActResult(new HoldInfo());
-        } else {
-            return new ActResult(autoTradeSer.getHoldInfo(user));
+        if (null != user) {
+            String rs = redisRep.get(user.getId() + "conf");
+            if (null != rs) {
+                return new ActResult(autoTradeSer.getHoldInfo(JSON.parseObject(rs, UserConf.class)));
+            }
         }
-
+       return new ActResult(new HoldInfo());
     }
 
     @GetMapping("kline")
