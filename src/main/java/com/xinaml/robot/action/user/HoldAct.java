@@ -5,6 +5,7 @@ import com.xinaml.robot.base.atction.BaseAct;
 import com.xinaml.robot.base.rep.RedisRep;
 import com.xinaml.robot.common.custom.result.ActResult;
 import com.xinaml.robot.common.custom.result.Result;
+import com.xinaml.robot.common.utils.DateUtil;
 import com.xinaml.robot.common.utils.UserUtil;
 import com.xinaml.robot.entity.user.User;
 import com.xinaml.robot.entity.user.UserConf;
@@ -38,7 +39,7 @@ public class HoldAct extends BaseAct {
                 return new ActResult(autoTradeSer.getHoldInfo(JSON.parseObject(rs, UserConf.class)));
             }
         }
-       return new ActResult(new HoldInfo());
+        return new ActResult(new HoldInfo());
     }
 
     @GetMapping("kline")
@@ -47,9 +48,21 @@ public class HoldAct extends BaseAct {
         if (null != user) {
             String rs = redisRep.get(user.getId() + "conf");
             if (null != rs) {
-                return new ActResult(autoTradeSer.getLine(JSON.parseObject(rs, UserConf.class)));
+                KLine kLine = autoTradeSer.getLine(JSON.parseObject(rs, UserConf.class));
+                String time = kLine.getTimestamp();
+                time = time.substring(0, 19).replace("T", " ");
+                time = DateUtil.parseDateTime(time).plusHours(8).toString().replace("T", " ");
+                kLine.setTimestamp(time);
+
             }
         }
         return new ActResult(new KLine());
+    }
+
+    public static void main(String[] args) {
+        String time = "2019-07-05T10:00:00.000Z";
+        time = time.substring(0, 19).replace("T", " ");
+        System.out.println();
+
     }
 }
