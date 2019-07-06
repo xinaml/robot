@@ -8,6 +8,7 @@ import com.xinaml.robot.entity.user.UserConf;
 import com.xinaml.robot.vo.user.KLine;
 
 import static com.xinaml.robot.common.constant.UrlConst.K_LINE;
+import static com.xinaml.robot.common.constant.UrlConst.ORDER_INFO;
 
 /**
  * @Author: [lgq]
@@ -18,35 +19,11 @@ import static com.xinaml.robot.common.constant.UrlConst.K_LINE;
  */
 public class Test {
     public static void main(String[] args) {
-        out();
+        String url = ORDER_INFO + "/" + "BTC-USD-190927" + "/" + "3122772559674369";
+        String rs = Client.httpGet(url, null);
+        System.out.println(rs);
     }
-    private static void out(){
-        UserConf conf = new UserConf();
-        int s = 60* 60;
-        conf.setSeconds(s);
-        String start = conf.getStartDate();
-        String end = conf.getEndDate();
-        String kLineUrl = K_LINE + "/" + "BTC-USD-190927" + "/candles?" + start + "&end=" + end + "&granularity=" + s;
-        String rs = Client.httpGet(kLineUrl, null);
-        System.out.println(start);
-        System.out.println(end);
-        if (null != rs && rs.length() > 5) {
-            JSONArray array = JSON.parseArray(rs);
-            for (Object o : array.toArray()) {
-                JSONArray list = (JSONArray) o;
-                KLine kLine = new KLine();
-                kLine.setTimestamp(list.getString(0));
-                kLine.setOpen(list.getDouble(1));
-                kLine.setHigh(list.getDouble(2));
-                kLine.setLow(list.getDouble(3));
-                kLine.setClose(list.getDouble(4));
-                kLine.setVolume(list.getDouble(5));
-                kLine.setCurrencyVolume(list.getDouble(6));
-                System.out.println(JSON.toJSONString(kLine));
-                break;
-            }
-        }
-    }
+
 
 
 }

@@ -116,8 +116,8 @@ public class AutoTradeSerImpl implements AutoTradeSer {
      */
     private void handleLoss(UserConf conf, List<Order> orders, Double last) {
         HoldInfo info = getHoldInfo(conf);
-        if (StringUtils.isNotBlank(info.getLong_pnl_ratio()) && StringUtils.isNotBlank(info.getLeverage())) {
-            double profit = Double.parseDouble(info.getLong_pnl_ratio()) * Double.parseDouble(info.getLeverage()); //负数为亏损
+        if (StringUtils.isNotBlank(info.getLong_pnl())) {//多仓收益
+            double profit = Double.parseDouble(info.getLong_pnl()); //负数为亏损
             profit = Math.abs(profit);
             double loss = conf.getLoss();
             if (0 > profit && loss > profit) { //如果设定的损值大于实际的损值,profit少于0的时候就是亏损了
