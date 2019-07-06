@@ -44,21 +44,25 @@ public class MailUtil {
             } catch (Exception e) {
                 LOG.error(e.getMessage());
             }
-        }else {
-            LOG.error("邮件发送失败：mail="+mail+", subject="+subject+", content="+content);
+        } else {
+            LOG.error("邮件发送失败：mail=" + mail + ", subject=" + subject + ", content=" + content);
         }
     }
+
     private static Session getSession() {
         Properties prop = new Properties();
         prop.setProperty("mail.transport.protocol", "smtp");
         prop.setProperty("mail.smtp.host", SMTP_HOST);
-        prop.setProperty("mail.smtp.auth", "true");
+        prop.setProperty("mail.smtp.port", "465");
+        prop.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        prop.setProperty("mail.smtp.socketFactory.fallback", "false");
+        prop.setProperty("mail.smtp.socketFactory.port", "465");
         Session session = Session.getInstance(prop);
         return session;
     }
 
     public static void main(String[] args) throws Exception {
-        MailUtil.send("xinaml@qq.com","今天回家吃饭好吗","写代码没出息的！");
+        MailUtil.send("444758393@qq.com", "这是一个问题哦", "写代码没出息的，你看看吧！");
     }
 
 }

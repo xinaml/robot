@@ -185,8 +185,9 @@
         </div>
         <br>
         <div class="input-group">
-            <span class="input-group-text">只等待卖出</span>&nbsp;<p style="color: gray">不买入，仅卖出。</p>
+            <span class="input-group-text">只等待卖出</span>
                 <input id="onlySell" name="onlySell" value="true" type="checkbox" onchange="changeOnly()"  style="margin-left: 10px;width: 40px;height:40px">
+            &nbsp;<p style="color: gray">不买入，仅卖出。</p>
         </div>
 
     </form>
@@ -214,11 +215,11 @@
             success: function (rs) {
                 if (rs.code == 0) {
                     if (rs.data != null) {
-                        $("#time").find("option:contains('" + rs.data.time + "')").attr("selected", true);
+                        $("#time option[value='"+rs.data.time+"']").attr("selected",true);
                         $("#account").val(rs.data.account)
                         $("#count").val(rs.data.count)
                         $("#contract").val(rs.data.contract)
-                        $("#type").find("option:contains('" + rs.data.type + "')").attr("selected", true);
+                        $("#type option[value='"+rs.data.type+"']").attr("selected",true);
                         $("#buyMultiple").val(rs.data.buyMultiple)
                         $("#selfMultiple").val(rs.data.selfMultiple)
                         $("#leverage").val(rs.data.leverage)

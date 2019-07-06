@@ -133,7 +133,8 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                         orderSer.remove(list);
                         String email = conf.getUser().getEmail();
                         if (StringUtils.isNotBlank(email)) {
-                            String msg = DateUtil.dateToString(LocalDateTime.now()) + " 已全部平仓卖出！" + "卖出张数为：" + conf.getCount();
+                            String msg = DateUtil.dateToString(LocalDateTime.now()) + "亏损率达到设定值， 已全部平仓卖出！" + "卖出张数为：" + conf.getCount();
+                            LOG.info(msg);
                             MailUtil.send(email, "亏损率达到设定值"+loss+",平仓卖出！", msg);
                         }
                     }
@@ -144,7 +145,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
         //卖出价>最新价
         if (StringUtils.isNotBlank(info.getLong_avg_cost())) {//开仓平均价不为空
             Double sellPrice = Double.parseDouble(info.getLong_avg_cost()) * conf.getSelfMultiple();//卖出价=开仓平均价*卖出倍率
-            if (sellPrice >= last) { //当前价>=最新价
+            if (sellPrice > last && 0>1) { //当前价>=最新价
                 if(StringUtils.isNotBlank(info.getLong_avail_qty())){
                     Integer count = Integer.parseInt(info.getLong_avail_qty());
                     if(count>0){
@@ -158,7 +159,8 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                         orderSer.remove(list);
                         String email = conf.getUser().getEmail();
                         if (StringUtils.isNotBlank(email)) {
-                            String msg = DateUtil.dateToString(LocalDateTime.now()) + " 已全部平仓卖出！" + "卖出张数为：" + conf.getCount();
+                            String msg = DateUtil.dateToString(LocalDateTime.now()) + "当前价达到卖出价， 已全部平仓卖出！" + "卖出张数为：" + conf.getCount();
+                            LOG.info(msg);
                             MailUtil.send(email, "当前价达到卖出价，平仓卖出!", msg);
                         }
                     }
