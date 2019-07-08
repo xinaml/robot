@@ -1,10 +1,7 @@
 package com.xinaml.robot.common.webscoket;
 
-import com.xinaml.robot.entity.user.UserConf;
-import com.xinaml.robot.ser.user.UserConfSer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
@@ -27,8 +24,6 @@ public class WebSocketServer {
     static Logger LOG = LoggerFactory.getLogger(WebSocketServer.class);
     private static int onlineCount = 0;
     private static ConcurrentHashMap<String, Session> webSocketMap = new ConcurrentHashMap();
-    @Autowired
-    private UserConfSer userConfSer;
 
     //接收sid
     private String userId = "";
@@ -43,10 +38,6 @@ public class WebSocketServer {
         LOG.info("有新窗口开始监听:" + userId + ",当前在线人数为" + getOnlineCount());
         this.userId = userId;
         sendMessage(userId, "连接成功");
-        UserConf conf = userConfSer.findByUserId(userId);
-        if(null!=conf && conf.getUser().getStop()==true){
-            sendMessage(userId, "自动交易尚未开启！");
-        }
 
     }
 
@@ -87,9 +78,9 @@ public class WebSocketServer {
      */
     public static void sendMessage(String userId, String message) {
         try {
-            Session session =webSocketMap.get(userId);
-            if(null!=session){
-                if(session.isOpen()){
+            Session session = webSocketMap.get(userId);
+            if (null != session) {
+                if (session.isOpen()) {
                     session.getBasicRemote().sendText(message);
                 }
             }

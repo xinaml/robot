@@ -118,7 +118,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
         HoldInfo info = getHoldInfo(conf);
         Integer count = StringUtils.isNotBlank(info.getLong_avail_qty()) ? Integer.parseInt(info.getLong_avail_qty()) : 0;//剩余张数
         if (StringUtils.isNotBlank(info.getLong_pnl())) {//多仓收益
-            double profit = Double.parseDouble(info.getLong_pnl()); //负数为亏损
+            double profit = Double.parseDouble(info.getLong_pnl_ratio()) * 100; //负数为亏损,多仓收益率
             profit = Math.abs(profit);
             double loss = conf.getLoss();
             if (0 > profit && loss > profit) { //如果设定的损值大于实际的损值,profit少于0的时候就是亏损了
@@ -167,7 +167,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
         }
         //多仓收益,达到设置阀，全部卖出
         if (StringUtils.isNotBlank(info.getLong_pnl())) {//多仓收益
-            double profit = Double.parseDouble(info.getLong_pnl()); //负数为亏损
+            double profit = Double.parseDouble(info.getLong_pnl_ratio()) * 100; //多仓收益率,负数为亏损
             if (null != conf.getProfit() && profit >= conf.getProfit()) {//多仓收益达到设置阀，全部卖出
                 if (count > 0) {
                     conf.setCount(count);//获取平仓数
@@ -187,7 +187,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 }
             }
         }
-        if(count==0){//平台上没有张数了。删除本地未完成订单
+        if (count == 0) {//平台上没有张数了。删除本地未完成订单
             Order[] list = new Order[orders.size()];
             int oIndex = 0;
             for (Order order : orders) {

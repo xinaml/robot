@@ -144,7 +144,7 @@
                             $("#short_pnl").text(rs.data.short_pnl)
                             $("#long_margin").text(rs.data.long_margin)
                             $("#long_pnl").text(rs.data.long_pnl)
-                            $("#long_pnl_ratio").text(rs.data.long_pnl_ratio)
+                            $("#long_pnl_ratio").text( (rs.data.long_pnl_ratio*100).toFixed(2)+"%")
                             $("#long_unrealised_pnl").text(rs.data.long_unrealised_pnl)
                         }
                     } else {

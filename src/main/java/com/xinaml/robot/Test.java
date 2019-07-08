@@ -2,10 +2,15 @@ package com.xinaml.robot;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.xinaml.robot.common.constant.UrlConst;
 import com.xinaml.robot.common.okex.Client;
 import com.xinaml.robot.common.okex.utils.DateUtils;
 import com.xinaml.robot.entity.user.UserConf;
+import com.xinaml.robot.vo.user.HoldInfo;
 import com.xinaml.robot.vo.user.KLine;
+
+import java.util.List;
 
 import static com.xinaml.robot.common.constant.UrlConst.K_LINE;
 import static com.xinaml.robot.common.constant.UrlConst.ORDER_INFO;
@@ -19,9 +24,11 @@ import static com.xinaml.robot.common.constant.UrlConst.ORDER_INFO;
  */
 public class Test {
     public static void main(String[] args) {
-        String url = ORDER_INFO + "/" + "BTC-USD-190927" + "/" + "3122772559674369";
-        String rs = Client.httpGet(url, null);
-        System.out.println(rs);
+        String rs = Client.httpGet(UrlConst.HOLD_INFO + "BTC-USD-190927" + "/position",null);
+        JSONObject ob = JSON.parseObject(rs);
+        JSONArray array = (JSONArray) ob.get("holding");
+        List<HoldInfo> list = array.toJavaList(HoldInfo.class);
+        System.out.println(JSON.toJSONString(list));
     }
 
 
