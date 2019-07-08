@@ -65,6 +65,8 @@ public class UserConf extends BaseEntity {
 
     @Column(columnDefinition = " DECIMAL(10,5) COMMENT '亏损多少卖出'")
     private Double loss=0.1;//亏损多少卖出
+     @Column(columnDefinition = " DECIMAL(10,5) COMMENT '收益达到多少全部卖出'")
+    private Double profit=20.0;//收益达到多少全部卖出
 
     @Transient
     private Integer seconds=60;//秒
@@ -205,5 +207,13 @@ public class UserConf extends BaseEntity {
 
     public void setLoss(Double loss) {
         this.loss = loss;
+    }
+
+    public Double getProfit() {
+        return profit;
+    }
+
+    public void setProfit(Double profit) {
+        this.profit = profit;
     }
 }

@@ -229,7 +229,16 @@
             </div>
             <input type="text" class="form-control" placeholder="亏损多少卖出" name="loss" id="loss"
                    onkeyup="if(isNaN(value))execCommand('undo')" onafterpaste="if(isNaN(value))execCommand('undo')">
-            <span class="input-group-text">%</span>  &nbsp;<p style="color: gray">如：亏损-50%卖出,填50</p>
+            <span class="input-group-text">%</span>  &nbsp;<p style="color: gray">如：亏损达到-50%卖出,填50</p>
+        </div>
+        <br>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">收益多少卖出</span>
+            </div>
+            <input type="text" class="form-control" placeholder="亏损多少卖出" name="profit" id="profit"
+                   onkeyup="if(isNaN(value))execCommand('undo')" onafterpaste="if(isNaN(value))execCommand('undo')">
+            <span class="input-group-text">%</span>  &nbsp;<p style="color: gray">如：收益达到20%全部卖出,填20</p>
         </div>
         <br>
         <div class="input-group">
@@ -273,6 +282,7 @@
                         $("#onlySell").attr('checked',rs.data.onlySell)
                         $("#onlySell").val(rs.data.onlySell)
                         $("#loss").val(rs.data.loss)
+                        $("#profit").val(rs.data.profit)
 
                     }
                 } else {

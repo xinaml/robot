@@ -116,58 +116,84 @@ public class AutoTradeSerImpl implements AutoTradeSer {
      */
     private void handleLoss(UserConf conf, List<Order> orders, Double last) {
         HoldInfo info = getHoldInfo(conf);
+        Integer count = StringUtils.isNotBlank(info.getLong_avail_qty()) ? Integer.parseInt(info.getLong_avail_qty()) : 0;//剩余张数
         if (StringUtils.isNotBlank(info.getLong_pnl())) {//多仓收益
             double profit = Double.parseDouble(info.getLong_pnl()); //负数为亏损
             profit = Math.abs(profit);
             double loss = conf.getLoss();
             if (0 > profit && loss > profit) { //如果设定的损值大于实际的损值,profit少于0的时候就是亏损了
-                if (StringUtils.isNotBlank(info.getLong_avail_qty())) {//获取平仓数
-                    if(Integer.parseInt(info.getLong_avail_qty())>0){
-                        conf.setCount(Integer.parseInt(info.getLong_avail_qty()));
-                        commitSellOrder(conf);//全部卖出
-                        Order[] list = new Order[orders.size()];
-                        int index = 0;
-                        for (Order order : orders) {
-                            list[index++] = order;
-                        }
-                        orderSer.remove(list);
-                        String email = conf.getUser().getEmail();
-                        if (StringUtils.isNotBlank(email)) {
-                            String msg = DateUtil.dateToString(LocalDateTime.now()) + "亏损率达到设定值， 已全部平仓卖出！" + "卖出张数为：" + conf.getCount();
-                            LOG.info(msg);
-                            MailUtil.send(email, "亏损率达到设定值"+loss+",平仓卖出！", msg);
-                        }
+                if (count > 0) {
+                    conf.setCount(Integer.parseInt(info.getLong_avail_qty()));
+                    commitSellOrder(conf);//全部卖出
+                    Order[] list = new Order[orders.size()];
+                    int index = 0;
+                    for (Order order : orders) {
+                        list[index++] = order;
                     }
-
+                    orderSer.remove(list);
+                    String email = conf.getUser().getEmail();
+                    if (StringUtils.isNotBlank(email)) {
+                        String msg = DateUtil.dateToString(LocalDateTime.now()) + "亏损率达到设定值， 已全部平仓卖出！" + "卖出张数为：" + conf.getCount();
+                        LOG.info(msg);
+                        MailUtil.send(email, "亏损率达到设定值" + loss + ",平仓卖出！", msg);
+                    }
                 }
+
             }
         }
         //卖出价>最新价
         if (StringUtils.isNotBlank(info.getLong_avg_cost())) {//开仓平均价不为空
             Double sellPrice = Double.parseDouble(info.getLong_avg_cost()) * conf.getSelfMultiple();//卖出价=开仓平均价*卖出倍率
-            if (sellPrice > last && 0>1) { //当前价>=最新价
-                if(StringUtils.isNotBlank(info.getLong_avail_qty())){
-                    Integer count = Integer.parseInt(info.getLong_avail_qty());
-                    if(count>0){
-                        conf.setCount(count);//获取平仓数
-                        commitSellOrder(conf);//全部卖出
-                        Order[] list = new Order[orders.size()];
-                        int oIndex = 0;
-                        for (Order order : orders) {
-                            list[oIndex++] = order;
-                        }
-                        orderSer.remove(list);
-                        String email = conf.getUser().getEmail();
-                        if (StringUtils.isNotBlank(email)) {
-                            String msg = DateUtil.dateToString(LocalDateTime.now()) + "当前价达到卖出价， 已全部平仓卖出！" + "卖出张数为：" + conf.getCount();
-                            LOG.info(msg);
-                            MailUtil.send(email, "当前价达到卖出价，平仓卖出!", msg);
-                        }
+            if (sellPrice > last && 0 > 1) { //当前价>=最新价
+                if (count > 0) {
+                    conf.setCount(count);//获取平仓数
+                    commitSellOrder(conf);//全部卖出
+                    Order[] list = new Order[orders.size()];
+                    int oIndex = 0;
+                    for (Order order : orders) {
+                        list[oIndex++] = order;
                     }
-
+                    orderSer.remove(list);
+                    String email = conf.getUser().getEmail();
+                    if (StringUtils.isNotBlank(email)) {
+                        String msg = DateUtil.dateToString(LocalDateTime.now()) + "当前价达到卖出价， 已全部平仓卖出！" + "卖出张数为：" + conf.getCount();
+                        LOG.info(msg);
+                        MailUtil.send(email, "当前价达到卖出价，平仓卖出!", msg);
+                    }
                 }
 
             }
+
+        }
+        //多仓收益,达到设置阀，全部卖出
+        if (StringUtils.isNotBlank(info.getLong_pnl())) {//多仓收益
+            double profit = Double.parseDouble(info.getLong_pnl()); //负数为亏损
+            if (null != conf.getProfit() && profit >= conf.getProfit()) {//多仓收益达到设置阀，全部卖出
+                if (count > 0) {
+                    conf.setCount(count);//获取平仓数
+                    commitSellOrder(conf);//全部卖出
+                    Order[] list = new Order[orders.size()];
+                    int oIndex = 0;
+                    for (Order order : orders) {
+                        list[oIndex++] = order;
+                    }
+                    orderSer.remove(list);
+                    String email = conf.getUser().getEmail();
+                    if (StringUtils.isNotBlank(email)) {
+                        String msg = DateUtil.dateToString(LocalDateTime.now()) + "收益率达到" + profit + "， 已全部平仓卖出！" + "卖出张数为：" + conf.getCount();
+                        LOG.info(msg);
+                        MailUtil.send(email, "收益率达到" + profit + "平仓卖出!", msg);
+                    }
+                }
+            }
+        }
+        if(count==0){//平台上没有张数了。删除本地未完成订单
+            Order[] list = new Order[orders.size()];
+            int oIndex = 0;
+            for (Order order : orders) {
+                list[oIndex++] = order;
+            }
+            orderSer.remove(list);
         }
 
     }

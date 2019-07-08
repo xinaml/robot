@@ -19,7 +19,7 @@ public class AccountSerImpl implements AccountSer {
     @Override
     public AccountInfo info(UserConf conf) {
         String rs = Client.httpGet(UrlConst.ACCOUNT_INFO, conf.getUser());
-        if (rs.indexOf("unrealized_pnl") != -1) {
+        if (null!=rs && rs.indexOf("unrealized_pnl") != -1) {
             AccountInfo info = JSON.parseObject(rs, AccountInfo.class);
             return info;
         }

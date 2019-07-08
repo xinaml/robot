@@ -35,7 +35,10 @@ public class UserConfTO {
     @Range(max = 100, min = 1, message = "杠杆倍数:1-100")
     @NotNull(groups = {ADD.class}, message = "请填写杠杆倍数！")
     private Integer leverage;//杠杆倍数
+    @NotNull(groups = {ADD.class}, message = "请填写亏损率值！")
     private Double loss;//亏损多少卖出
+    @NotNull(groups = {ADD.class}, message = "请填写收益率值！")
+    private Double profit;//收益达到多少卖出
     private Boolean onlySell=false;
 
 
@@ -133,5 +136,13 @@ public class UserConfTO {
 
     public void setLoss(Double loss) {
         this.loss = loss;
+    }
+
+    public Double getProfit() {
+        return profit;
+    }
+
+    public void setProfit(Double profit) {
+        this.profit = profit;
     }
 }
