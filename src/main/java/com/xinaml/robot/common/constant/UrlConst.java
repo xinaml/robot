@@ -9,7 +9,7 @@ package com.xinaml.robot.common.constant;
  */
 public class UrlConst {
 
-    public static  final String ACCOUNT_INFO="/api/account/v3/wallet";
+    public static  final String ACCOUNT_INFO="/api/futures/v3/accounts/btc";
     /**
      * k线
      */
