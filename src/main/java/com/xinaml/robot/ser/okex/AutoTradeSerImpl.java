@@ -62,7 +62,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 String time = PriceSession.get(userId);//上次成交价
                 if (null == time || !(line.getTimestamp()).equals(time)) {
                     if (!conf.getOnlySell()) {//如果非只卖出，可以继续下单
-                        commitBuyOrder(conf, buy + ""); //提交订单
+                        commitBuyOrder(conf, buy + "",conf.getCount()); //提交订单
                     }
                     PriceSession.put(userId, line.getTimestamp());
                 }
@@ -89,7 +89,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
             double buy = Double.parseDouble(order.getPrice());
             double sell = buy * conf.getSelfMultiple();////卖出价=买入价*卖出价倍率
             if (last >= sell && count == 1) { //如果张数为1时才卖出，张树大于等于2时，看整体收益率卖出
-                Order sOrder = commitSellOrder(conf);//卖出
+                Order sOrder = commitSellOrder(conf,conf.getCount());//卖出
                 if (sOrder != null && sOrder.getStatus() == 2) {
                     order.setProfit(StringUtil.formatDouble(last - Double.parseDouble(order.getPrice())));//设置盈利
                     order.setSellId(sOrder.getId());//设置卖出id
@@ -125,8 +125,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
             double loss = conf.getLoss();
             if (0 > profit && loss > profit) { //如果设定的损值大于实际的损值,profit少于0的时候就是亏损了
                 if (count > 0) {
-                    conf.setCount(Integer.parseInt(info.getLong_avail_qty()));
-                    commitSellOrder(conf);//全部卖出
+                    commitSellOrder(conf,count);//全部卖出
                     Order[] list = new Order[orders.size()];
                     int index = 0;
                     for (Order order : orders) {
@@ -148,8 +147,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
             Double sellPrice = Double.parseDouble(info.getLong_avg_cost()) * conf.getSelfMultiple();//卖出价=开仓平均价*卖出倍率
             if (sellPrice > last && 0 > 1) { //当前价>=最新价
                 if (count > 0) {
-                    conf.setCount(count);//获取平仓数
-                    commitSellOrder(conf);//全部卖出
+                    commitSellOrder(conf,count);//全部卖出
                     Order[] list = new Order[orders.size()];
                     int oIndex = 0;
                     for (Order order : orders) {
@@ -172,8 +170,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
             double profit = Double.parseDouble(info.getLong_pnl_ratio()) * 100; //多仓收益率,负数为亏损
             if (null != conf.getProfit() && profit >= conf.getProfit()) {//多仓收益达到设置阀，全部卖出
                 if (count > 0) {
-                    conf.setCount(count);//获取平仓数
-                    commitSellOrder(conf);//全部卖出
+                    commitSellOrder(conf,count);//全部卖出
                     Order[] list = new Order[orders.size()];
                     int oIndex = 0;
                     for (Order order : orders) {
@@ -207,11 +204,11 @@ public class AutoTradeSerImpl implements AutoTradeSer {
      * @return
      */
     @Override
-    public Order commitSellOrder(UserConf conf) {
+    public Order commitSellOrder(UserConf conf,Integer size) {
         String url = COMMIT_ORDER;
         OrderVO orderVO = new OrderVO();
         orderVO.setInstrument_id(conf.getInstrumentId());//合约id
-        orderVO.setSize(conf.getCount() + "");//每次开张数
+        orderVO.setSize(size+"");//每次开张数
         orderVO.setType("3");
         orderVO.setMatch_price("1");
         orderVO.setLeverage(conf.getLeverage() + "");
@@ -259,11 +256,12 @@ public class AutoTradeSerImpl implements AutoTradeSer {
      *
      * @param conf
      */
-    public Order commitBuyOrder(UserConf conf, String buy) {
+    @Override
+    public Order commitBuyOrder(UserConf conf, String buy,Integer size) {
         String url = COMMIT_ORDER;
         OrderVO orderVO = new OrderVO();
         orderVO.setInstrument_id(conf.getInstrumentId());//合约id
-        orderVO.setSize(conf.getCount() + "");//每次开张数
+        orderVO.setSize(size + "");//每次开张数
         orderVO.setPrice(buy);//买入价格
         orderVO.setType("1");
         orderVO.setLeverage(conf.getLeverage() + "");

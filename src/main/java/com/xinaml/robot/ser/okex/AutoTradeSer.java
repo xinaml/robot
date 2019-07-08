@@ -29,7 +29,7 @@ public interface AutoTradeSer {
      *
      * @param conf
      */
-    default Order commitSellOrder(UserConf conf) {
+    default Order commitSellOrder(UserConf conf,Integer size) {
         return null;
     }
 
@@ -39,7 +39,7 @@ public interface AutoTradeSer {
      * @param conf 配置
      * @param buy  买入价
      */
-    default Order commitBuyOrder(UserConf conf, String buy) {
+    default Order commitBuyOrder(UserConf conf, String buy,Integer size) {
         return null;
     }
 
