@@ -82,11 +82,13 @@ public class AutoTradeSerImpl implements AutoTradeSer {
      * @param last 最新成交价
      */
     private void checkSell(UserConf conf, Double last) {
+        HoldInfo info = getHoldInfo(conf);
+        Integer count = StringUtils.isNotBlank(info.getLong_avail_qty()) ? Integer.parseInt(info.getLong_avail_qty()) : 0;//剩余张数
         List<Order> orders = orderSer.findBuySuccess(conf.getUser().getId());
         for (Order order : orders) {
             double buy = Double.parseDouble(order.getPrice());
             double sell = buy * conf.getSelfMultiple();////卖出价=买入价*卖出价倍率
-            if (last >= sell) {
+            if (last >= sell && count == 1) { //如果张数为1时才卖出，张树大于等于2时，看整体收益率卖出
                 Order sOrder = commitSellOrder(conf);//卖出
                 if (sOrder != null && sOrder.getStatus() == 2) {
                     order.setProfit(StringUtil.formatDouble(last - Double.parseDouble(order.getPrice())));//设置盈利
