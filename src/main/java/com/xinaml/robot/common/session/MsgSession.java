@@ -19,7 +19,7 @@ public class MsgSession {
 
 
     private static LoadingCache<String, String> MSG_SESSION = CacheBuilder.newBuilder()
-            .expireAfterWrite(5, TimeUnit.MINUTES)
+            .expireAfterWrite(1, TimeUnit.HOURS)
             .maximumSize(1000)
             .removalListener(new RemovalListener<String, String>() {
                 @Override

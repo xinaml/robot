@@ -54,10 +54,23 @@ public class UserConfSerImpl extends ServiceImpl<UserConf, UserConfDTO> implemen
 
     @Override
     public UserConf findByUserId(String userId) {
-        UserConfDTO dto = new UserConfDTO();
-        dto.addRT(RT.eq("user.id", userId));
-        UserConf conf = findOne(dto);
-        return conf;
+        String rs = redisRep.get(userId+"conf");
+        UserConf conf =null;
+        if(null!=rs){
+            conf =JSON.parseObject(rs, UserConf.class);
+        }else {
+            UserConfDTO dto = new UserConfDTO();
+            dto.addRT(RT.eq("user.id", userId));
+             conf = findOne(dto);
+            setSeconds(conf);
+            redisRep.put(userId+"conf",JSON.toJSONString(conf));//保存配置信息到redis
+        }
+        if(null!=rs){
+            setSeconds(conf);
+            return conf;
+        }
+        return null;
+
     }
 
     public void setSeconds(UserConf conf){

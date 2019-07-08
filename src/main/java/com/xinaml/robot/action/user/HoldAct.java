@@ -1,8 +1,7 @@
 package com.xinaml.robot.action.user;
 
-import com.alibaba.fastjson.JSON;
 import com.xinaml.robot.base.atction.BaseAct;
-import com.xinaml.robot.base.rep.RedisRep;
+import com.xinaml.robot.common.custom.annotation.Login;
 import com.xinaml.robot.common.custom.result.ActResult;
 import com.xinaml.robot.common.custom.result.Result;
 import com.xinaml.robot.common.utils.DateUtil;
@@ -10,6 +9,7 @@ import com.xinaml.robot.common.utils.UserUtil;
 import com.xinaml.robot.entity.user.User;
 import com.xinaml.robot.entity.user.UserConf;
 import com.xinaml.robot.ser.okex.AutoTradeSer;
+import com.xinaml.robot.ser.user.UserConfSer;
 import com.xinaml.robot.vo.user.HoldInfo;
 import com.xinaml.robot.vo.user.KLine;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,20 +23,21 @@ import org.springframework.web.bind.annotation.RestController;
  * @Version: [1.0.0]
  * @Copy: [com.xinaml]
  */
+@Login
 @RestController
 public class HoldAct extends BaseAct {
     @Autowired
     private AutoTradeSer autoTradeSer;
     @Autowired
-    private RedisRep redisRep;
+    private UserConfSer userConfSer;
 
     @GetMapping("hold/info")
     public Result getInfo() {
         User user = UserUtil.getUser();
         if (null != user) {
-            String rs = redisRep.get(user.getId() + "conf");
-            if (null != rs) {
-                return new ActResult(autoTradeSer.getHoldInfo(JSON.parseObject(rs, UserConf.class)));
+            UserConf conf = userConfSer.findByUserId(user.getId());
+            if (null != conf) {
+                return new ActResult(autoTradeSer.getHoldInfo(conf));
             }
         }
         return new ActResult(new HoldInfo());
@@ -46,9 +47,9 @@ public class HoldAct extends BaseAct {
     public Result kline() {
         User user = UserUtil.getUser();
         if (null != user) {
-            String rs = redisRep.get(user.getId() + "conf");
-            if (null != rs) {
-                KLine kLine = autoTradeSer.getLine(JSON.parseObject(rs, UserConf.class));
+            UserConf conf = userConfSer.findByUserId(user.getId());
+            if (null != conf) {
+                KLine kLine = autoTradeSer.getLine(conf);
                 String time = kLine.getTimestamp();
                 time = time.substring(0, 19).replace("T", " ");
                 time = DateUtil.parseDateTime(time).plusHours(8).toString().replace("T", " ");
@@ -60,10 +61,4 @@ public class HoldAct extends BaseAct {
         return new ActResult(new KLine());
     }
 
-    public static void main(String[] args) {
-        String time = "2019-07-05T10:00:00.000Z";
-        time = time.substring(0, 19).replace("T", " ");
-        System.out.println();
-
-    }
 }
