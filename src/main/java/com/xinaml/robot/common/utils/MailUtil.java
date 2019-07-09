@@ -57,12 +57,13 @@ public class MailUtil {
         prop.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         prop.setProperty("mail.smtp.socketFactory.fallback", "false");
         prop.setProperty("mail.smtp.socketFactory.port", "465");
+        prop.put("mail.smtp.starttls.enable", "true");
         Session session = Session.getInstance(prop);
         return session;
     }
 
     public static void main(String[] args) throws Exception {
-        MailUtil.send("444758393@qq.com", "这是一个问题哦", "写代码没出息的，你看看吧！");
+        MailUtil.send("444758393@qq.com", "这是一个问题哦1", "写代码没出息的，你看看吧1！");
     }
 
 }

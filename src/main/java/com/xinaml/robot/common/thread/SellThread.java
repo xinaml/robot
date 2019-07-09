@@ -69,22 +69,21 @@ public class SellThread extends Thread {
             }
         }
         //卖出价>最新价
-        if (StringUtils.isNotBlank(info.getLong_avg_cost())) {//开仓平均价不为空
-            Double sellPrice = Double.parseDouble(info.getLong_avg_cost()) * conf.getSelfMultiple();//卖出价=开仓平均价*卖出倍率
-            if (sellPrice > last) { //当前价>=最新价
-                if (count > 0) {
-                    autoTradeSer.commitSellOrder(conf, count);//全部卖出
-                    String email = conf.getUser().getEmail();
-                    if (StringUtils.isNotBlank(email)) {
-                        String msg = DateUtil.dateToString(LocalDateTime.now()) + "当前价:" + sellPrice + "大于等于最新价:" + last + "， 已全部平仓卖出！" + "卖出张数为：" + count;
-                        LOG.info(msg);
-                        MailUtil.send(email, "当前价大于等于最新价，平仓卖出!", msg);
-                    }
-                }
-
-            }
-
-        }
+//        if (StringUtils.isNotBlank(info.getLong_avg_cost())) {//开仓平均价不为空
+//            Double sellPrice = Double.parseDouble(info.getLong_avg_cost()) * conf.getSelfMultiple();//卖出价=开仓平均价*卖出倍率
+//            if (sellPrice > last) { //当前价>=最新价
+//                if (count > 0) {
+//                    autoTradeSer.commitSellOrder(conf, count);//全部卖出
+//                    String email = conf.getUser().getEmail();
+//                    if (StringUtils.isNotBlank(email)) {
+//                        String msg = DateUtil.dateToString(LocalDateTime.now()) + "当前价:" + sellPrice + "大于等于最新价:" + last + "， 已全部平仓卖出！" + "卖出张数为：" + count;
+//                        LOG.info(msg);
+//                        MailUtil.send(email, "当前价大于等于最新价，平仓卖出!", msg);
+//                    }
+//                }
+//
+//            }
+//        }
         //多仓收益,达到设置阀，全部卖出
         if (StringUtils.isNotBlank(info.getLong_pnl())) {//多仓收益
             double profit = Double.parseDouble(info.getLong_pnl_ratio()) * 100; //多仓收益率,负数为亏损
