@@ -25,7 +25,7 @@ public class MailUtil {
                 MimeMessage message = new MimeMessage(session);
                 message.setFrom(new InternetAddress(SERVER_MAIL, "ROBOT服务", "utf-8"));
                 // 代表收件人
-                message.setRecipient(Message.RecipientType.TO, new InternetAddress(mail, "李四", "utf-8"));
+                message.setRecipient(Message.RecipientType.TO, new InternetAddress(mail, "LGQ", "utf-8"));
                 // 设置邮件主题
                 message.setSubject(subject);
                 // 设置邮件内容
