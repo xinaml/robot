@@ -52,7 +52,10 @@ var Order = (function () {
             }, {
                 field: 'status',
                 title: '订单状态', formatter: function (value, row, index) {
-                    return "待卖出";
+                    if(row.type=="1"){
+                        return "待卖出";
+                    }
+                    return "-";
                 },
                 align: 'center'
 
@@ -147,23 +150,31 @@ var Order = (function () {
         };
         $('#order_table').bootstrapTable('refresh',opt)
     }
-    Order.prototype.cancel = function (arg) {
+
+
+    Order.prototype.delOrder = function (arg) {
+        var status =  $("#status").val();
+        if("待卖出"==status){
+            toastr.error("不可删除待卖出订单！");
+            return;
+        }
         var rows = $('#order_table').bootstrapTable("getSelections");
         if (arg) {
             if (rows.length > 0) {
                 $('#delModal').modal('show');
             }
         } else {
-            var obj = rows[0];
-            var id = obj.orderId;
-            var type = obj.type;
-            if (rows.length == 1) {
+            var ids = new Array();
+            $.each(rows, function (index, obj) {
+                ids.push(obj.id);
+            })
+            if (rows.length > 0) {
                 $.ajax({
                     type: 'POST',
                     url: '/order/del',
                     dataType: 'json',
                     traditional: true,
-                    data: {id: id, type: type},
+                    data: {ids: ids},
                     success: function (rs) {
                         if (rs.code == 0) {
                             $(".success.selected").remove();
@@ -178,8 +189,6 @@ var Order = (function () {
                         //请求失败时
                     }
                 })
-            }else {
-                toastr.error("只能选择一行进行撤销！");
             }
         }
 

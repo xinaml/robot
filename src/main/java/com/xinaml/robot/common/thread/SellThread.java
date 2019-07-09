@@ -4,7 +4,6 @@ import com.xinaml.robot.common.utils.DateUtil;
 import com.xinaml.robot.common.utils.MailUtil;
 import com.xinaml.robot.entity.user.UserConf;
 import com.xinaml.robot.ser.okex.AutoTradeSer;
-import com.xinaml.robot.ser.order.OrderSer;
 import com.xinaml.robot.vo.user.HoldInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -26,7 +25,7 @@ public class SellThread extends Thread {
     private Double last;
     private AutoTradeSer autoTradeSer;
 
-    public SellThread(UserConf conf, Double last, AutoTradeSer autoTradeSer ) {
+    public SellThread(UserConf conf, Double last, AutoTradeSer autoTradeSer) {
         this.conf = conf;
         this.last = last;
         this.autoTradeSer = autoTradeSer;
@@ -99,7 +98,6 @@ public class SellThread extends Thread {
                 }
             }
         }
-
     }
 
 }

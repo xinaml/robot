@@ -35,10 +35,6 @@ import java.util.Map;
 public class OrderAct {
     @Autowired
     private OrderSer orderSer;
-    @Autowired
-    private AutoTradeSer autoTradeSer;
-    @Autowired
-    private UserConfSer userConfSer;
 
     @GetMapping("page")
     public ModelAndView conf() throws ActException {
@@ -64,18 +60,17 @@ public class OrderAct {
         }
     }
 
-
     // DeleteMapping 这种方式接收不到数组参数，见下一方法，必须用过url来传参
     @PostMapping("del")
-    public Result del(String id, String type) throws ActException {
+    public Result del(String[] ids) throws ActException {
         try {
-            User user = UserUtil.getUser();
-            UserConf conf = userConfSer.findByUserId(user.getId());
-            String msg = autoTradeSer.cancelOrder(conf, id, type);
-            int code = msg.indexOf("error_message")!=-1?1:0;
-            return new ActResult(code,msg);
+            orderSer.remove(ids);
+            return new ActResult("删除订单成功！");
         } catch (Exception e) {
             throw new ActException(e.getMessage());
         }
     }
+
+
+
 }
