@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static com.xinaml.robot.common.constant.UrlConst.*;
 
@@ -99,6 +100,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 if (sOrder != null && sOrder.getStatus() == 2) {
                     order.setProfit(StringUtil.formatDouble(last - Double.parseDouble(order.getPrice())));//设置盈利
                     order.setSellId(sOrder.getId());//设置卖出id
+                    order.setSize(count+"");
                     order.setSell(sell + "");//设置卖出价
                     order.setSellDate(LocalDateTime.now());//设置卖出时间
                     orderSer.update(order);
@@ -154,6 +156,8 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 order.setErrorCode(oc.getError_code());
                 order.setErrorMessage(oc.getError_message());
                 order.setInstrumentId(conf.getInstrumentId());
+                order.setSellId(UUID.randomUUID().toString());
+                order.setSize(size+"");
                 order.setUid(conf.getUser().getId());
                 order.setCreateDate(LocalDateTime.now());
                 order.setType(2);//卖出

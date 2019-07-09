@@ -45,6 +45,9 @@ public class Order extends BaseEntity {
     @Column( columnDefinition = "VARCHAR(56) COMMENT '卖出id'")
     private String sellId;
 
+    @Column( columnDefinition = "VARCHAR(56) COMMENT '卖出张数'")
+    private String size;
+
     @Column( columnDefinition = "INT(2) COMMENT '订单状态:-2:失败,-1:撤单成功,0:等待成交 ,1:部分成交, 2:完全成交,3:下单中,4:撤单中'")
     private Integer status;//1，下单未成功，2，撤单 ，3成交
 
@@ -162,5 +165,13 @@ public class Order extends BaseEntity {
 
     public void setSellDate(LocalDateTime sellDate) {
         this.sellDate = sellDate;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
     }
 }
