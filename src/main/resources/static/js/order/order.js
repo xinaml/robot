@@ -166,6 +166,7 @@ var Order = (function () {
                             $(".success.selected").remove();
                             $(".selected").remove()
                             $('#delModal').modal('hide');
+                            $('#order_table').bootstrapTable('refresh')
                             toastr.success(rs.msg);
                         } else {
                             toastr.error(rs.msg);

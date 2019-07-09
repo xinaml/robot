@@ -52,9 +52,8 @@ public class SellThread extends Thread {
         Integer count = StringUtils.isNotBlank(info.getLong_avail_qty()) ? Integer.parseInt(info.getLong_avail_qty()) : 0;//剩余张数
         if (StringUtils.isNotBlank(info.getLong_pnl())) {//多仓收益
             double profit = Double.parseDouble(info.getLong_pnl_ratio()) * 100; //负数为亏损,多仓收益率
-            profit = Math.abs(profit);
             double loss = conf.getLoss();
-            if (0 > profit && loss > profit) { //如果设定的损值大于实际的损值,profit少于0的时候就是亏损了
+            if (0 > profit && Math.abs(profit) >= loss) { //如果设定的损值大于实际的损值,profit少于0的时候就是亏损了
                 if (count > 0) {
                     autoTradeSer.commitSellOrder(conf, count);//全部卖出
                     String email = conf.getUser().getEmail();
