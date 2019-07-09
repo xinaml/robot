@@ -73,26 +73,6 @@ var Order = (function () {
                 align: 'center'
 
             }, {
-                field: 'price',
-                title: '买入价格',
-                align: 'center'
-
-            }, {
-                field: 'sell',
-                title: '卖出价格',
-                align: 'center'
-
-            }, {
-                field: 'profit',
-                title: '盈利',
-                align: 'center'
-
-            }, {
-                field: 'sellId',
-                title: '卖出id',
-                align: 'center'
-
-            }, {
                 type: 'text',
                 field: 'orderId',
                 title: '订单id',
@@ -105,6 +85,11 @@ var Order = (function () {
             }, {
                 field: 'sellDate',
                 title: '卖出时间',
+                align: 'center'
+
+            }, {
+                field: 'size',
+                title: '张数',
                 align: 'center'
 
             }]

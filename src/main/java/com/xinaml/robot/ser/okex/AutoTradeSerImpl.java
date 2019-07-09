@@ -161,6 +161,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 order.setUid(conf.getUser().getId());
                 order.setCreateDate(LocalDateTime.now());
                 order.setType(2);//卖出
+                order.setSellDate(LocalDateTime.now());
                 OrderInfo info = getOrderInfo(conf, oc.getOrder_id());
                 if (null != info) {
                     if (info.getState().equals("2")) {
