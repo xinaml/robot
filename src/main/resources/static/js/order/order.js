@@ -139,13 +139,14 @@ var Order = (function () {
 
     Order.prototype.delOrder = function (arg) {
         var status =  $("#status").val();
-        if("待卖出"==status){
-            toastr.error("不可删除待卖出订单！");
-            return;
-        }
+
         var rows = $('#order_table').bootstrapTable("getSelections");
         if (arg) {
             if (rows.length > 0) {
+                if("待卖出"==status){
+                    toastr.error("不可删除待卖出订单！");
+                    return;
+                }
                 $('#delModal').modal('show');
             }
         } else {

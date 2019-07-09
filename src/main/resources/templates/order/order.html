@@ -32,16 +32,18 @@
 </table>
 <div class="content">
     <div id="toolbar" class="btn-group pull-right" style="margin-right: 20px;">
-        <button type="button" style="margin-left: 10px">
-            <select class="form-control" id="status" onchange="$order.changeStatus()" >
+        <div style="float: left">
+            <select class="form-control" id="status" onchange="$order.changeStatus()">
                 <option value="待卖出">待卖出</option>
                 <option value="已卖出">已卖出</option>
             </select>
-        </button>
-
-        <button id="btn_delete" type="button" class="btn btn-default" onclick="$order.delOrder(this)" style="margin-left: 10px" >
-            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
-        </button>
+        </div>
+        <div style="float: left">
+            <button id="btn_delete" type="button" class="btn btn-default" onclick="$order.delOrder(this)"
+                    style="margin-left: 10px">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+            </button>
+        </div>
 
     </div>
 </div>
