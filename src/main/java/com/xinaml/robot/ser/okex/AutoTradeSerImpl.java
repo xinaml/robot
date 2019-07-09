@@ -7,7 +7,8 @@ import com.xinaml.robot.common.constant.UrlConst;
 import com.xinaml.robot.common.okex.Client;
 import com.xinaml.robot.common.session.MsgSession;
 import com.xinaml.robot.common.session.PriceSession;
-import com.xinaml.robot.common.thread.SellThread;
+import com.xinaml.robot.common.thread.LossSellThread;
+import com.xinaml.robot.common.thread.ProfitSellThread;
 import com.xinaml.robot.common.utils.DateUtil;
 import com.xinaml.robot.common.utils.MailUtil;
 import com.xinaml.robot.common.utils.StringUtil;
@@ -49,9 +50,11 @@ public class AutoTradeSerImpl implements AutoTradeSer {
     public void trade(UserConf conf) {
         KLine line = getLine(conf);
         Double last = getLast(conf); //最新成交价
-        if (null != last) { //止损卖出线程
-            new Thread(new SellThread(conf, last, this))
-                    .start();
+        if (null != last) {
+            new Thread(new ProfitSellThread(conf, this))
+                    .start();//收益卖出线程
+            new Thread(new LossSellThread(conf, this))
+                    .start();//止损卖出线程
         }
         if (line != null && last != null) { //买入，单张卖出
             double buy = conf.getBuyMultiple() * line.getClose();//买入价=买入价倍率*收盘价
@@ -76,7 +79,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 }
 
             }
-            checkSell(conf,last);//检测卖出
+            checkSell(conf, last);//检测卖出
         }
 
 
@@ -100,7 +103,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 if (sOrder != null && sOrder.getStatus() == 2) {
                     order.setProfit(StringUtil.formatDouble(last - Double.parseDouble(order.getPrice())));//设置盈利
                     order.setSellId(sOrder.getId());//设置卖出id
-                    order.setSize(count+"");
+                    order.setSize(count + "");
                     order.setSell(sell + "");//设置卖出价
                     order.setSellDate(LocalDateTime.now());//设置卖出时间
                     orderSer.update(order);
@@ -157,7 +160,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 order.setErrorMessage(oc.getError_message());
                 order.setInstrumentId(conf.getInstrumentId());
                 order.setSellId(UUID.randomUUID().toString());
-                order.setSize(size+"");
+                order.setSize(size + "");
                 order.setUid(conf.getUser().getId());
                 order.setCreateDate(LocalDateTime.now());
                 order.setType(2);//卖出
@@ -207,6 +210,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 order.setInstrumentId(conf.getInstrumentId());
                 order.setUid(conf.getUser().getId());
                 order.setCreateDate(LocalDateTime.now());
+                order.setSize(size+"");
                 order.setPrice(buy);
                 order.setType(1);//买入
                 OrderInfo info = getOrderInfo(conf, oc.getOrder_id());
