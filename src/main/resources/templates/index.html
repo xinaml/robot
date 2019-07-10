@@ -51,7 +51,10 @@
             <tr>
                 <th >时间</th>
                 <th id="timestamp">-</th>
+                <th >最新成交价</th>
+                <th id="last">-</th>
             </tr>
+
             </thead>
         </table>
     </div>
@@ -221,19 +224,36 @@
 
             $.ajax({
                 type: 'GET',
-                url: '/kline',
+                url: '/hold/kline',
                 dataType: 'json',
                 cache: false,//false是不缓存，true为缓存
                 async: true,//true为异步，false为同步
                 success: function (rs) {
                     if (rs.code == 0) {
                         if (rs.data != null) {
-                            $(document).attr("title", "首页-" + rs.data.close);
                             $("#open").text(rs.data.open);
                             $("#close").text(rs.data.close);
                             $("#high").text(rs.data.high);
                             $("#low").text(rs.data.low);
                             $("#timestamp").text(rs.data.timestamp);
+                        }
+                    } else {
+                        toastr.error(rs.msg);
+                    }
+                }
+            });
+
+            $.ajax({
+                type: 'GET',
+                url: '/hold/last',
+                dataType: 'json',
+                cache: false,//false是不缓存，true为缓存
+                async: true,//true为异步，false为同步
+                success: function (rs) {
+                    if (rs.code == 0) {
+                        if (rs.data != null) {
+                            $(document).attr("title", "首页-" + rs.data);
+                            $("#last").text(rs.data);
                         }
                     } else {
                         toastr.error(rs.msg);

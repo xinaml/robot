@@ -14,6 +14,7 @@ import com.xinaml.robot.vo.user.HoldInfo;
 import com.xinaml.robot.vo.user.KLine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @Copy: [com.xinaml]
  */
 @Login
+@RequestMapping("hold")
 @RestController
 public class HoldAct extends BaseAct {
     @Autowired
@@ -31,7 +33,7 @@ public class HoldAct extends BaseAct {
     @Autowired
     private UserConfSer userConfSer;
 
-    @GetMapping("hold/info")
+    @GetMapping("info")
     public Result getInfo() {
         User user = UserUtil.getUser();
         if (null != user) {
@@ -59,6 +61,20 @@ public class HoldAct extends BaseAct {
             }
         }
         return new ActResult(new KLine());
+    }
+
+    @GetMapping("last")
+    public Result last() {
+        User user = UserUtil.getUser();
+        if (null != user) {
+            UserConf conf = userConfSer.findByUserId(user.getId());
+            if (null != conf) {
+                Double last= autoTradeSer.getLast(conf);
+                return new ActResult(last);
+
+            }
+        }
+        return new ActResult("");
     }
 
 }
