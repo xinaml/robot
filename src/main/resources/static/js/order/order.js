@@ -52,7 +52,7 @@ var Order = (function () {
             }, {
                 field: 'status',
                 title: '订单状态', formatter: function (value, row, index) {
-                    if(row.type=="1"){
+                    if (row.type == "1") {
                         return "待卖出";
                     }
                     return "-";
@@ -106,6 +106,7 @@ var Order = (function () {
                 var param = {
                     page: params.pageNumber,
                     limit: params.pageSize,
+                    status: $("#status").val(),
                     sorts: "createDate",
                 };
                 return param;
@@ -125,25 +126,24 @@ var Order = (function () {
         });
     };
     Order.prototype.changeStatus = function (arg) {
-       var status =  $("#status").val();
+        var status = $("#status").val();
         var opt = {
             url: "/order/maps",
             silent: true,
-            query:{
-                status:status
+            query: {
+                status: status
             }
         };
-        $('#order_table').bootstrapTable('refresh',opt)
+        $('#order_table').bootstrapTable('refresh', opt)
     }
 
 
     Order.prototype.delOrder = function (arg) {
-        var status =  $("#status").val();
-
+        var status = $("#status").val();
         var rows = $('#order_table').bootstrapTable("getSelections");
         if (arg) {
             if (rows.length > 0) {
-                if("待卖出"==status){
+                if ("待卖出" == status) {
                     toastr.error("不可删除待卖出订单！");
                     return;
                 }
