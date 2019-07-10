@@ -1,4 +1,4 @@
-package com.xinaml.robot.common.okex.threads;
+package com.xinaml.robot.common.thread;
 
 import com.xinaml.robot.common.session.TaskSession;
 import com.xinaml.robot.entity.user.UserConf;

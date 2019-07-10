@@ -1,5 +1,6 @@
-package com.xinaml.robot.common.okex.threads;
+package com.xinaml.robot.common.thread;
 
+import com.xinaml.robot.common.thread.ThreadScan;
 import com.xinaml.robot.entity.user.User;
 import com.xinaml.robot.entity.user.UserConf;
 import com.xinaml.robot.ser.user.UserConfSer;

@@ -1,4 +1,4 @@
-package com.xinaml.robot.common.okex.threads;
+package com.xinaml.robot.common.thread;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -24,7 +24,7 @@ import java.util.TimerTask;
 /**
  * @Author: [lgq]
  * @Date: [19-6-14 上午10:38]
- * @Description: 委托订单扫描
+ * @Description: 委托订单扫描,撤销订单
  * @Version: [1.0.0]
  * @Copy: [com.xinaml]
  */

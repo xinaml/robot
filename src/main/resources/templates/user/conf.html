@@ -170,6 +170,15 @@
         <br>
         <div class="input-group">
             <div class="input-group-prepend">
+                <span class="input-group-text">买入值阀</span>
+            </div>
+            <input type="text" class="form-control" placeholder="值阀>收盘价-开仓平均价才买入，不填则不限制" name="buyVal" id="buyVal"
+                   onkeyup="if(isNaN(value))execCommand('undo')" onafterpaste="if(isNaN(value))execCommand('undo')">
+
+        </div>
+        <br>
+        <div class="input-group">
+            <div class="input-group-prepend">
                 <span class="input-group-text">买入价倍率</span>
             </div>
             <input type="text" class="form-control" placeholder="买入价倍率" name="buyMultiple" id="buyMultiple"
@@ -242,6 +251,7 @@
                         $("#sellTime").val(rs.data.sellTime)
                         $("#onlySell").attr('checked',rs.data.onlySell)
                         $("#onlySell").val(rs.data.onlySell)
+                        $("#buyVal").val(rs.data.buyVal)
                         $("#loss").val(rs.data.loss)
                         $("#profit").val(rs.data.profit)
 

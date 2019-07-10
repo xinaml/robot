@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.xinaml.robot.base.dto.RT;
 import com.xinaml.robot.base.rep.RedisRep;
 import com.xinaml.robot.base.ser.ServiceImpl;
-import com.xinaml.robot.common.okex.threads.ThreadScan;
+import com.xinaml.robot.common.thread.ThreadScan;
 import com.xinaml.robot.common.utils.UserUtil;
 import com.xinaml.robot.dto.user.UserConfDTO;
 import com.xinaml.robot.entity.user.User;
@@ -38,6 +38,7 @@ public class UserConfSerImpl extends ServiceImpl<UserConf, UserConfDTO> implemen
         UserConf conf = findOne(dto);
         if (null != conf) {
             BeanUtils.copyProperties(to, conf);
+            conf.setBuyVal(to.getBuyVal());
             super.update(conf);
         } else {
             conf = new UserConf();

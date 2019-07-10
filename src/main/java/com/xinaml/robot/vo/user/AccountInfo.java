@@ -14,7 +14,7 @@ public class AccountInfo {
     private String margin;	//	保证金（挂单冻结+持仓已用）
     private String margin_frozen;//	String	持仓已用保证金
     private String margin_for_unfilled	;//String	挂单冻结保证金
-    private String realised_pnl;//	String	已实现盈亏
+    private String realized_pnl;//	String	已实现盈亏
     private String unrealised_pnl;//	String	未实现盈亏
     private String margin_ratio;//	String	保证金率
     private String maint_margin_ratio;//	String	维持保证金率
@@ -69,12 +69,12 @@ public class AccountInfo {
         this.margin_for_unfilled = margin_for_unfilled;
     }
 
-    public String getRealised_pnl() {
-        return realised_pnl;
+    public String getRealized_pnl() {
+        return realized_pnl;
     }
 
-    public void setRealised_pnl(String realised_pnl) {
-        this.realised_pnl = realised_pnl;
+    public void setRealized_pnl(String realized_pnl) {
+        this.realized_pnl = realized_pnl;
     }
 
     public String getUnrealised_pnl() {

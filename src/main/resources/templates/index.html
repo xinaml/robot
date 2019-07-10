@@ -73,7 +73,7 @@
         </tr>
         <tr>
             <th>已实现盈余 :</th>
-            <th id="realised_pnl1">-</th>
+            <th id="realised_pnl">-</th>
         </tr>
         <tr>
             <th>空仓数量 :</th>
@@ -136,7 +136,7 @@
         </tr>
         <tr>
             <th>已实现盈亏 :</th>
-            <th id="realised_pnl">-</th>
+            <th id="realized_pnl">-</th>
         </tr>
         <tr>
             <th>保证金率 :</th>
@@ -259,10 +259,10 @@
                             $("#margin").text(rs.data.margin)
                             $("#margin_frozen").text(rs.data.margin_frozen)
                             $("#margin_for_unfilled").text(rs.data.margin_for_unfilled)
-                            if (rs.data.realised_pnl != null) {
-                                $("#realised_pnl1").text(rs.data.realised_pnl)
+                            if (rs.data.realized_pnl != null) {
+                                $("#realized_pnl").text(rs.data.realized_pnl)
                             } else {
-                                $("#realised_pnl1").text("-")
+                                $("#realized_pnl").text("-")
                             }
                             $("#unrealised_pnl").text(rs.data.unrealised_pnl)
                             $("#margin_ratio").text(rs.data.margin_ratio)

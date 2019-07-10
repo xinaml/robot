@@ -5,7 +5,7 @@ import com.xinaml.robot.base.dto.RT;
 import com.xinaml.robot.base.rep.RedisRep;
 import com.xinaml.robot.base.ser.ServiceImpl;
 import com.xinaml.robot.common.custom.exception.SerException;
-import com.xinaml.robot.common.okex.threads.ThreadScan;
+import com.xinaml.robot.common.thread.ThreadScan;
 import com.xinaml.robot.common.utils.PassWordUtil;
 import com.xinaml.robot.common.utils.TokenUtil;
 import com.xinaml.robot.common.utils.UserUtil;
@@ -29,7 +29,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.beans.Transient;
 import java.time.LocalDateTime;
 import java.util.Map;
 

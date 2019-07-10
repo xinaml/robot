@@ -39,7 +39,8 @@ public class UserConfTO {
     private Double loss;//亏损多少卖出
     @NotNull(groups = {ADD.class}, message = "请填写收益率值！")
     private Double profit;//收益达到多少卖出
-    private Boolean onlySell=false;
+    private Boolean onlySell=false;//是否仅卖出
+    private Double buyVal;//买入值阀
 
 
     public String getTime() {
@@ -144,5 +145,13 @@ public class UserConfTO {
 
     public void setProfit(Double profit) {
         this.profit = profit;
+    }
+
+    public Double getBuyVal() {
+        return buyVal;
+    }
+
+    public void setBuyVal(Double buyVal) {
+        this.buyVal = buyVal;
     }
 }
