@@ -41,49 +41,6 @@
 
 <div style="margin-top: 20px;float: left;width: 500px" class="container mt-3">
     <div>
-        <table class="info-table" style="width: 500px;">
-            <thead>
-            <tr>
-                <th>账户权益 :</th>
-                <th id="equity">-</th>
-            </tr>
-            <tr>
-                <th>账户余额 :</th>
-                <th id="total_avail_balance">-</th>
-            </tr>
-            <tr>
-                <th>保证金 :</th>
-                <th id="margin">-</th>
-            </tr>
-            <tr>
-                <th>持仓已用保证金 :</th>
-                <th id="margin_frozen">-</th>
-            </tr>
-            <tr>
-                <th>已实现盈亏 :</th>
-                <th id="realised_pnl">-</th>
-            </tr>
-            <tr>
-                <th>保证金率 :</th>
-                <th id="margin_ratio">-</th>
-            </tr>
-            <tr>
-                <th>维持保证金率 :</th>
-                <th id="maint_margin_ratio">-</th>
-            </tr>
-            <tr>
-                <th>可划转数量 :</th>
-                <th id="available_balance">-</th>
-            </tr>
-            <tr>
-                <th>强平模式 :</th>
-                <th id="liqui_mode">-</th>
-            </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-        <br>
         <form id="userFrom">
             <div class="input-group">
                 <div class="input-group-prepend">
@@ -312,49 +269,6 @@
             }
         });
 
-        setInterval(function(){
-            $.ajax({
-                type: 'GET',
-                url: '/account/info',
-                dataType: 'json',
-                cache: false,//false是不缓存，true为缓存
-                async: true,//true为异步，false为同步
-                success: function (rs) {
-                    if (rs.code == 0) {
-                        if (rs.data != null) {
-                            $("#equity").text(rs.data.equity)
-                            $("#total_avail_balance").text(rs.data.total_avail_balance)
-                            $("#margin").text(rs.data.margin)
-                            $("#margin_frozen").text(rs.data.margin_frozen)
-                            $("#margin_for_unfilled").text(rs.data.margin_for_unfilled)
-                            if(rs.data.realised_pnl!=null){
-                                $("#realised_pnl").text(rs.data.realised_pnl)
-                            }else {
-                                $("#realised_pnl").text("-")
-                            }
-                            $("#unrealised_pnl").text(rs.data.unrealised_pnl)
-                            $("#margin_ratio").text(rs.data.margin_ratio)
-                            $("#maint_margin_ratio").text(rs.data.maint_margin_ratio)
-                            if(rs.data.liqui_mode!=null){
-                                $("#liqui_mode").text(rs.data.liqui_mode=="tier"?"梯度强平":"一次强平")
-                            }else {
-                                $("#liqui_mode").text("-")
-                            }
-                            if(rs.data.available_balance!=null){
-                                $("#available_balance").text(rs.data.available_balance)
-                            }else {
-                                $("#available_balance").text("-")
-                            }
-                        }
-                    } else {
-                        toastr.error(rs.msg);
-                    }
-                }
-            });
-
-
-
-        }, 2000)
 
     });
     //编辑Secret key

@@ -1,5 +1,5 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <html>
 <head>
     <meta charset="utf-8">
@@ -19,7 +19,9 @@
 
 </head>
 <body>
-<div id="top" style="height: 50px;float: right;padding-top: 10px;padding-right: 20px"><button class="btn-primary" onclick="javaScript:$('#logout').modal('show')">退出</button></div>
+<div id="top" style="height: 50px;float: right;padding-top: 10px;padding-right: 20px">
+    <button class="btn-primary" onclick="javaScript:$('#logout').modal('show')">退出</button>
+</div>
 <ul class="nav nav-tabs">
     <li class="active"><a href="/">首页</a></li>
     <li><a href="/order/page">待卖出订单</a></li>
@@ -29,12 +31,15 @@
 
 </ul>
 <div class="content">
-    <span>开盘价格：</span><span style="padding-left: 15px;padding-right: 15px" id="open">-</span>
-    <span>最高价格：</span><span style="padding-left: 15px;padding-right: 15px" id="high">-</span>
-    <span>最低价格：</span><span style="padding-left: 15px;padding-right: 15px" id="low">-</span>
-    <span>收盘价格：</span><span style="padding-left: 15px;padding-right: 15px" id="close">-</span>
-    <span>时间：</span><span style="padding-left: 15px;padding-right: 15px" id="timestamp">-</span>
-    <table class="table" style="width: 500px;margin-left: 50px">
+    <div>
+        <span>开盘价格：</span><span style="padding-left: 15px;padding-right: 15px" id="open">-</span>
+        <span>最高价格：</span><span style="padding-left: 15px;padding-right: 15px" id="high">-</span>
+        <span>最低价格：</span><span style="padding-left: 15px;padding-right: 15px" id="low">-</span>
+        <span>收盘价格：</span><span style="padding-left: 15px;padding-right: 15px" id="close">-</span>
+        <span>时间：</span><span style="padding-left: 15px;padding-right: 15px" id="timestamp">-</span>
+    </div>
+    <br>
+    <table class="table" style="width: 500px;margin-left: 50px;float: left">
         <caption>持仓信息</caption>
         <thead>
         <tr>
@@ -51,7 +56,7 @@
         </tr>
         <tr>
             <th>已实现盈余 :</th>
-            <th id="realised_pnl">-</th>
+            <th id="realised_pnl1">-</th>
         </tr>
         <tr>
             <th>空仓数量 :</th>
@@ -93,6 +98,50 @@
         <tbody>
         </tbody>
     </table>
+    <table class="table" style="width: 500px;float: left;margin-left: 100px">
+        <caption>账户信息</caption>
+        <thead>
+        <tr>
+            <th>账户权益 :</th>
+            <th id="equity">-</th>
+        </tr>
+        <tr>
+            <th>账户余额 :</th>
+            <th id="total_avail_balance">-</th>
+        </tr>
+        <tr>
+            <th>保证金 :</th>
+            <th id="margin">-</th>
+        </tr>
+        <tr>
+            <th>持仓已用保证金 :</th>
+            <th id="margin_frozen">-</th>
+        </tr>
+        <tr>
+            <th>已实现盈亏 :</th>
+            <th id="realised_pnl">-</th>
+        </tr>
+        <tr>
+            <th>保证金率 :</th>
+            <th id="margin_ratio">-</th>
+        </tr>
+        <tr>
+            <th>维持保证金率 :</th>
+            <th id="maint_margin_ratio">-</th>
+        </tr>
+        <tr>
+            <th>可划转数量 :</th>
+            <th id="available_balance">-</th>
+        </tr>
+        <tr>
+            <th>强平模式 :</th>
+            <th id="liqui_mode">-</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
 </div>
 <div id="footer" style="text-align: center"></div>
 <div class="modal fade" id="logout" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -123,7 +172,7 @@
 </body>
 <script>
     $(function () {
-        setInterval(function(){
+        setInterval(function () {
             $.ajax({
                 type: 'GET',
                 url: '/hold/info',
@@ -144,7 +193,7 @@
                             $("#short_pnl").text(rs.data.short_pnl)
                             $("#long_margin").text(rs.data.long_margin)
                             $("#long_pnl").text(rs.data.long_pnl)
-                            $("#long_pnl_ratio").text( (rs.data.long_pnl_ratio*100).toFixed(2)+"%")
+                            $("#long_pnl_ratio").text((rs.data.long_pnl_ratio * 100).toFixed(2) + "%")
                             $("#long_unrealised_pnl").text(rs.data.long_unrealised_pnl)
                         }
                     } else {
@@ -162,7 +211,7 @@
                 success: function (rs) {
                     if (rs.code == 0) {
                         if (rs.data != null) {
-                            $(document).attr("title","首页-"+rs.data.close);
+                            $(document).attr("title", "首页-" + rs.data.close);
                             $("#open").text(rs.data.open);
                             $("#close").text(rs.data.close);
                             $("#high").text(rs.data.high);
@@ -176,6 +225,50 @@
             });
 
         }, 500)
+
+
+        setInterval(function () {
+            $.ajax({
+                type: 'GET',
+                url: '/account/info',
+                dataType: 'json',
+                cache: false,//false是不缓存，true为缓存
+                async: true,//true为异步，false为同步
+                success: function (rs) {
+                    if (rs.code == 0) {
+                        if (rs.data != null) {
+                            $("#equity").text(rs.data.equity)
+                            $("#total_avail_balance").text(rs.data.total_avail_balance)
+                            $("#margin").text(rs.data.margin)
+                            $("#margin_frozen").text(rs.data.margin_frozen)
+                            $("#margin_for_unfilled").text(rs.data.margin_for_unfilled)
+                            if (rs.data.realised_pnl != null) {
+                                $("#realised_pnl1").text(rs.data.realised_pnl)
+                            } else {
+                                $("#realised_pnl1").text("-")
+                            }
+                            $("#unrealised_pnl").text(rs.data.unrealised_pnl)
+                            $("#margin_ratio").text(rs.data.margin_ratio)
+                            $("#maint_margin_ratio").text(rs.data.maint_margin_ratio)
+                            if (rs.data.liqui_mode != null) {
+                                $("#liqui_mode").text(rs.data.liqui_mode == "tier" ? "梯度强平" : "一次强平")
+                            } else {
+                                $("#liqui_mode").text("-")
+                            }
+                            if (rs.data.available_balance != null) {
+                                $("#available_balance").text(rs.data.available_balance)
+                            } else {
+                                $("#available_balance").text("-")
+                            }
+                        }
+                    } else {
+                        toastr.error(rs.msg);
+                    }
+                }
+            });
+
+
+        }, 1000)
 
 
     });

@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -131,6 +132,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
      * @param conf
      * @return
      */
+    @Transactional
     @Override
     public Order commitSellOrder(UserConf conf, Integer size) {
         String url = COMMIT_ORDER;
@@ -166,6 +168,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                     }
                 }
                 orderSer.save(order);
+                LOG.info("卖出订单成功，张数为"+size);
                 return order;
             }
 
@@ -180,6 +183,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
      *
      * @param conf
      */
+    @Transactional
     @Override
     public Order commitBuyOrder(UserConf conf, String buy, Integer size) {
         String url = COMMIT_ORDER;
