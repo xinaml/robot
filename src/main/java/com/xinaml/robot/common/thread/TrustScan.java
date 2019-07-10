@@ -28,7 +28,6 @@ import java.util.TimerTask;
  * @Version: [1.0.0]
  * @Copy: [com.xinaml]
  */
-@Component
 public class TrustScan {
     @Autowired
     private UserConfSer userConfSer;

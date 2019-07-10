@@ -36,23 +36,23 @@
             <caption>K线信息</caption>
             <thead>
             <tr>
-                <th>开盘价格 :</th>
-                <th id="open">-</th>
-                <th >最高价格</th>
-                <th id="high">-</th>
-            </tr>
-            <tr>
-                <th>最低价格 :</th>
-                <th id="low">-</th>
-                <th >收盘价格</th>
-                <th id="close">-</th>
-
-            </tr>
-            <tr>
-                <th >时间</th>
-                <th id="timestamp">-</th>
                 <th >最新成交价</th>
-                <th id="last">-</th>
+                <th id="last" style="color:green">-</th>
+                <th>开盘价格 :</th>
+                <th id="open" style="color:green">-</th>
+            </tr>
+            <tr>
+                <th >最高价格</th>
+                <th id="high" style="color:green">-</th>
+                <th>最低价格 :</th>
+                <th id="low" style="color:green">-</th>
+            </tr>
+            <tr>
+                <th >收盘价格</th>
+                <th id="close" style="color:green">-</th>
+                <th >时间</th>
+                <th id="timestamp" style="color:green">-</th>
+
             </tr>
 
             </thead>
@@ -64,55 +64,55 @@
         <thead>
         <tr>
             <th>多仓数量 :</th>
-            <th id="long_qty">-</th>
+            <th id="long_qty" style="color:green">-</th>
         </tr>
         <tr>
             <th>多仓可平仓数量 :</th>
-            <th id="long_avail_qty">-</th>
+            <th id="long_avail_qty" style="color:green">-</th>
         </tr>
         <tr>
             <th>开仓平均价 :</th>
-            <th id="long_avg_cost">-</th>
+            <th id="long_avg_cost" style="color:green">-</th>
         </tr>
         <tr>
             <th>已实现盈余 :</th>
-            <th id="realised_pnl">-</th>
+            <th id="realised_pnl" style="color:green">-</th>
         </tr>
         <tr>
             <th>空仓数量 :</th>
-            <th id="short_qty">-</th>
+            <th id="short_qty" style="color:green">-</th>
         </tr>
         <tr>
             <th>空仓保证金 :</th>
-            <th id="short_margi">-</th>
+            <th id="short_margi" style="color:green">-</th>
         </tr>
         <tr>
             <th>空仓可平仓数量 :</th>
-            <th id="short_avail_qty">-</th>
+            <th id="short_avail_qty" style="color:green">-</th>
         </tr>
         <tr>
             <th>空仓收益 :</th>
-            <th id="short_pnl">-</th>
+            <th id="short_pnl" style="color:green">-</th>
         </tr>
         <tr>
             <th>空仓收益率 :</th>
-            <th id="short_pnl_ratio">-</th>
+            <th id="short_pnl_ratio" style="color:green">-</th>
         </tr>
         <tr>
             <th>多仓保证金 :</th>
-            <th id="long_margin">-</th>
+            <th id="long_margin" style="color:green">-</th>
         </tr>
         <tr>
             <th>多仓收益 :</th>
-            <th id="long_pnl">-</th>
+            <th id="long_pnl" style="color:green">-</th>
         </tr>
         <tr>
             <th>多仓收益率 :</th>
-            <th id="long_pnl_ratio">-</th>
+            <th id="long_pnl_ratio" style="color:green">-</th>
         </tr>
         <tr>
             <th>多仓未实现盈亏 :</th>
-            <th id="long_unrealised_pnl">-</th>
+            <th id="long_unrealised_pnl" style="color:green">-</th>
         </tr>
         </thead>
         <tbody>
@@ -123,39 +123,39 @@
         <thead>
         <tr>
             <th>账户权益 :</th>
-            <th id="equity">-</th>
+            <th id="equity" style="color:green">-</th>
         </tr>
         <tr>
             <th>账户余额 :</th>
-            <th id="total_avail_balance">-</th>
+            <th id="total_avail_balance" style="color:green">-</th>
         </tr>
         <tr>
             <th>保证金 :</th>
-            <th id="margin">-</th>
+            <th id="margin" style="color:green">-</th>
         </tr>
         <tr>
             <th>持仓已用保证金 :</th>
-            <th id="margin_frozen">-</th>
+            <th id="margin_frozen" style="color:green">-</th>
         </tr>
         <tr>
             <th>已实现盈亏 :</th>
-            <th id="realized_pnl">-</th>
+            <th id="realized_pnl" style="color:green">-</th>
         </tr>
         <tr>
             <th>保证金率 :</th>
-            <th id="margin_ratio">-</th>
+            <th id="margin_ratio" style="color:green">-</th>
         </tr>
         <tr>
             <th>维持保证金率 :</th>
-            <th id="maint_margin_ratio">-</th>
+            <th id="maint_margin_ratio" style="color:green">-</th>
         </tr>
         <tr>
             <th>可划转数量 :</th>
-            <th id="available_balance">-</th>
+            <th id="available_balance" style="color:green">-</th>
         </tr>
         <tr>
             <th>强平模式 :</th>
-            <th id="liqui_mode">-</th>
+            <th id="liqui_mode" style="color:green">-</th>
         </tr>
         </thead>
         <tbody>
@@ -207,7 +207,9 @@
                             $("#long_avg_cost").text(rs.data.long_avg_cost)
                             $("#realised_pnl").text(rs.data.realised_pnl)
                             $("#short_qty").text(rs.data.short_qty)
-                            $("#short_margi").text(rs.data.short_margi)
+                            if(rs.data.short_margi != ""){
+                                $("#short_margi").text(rs.data.short_margi)
+                            }
                             $("#short_avail_qty").text(rs.data.short_avail_qty)
                             $("#short_pnl_ratio").text(rs.data.short_pnl_ratio)
                             $("#short_pnl").text(rs.data.short_pnl)
