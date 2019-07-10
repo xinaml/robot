@@ -62,13 +62,19 @@ public class AutoTradeSerImpl implements AutoTradeSer {
             if (buy >= last && !conf.getOnlySell()) {//买入价>=最新成交价 且 如果非只卖出，可以继续买入下单 买入
                 String time = PriceSession.get(userId);//上次成交价
                 if (null == time || !(line.getTimestamp()).equals(time)) {
-                    if(conf.getBuyVal()==null){ //没有设置买入阀值，直接买入
+                    if (conf.getBuyVal() == null) { //没有设置买入阀值，直接买入
                         commitBuyOrder(conf, buy + "", conf.getCount()); //提交订单
-                    }else {//设置了阀值
+                    } else {//设置了阀值
                         HoldInfo info = getHoldInfo(conf);
                         String avg = info.getLong_avg_cost();//开仓均价
-                        //最新价-开仓均价 >= 买入阀值
-                        if(StringUtils.isNotBlank(avg) && last-Double.parseDouble(avg)>=conf.getBuyVal()){
+                        //
+                        int size = StringUtils.isNotBlank(info.getLong_qty()) ? Integer.parseInt(info.getLong_qty()) : 0;
+                        //张数>0 并且 最新价-开仓均价 >= 买入阀值
+                        if (size > 0 && StringUtils.isNotBlank(avg) && last - Double.parseDouble(avg) >= conf.getBuyVal()) {
+                            commitBuyOrder(conf, buy + "", conf.getCount()); //提交订单
+                        }
+                        //如果持仓没有张数，即使设置了阀值，也买入
+                        if (size == 0) {
                             commitBuyOrder(conf, buy + "", conf.getCount()); //提交订单
                         }
                     }
