@@ -85,4 +85,9 @@ public final class DateUtil {
         return LocalDateTime.ofInstant(instant, zone);
     }
 
+    public static String now() {
+        return dateToString(LocalDateTime.now());
+    }
+
+
 }

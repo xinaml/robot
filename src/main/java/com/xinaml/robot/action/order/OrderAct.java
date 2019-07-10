@@ -8,11 +8,7 @@ import com.xinaml.robot.common.custom.result.ActResult;
 import com.xinaml.robot.common.custom.result.Result;
 import com.xinaml.robot.common.utils.UserUtil;
 import com.xinaml.robot.dto.order.OrderDTO;
-import com.xinaml.robot.entity.user.User;
-import com.xinaml.robot.entity.user.UserConf;
-import com.xinaml.robot.ser.okex.AutoTradeSer;
 import com.xinaml.robot.ser.order.OrderSer;
-import com.xinaml.robot.ser.user.UserConfSer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,9 +40,9 @@ public class OrderAct {
     @GetMapping("maps")
     public Map<String, Object> maps(OrderDTO dto) throws ActException {
         try {
-            if(dto.getStatus()!=null && dto.getStatus().equals("已卖出")){
+            if (dto.getStatus() != null && dto.getStatus().equals("已卖出")) {
                 dto.addRT(RT.isNotNull("sellId"));
-            }else {
+            } else {
                 dto.addRT(RT.isNull("sellId"));
             }
             dto.addRT(RT.eq("user.id", UserUtil.getUser().getId()));
@@ -70,7 +66,5 @@ public class OrderAct {
             throw new ActException(e.getMessage());
         }
     }
-
-
 
 }

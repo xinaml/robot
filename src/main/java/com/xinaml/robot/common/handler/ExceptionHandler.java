@@ -31,6 +31,7 @@ public class ExceptionHandler extends AbstractHandlerExceptionResolver {
     @Override
     protected ModelAndView doResolveException(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) {
         e.printStackTrace();
+        LOGGER.error(e.getMessage());
         ActResult rs = new ActResult();
         httpServletResponse.setContentType(JSON_CONTEXT);
         if (e instanceof ActException) {
@@ -52,10 +53,8 @@ public class ExceptionHandler extends AbstractHandlerExceptionResolver {
         } else {
             if (StringUtils.isBlank(rs.getMsg())) {
                 rs.setMsg(e.getMessage());
-                LOGGER.error(o + rs.getMsg());
             }
         }
-        LOGGER.error(rs.getMsg());
         ResponseUtil.writeData(rs);
         return new ModelAndView();
     }

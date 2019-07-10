@@ -1,5 +1,6 @@
 package com.xinaml.robot.common.thread;
 
+import com.xinaml.robot.common.utils.DateUtil;
 import com.xinaml.robot.common.utils.MailUtil;
 import com.xinaml.robot.common.utils.StringUtil;
 import com.xinaml.robot.entity.user.UserConf;
@@ -32,7 +33,7 @@ public class LossSellThread extends Thread {
         try {
             lossSell(conf);//止损
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage());
         }
     }
 
@@ -54,7 +55,7 @@ public class LossSellThread extends Thread {
                     autoTradeSer.commitSellOrder(conf, count);//全部卖出
                     String email = conf.getUser().getEmail();
                     if (StringUtils.isNotBlank(email)) {
-                        String msg = "亏损率为" + StringUtil.formatDouble(profit) + "%，达到设定值" + StringUtil.formatDouble(loss) + "%， 已全部平仓卖出！" + "卖出张数为：" + count;
+                        String msg = DateUtil.now()+ ":亏损率为" + StringUtil.formatDouble(profit) + "%，达到设定值" + StringUtil.formatDouble(loss) + "%， 已全部平仓卖出！" + "卖出张数为：" + count;
                         LOG.info(msg);
                         MailUtil.send(email, "亏损率达到设定值" + StringUtil.formatDouble(loss) + ",平仓卖出！", msg);
                     }
