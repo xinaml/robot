@@ -64,6 +64,13 @@
                 <input type="text" class="form-control" placeholder="apiKey" name="apiKey" id="apiKey">
             </div>
             <br>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">邮箱</span>
+                </div>
+                <input type="text" class="form-control" placeholder="email" name="email" id="email">
+            </div>
+            <br>
         </form>
     </div>
 
@@ -262,6 +269,7 @@
                     $("#passPhrase").val(rs.data.passPhrase)
                     $("#secretKey").val(rs.data.secretKey)
                     $("#apiKey").val(rs.data.apiKey)
+                    $("#email").val(rs.data.email)
                     $("#userId").val(rs.data.id)
                 } else {
                     toastr.error(rs.msg);

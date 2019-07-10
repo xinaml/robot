@@ -14,9 +14,10 @@ public class UserSecretTO extends BaseTO {
     @NotBlank(groups = {ADD.class, EDIT.class}, message = "apiKey不能为空！")
     private String apiKey;
 
-    @Email
     @NotBlank(groups = {ADD.class, EDIT.class}, message = "passPhrase不能为空！")
     private String passPhrase;
+
+    private String email;
 
     public String getSecretKey() {
         return secretKey;
@@ -40,5 +41,13 @@ public class UserSecretTO extends BaseTO {
 
     public void setPassPhrase(String passPhrase) {
         this.passPhrase = passPhrase;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

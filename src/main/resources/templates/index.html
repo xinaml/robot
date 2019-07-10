@@ -30,15 +30,32 @@
     <li><a href="/user/page">用户</a></li>
 
 </ul>
-<div class="content">
+<div class="content" >
     <div>
-        <span>开盘价格：</span><span style="padding-left: 15px;padding-right: 15px" id="open">-</span>
-        <span>最高价格：</span><span style="padding-left: 15px;padding-right: 15px" id="high">-</span>
-        <span>最低价格：</span><span style="padding-left: 15px;padding-right: 15px" id="low">-</span>
-        <span>收盘价格：</span><span style="padding-left: 15px;padding-right: 15px" id="close">-</span>
-        <span>时间：</span><span style="padding-left: 15px;padding-right: 15px" id="timestamp">-</span>
+        <table class="table" style="width: 500px;margin-left: 50px;">
+            <caption>K线信息</caption>
+            <thead>
+            <tr>
+                <th>开盘价格 :</th>
+                <th id="open">-</th>
+                <th >最高价格</th>
+                <th id="high">-</th>
+            </tr>
+            <tr>
+                <th>最低价格 :</th>
+                <th id="low">-</th>
+                <th >收盘价格</th>
+                <th id="close">-</th>
+
+            </tr>
+            <tr>
+                <th >时间</th>
+                <th id="timestamp">-</th>
+            </tr>
+            </thead>
+        </table>
     </div>
-    <br>
+    <hr>
     <table class="table" style="width: 500px;margin-left: 50px;float: left">
         <caption>持仓信息</caption>
         <thead>
