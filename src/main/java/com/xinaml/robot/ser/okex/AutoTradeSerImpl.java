@@ -168,7 +168,6 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                     }
                 }
                 orderSer.save(order);
-                LOG.info("卖出订单成功，张数为"+size);
                 return order;
             }
 

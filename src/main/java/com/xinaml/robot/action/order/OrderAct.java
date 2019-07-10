@@ -41,12 +41,13 @@ public class OrderAct {
     public Map<String, Object> maps(OrderDTO dto) throws ActException {
         try {
             if (dto.getStatus() != null && dto.getStatus().equals("已卖出")) {
+                dto.addRT(RT.eq("type", "2"));
                 dto.addRT(RT.isNotNull("sellId"));
             } else {
+                dto.addRT(RT.eq("type", "1"));
                 dto.addRT(RT.isNull("sellId"));
             }
             dto.addRT(RT.eq("user.id", UserUtil.getUser().getId()));
-            dto.addRT(RT.eq("type", "1"));
             dto.addRT(RT.eq("status", "2"));
             dto.addSort("createDate");
             Map<String, Object> maps = orderSer.findByPage(dto);
