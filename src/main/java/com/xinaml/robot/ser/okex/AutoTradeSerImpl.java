@@ -134,7 +134,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
             double buy = Double.parseDouble(order.getPrice());
             double sell = buy * conf.getSelfMultiple();////卖出价=买入价*卖出价倍率
             if ((conf.getUp() == true && last >= sell) || (conf.getUp() == false && sell >= last) && count == 1) { //如果张数为1时才卖出，张树大于等于2时，看整体收益率卖出
-                Order sOrder = commitSellOrder(conf, conf.getCount());//卖出
+                Order sOrder = commitSellOrder(conf, count);//卖出
                 if (sOrder != null && sOrder.getStatus() == 2) {//卖出成功
                     orderSer.remove(order);//删除买入订单
                     String email = conf.getUser().getEmail();

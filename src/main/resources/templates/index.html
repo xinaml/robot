@@ -211,7 +211,7 @@
                                 $("#short_margi").text(rs.data.short_margi)
                             }
                             $("#short_avail_qty").text(rs.data.short_avail_qty)
-                            $("#short_pnl_ratio").text(rs.data.short_pnl_ratio)
+                            $("#short_pnl_ratio").text((rs.data.short_pnl_ratio * 100).toFixed(2) + "%")
                             $("#short_pnl").text(rs.data.short_pnl)
                             $("#long_margin").text(rs.data.long_margin)
                             $("#long_pnl").text(rs.data.long_pnl)
