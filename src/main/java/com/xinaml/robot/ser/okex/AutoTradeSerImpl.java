@@ -127,7 +127,8 @@ public class AutoTradeSerImpl implements AutoTradeSer {
      */
     private void checkSell(UserConf conf, Double last) {
         HoldInfo info = getHoldInfo(conf);
-        Integer count = StringUtils.isNotBlank(info.getLong_avail_qty()) ? Integer.parseInt(info.getLong_avail_qty()) : 0;//剩余张数
+        String countStr = conf.getUp() == true ? info.getLong_avail_qty() : info.getShort_avail_qty();
+        Integer count = StringUtils.isNotBlank(countStr) ? Integer.parseInt(countStr) : 0;//剩余张数
         List<Order> orders = orderSer.findBuySuccess(conf.getUser().getId());
         for (Order order : orders) {
             double buy = Double.parseDouble(order.getPrice());
