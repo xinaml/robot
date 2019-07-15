@@ -45,9 +45,11 @@ public class LossSellThread extends Thread {
      */
     private void lossSell(UserConf conf) {
         HoldInfo info = autoTradeSer.getHoldInfo(conf);
-        Integer count = StringUtils.isNotBlank(info.getLong_avail_qty()) ? Integer.parseInt(info.getLong_avail_qty()) : 0;//剩余张数
-        if (StringUtils.isNotBlank(info.getLong_pnl())) {//多仓收益
-            double profit = Double.parseDouble(info.getLong_pnl_ratio()) * 100; //负数为亏损,多仓收益率
+        String countStr = conf.getUp() == true ? info.getLong_avail_qty() : info.getShort_avail_qty();
+        Integer count = StringUtils.isNotBlank(countStr) ? Integer.parseInt(countStr) : 0;//剩余张数
+        String profitStr = conf.getUp() == true ? info.getLong_pnl_ratio() : info.getShort_pnl_ratio();
+        if (StringUtils.isNotBlank(profitStr)) {//多仓收益
+            double profit = Double.parseDouble(profitStr) * 100; //负数为亏损,多仓收益率
             //profit-50
             double loss = conf.getLoss();//50
             if (0 > profit && Math.abs(profit) >= loss) { //如果设定的损值大于实际的损值,profit少于0的时候就是亏损了
@@ -55,7 +57,7 @@ public class LossSellThread extends Thread {
                     autoTradeSer.commitSellOrder(conf, count);//全部卖出
                     String email = conf.getUser().getEmail();
                     if (StringUtils.isNotBlank(email)) {
-                        String msg = DateUtil.now()+ ":亏损率为" + StringUtil.formatDouble(profit) + "%，达到设定值" + StringUtil.formatDouble(loss) + "%， 已全部平仓卖出！" + "卖出张数为：" + count;
+                        String msg = DateUtil.now() + ":亏损率为" + StringUtil.formatDouble(profit) + "%，达到设定值" + StringUtil.formatDouble(loss) + "%， 已全部平仓卖出！" + "卖出张数为：" + count;
                         LOG.info(msg);
                         MailUtil.send(email, "亏损率达到设定值" + StringUtil.formatDouble(loss) + ",平仓卖出！", msg);
                     }
