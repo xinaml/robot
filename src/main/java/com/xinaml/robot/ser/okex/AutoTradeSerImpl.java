@@ -26,6 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static com.xinaml.robot.common.constant.UrlConst.*;
 
@@ -45,16 +47,15 @@ public class AutoTradeSerImpl implements AutoTradeSer {
 
     @Autowired
     private WebSocketServer webSocketServer;
+    private ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
 
     @Override
     public void trade(UserConf conf) {
         KLine line = getLine(conf);
         Double last = getLast(conf); //最新成交价
         if (null != last) {
-            new Thread(new ProfitSellThread(conf, this))
-                    .start();//收益卖出线程
-            new Thread(new LossSellThread(conf, this))
-                    .start();//止损卖出线程
+            cachedThreadPool.execute(new Thread(new ProfitSellThread(conf, this)));//收益卖出线程
+            cachedThreadPool.execute(new Thread(new LossSellThread(conf, this)));//止损卖出线程
         }
         if (line != null && last != null) { //买入，单张卖出
             double buy = conf.getBuyMultiple() * line.getClose();//买入价=买入价倍率*收盘价
