@@ -62,6 +62,11 @@ public class UserConf extends BaseEntity {
     //常用类型 ：只等待卖出
     @Column(name = "is_only_sell", columnDefinition = "TINYINT(2) DEFAULT 1 COMMENT '只等待卖出'", nullable = false, insertable = false)
     private Boolean onlySell;
+    /**
+     * 买空或者买多,默认买多
+     */
+    @Column(name = "is_up", columnDefinition = "TINYINT(2) DEFAULT 1 COMMENT '买空或者买多'", nullable = true, insertable = false)
+    private Boolean up;
 
     @Column(columnDefinition = " DECIMAL(10,5) COMMENT '亏损多少卖出'")
     private Double loss=0.1;//亏损多少卖出
@@ -225,5 +230,13 @@ public class UserConf extends BaseEntity {
 
     public void setBuyVal(Double buyVal) {
         this.buyVal = buyVal;
+    }
+
+    public Boolean getUp() {
+        return up;
+    }
+
+    public void setUp(Boolean up) {
+        this.up = up;
     }
 }

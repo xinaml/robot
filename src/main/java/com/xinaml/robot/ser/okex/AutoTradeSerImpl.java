@@ -152,7 +152,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
         OrderVO orderVO = new OrderVO();
         orderVO.setInstrument_id(conf.getInstrumentId());//合约id
         orderVO.setSize(size + "");//每次开张数
-        orderVO.setType("3");
+        orderVO.setType(conf.getUp()==true?"3":"4");
         orderVO.setMatch_price("1");
         orderVO.setLeverage(conf.getLeverage() + "");
         String rs = Client.httpPost(url, JSON.toJSONString(orderVO), conf.getUser());
@@ -203,7 +203,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
         orderVO.setInstrument_id(conf.getInstrumentId());//合约id
         orderVO.setSize(size + "");//每次开张数
         orderVO.setPrice(buy);//买入价格
-        orderVO.setType("1");
+        orderVO.setType(conf.getUp()==true?"1":"2");
         orderVO.setLeverage(conf.getLeverage() + "");
         String rs = Client.httpPost(url, JSON.toJSONString(orderVO), conf.getUser());
         if (rs.indexOf("\"error_code\":\"0\"") != -1) {//下单成功

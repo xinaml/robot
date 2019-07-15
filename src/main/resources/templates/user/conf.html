@@ -215,7 +215,12 @@
                 <input id="onlySell" name="onlySell" value="true" type="checkbox" onchange="changeOnly()"  style="margin-left: 10px;width: 40px;height:40px">
             &nbsp;<p style="color: gray">不买入，仅卖出。</p>
         </div>
-
+        <br>
+        <div class="input-group">
+            <span class="input-group-text">买入开多</span>
+            <input id="up" name="up" value="true" type="checkbox" onchange="changeUp()"  style="margin-left: 10px;width: 40px;height:40px">
+            &nbsp;<p style="color: gray">不勾选则为买入开空</p>
+        </div>
     </form>
     <br>
     <div>
@@ -249,6 +254,8 @@
                         $("#sellTime").val(rs.data.sellTime)
                         $("#onlySell").attr('checked',rs.data.onlySell)
                         $("#onlySell").val(rs.data.onlySell)
+                        $("#up").attr('checked',rs.data.up)
+                        $("#up").val(rs.data.up)
                         $("#buyVal").val(rs.data.buyVal)
                         $("#loss").val(rs.data.loss)
                         $("#profit").val(rs.data.profit)
@@ -351,6 +358,15 @@
             $("#onlySell").val('false')
         }
     }
+    function changeUp() {
+        var a =  $("#up").prop('checked');
+        if(a==true){
+            $("#up").val('true')
+        }else {
+            $("#up").val('false')
+        }
+    }
+
 </script>
 
 </html>

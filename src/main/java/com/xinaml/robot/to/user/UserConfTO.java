@@ -40,6 +40,7 @@ public class UserConfTO {
     @NotNull(groups = {ADD.class}, message = "请填写收益率值！")
     private Double profit;//收益达到多少卖出
     private Boolean onlySell=false;//是否仅卖出
+    private Boolean up=false;//买多还是买空
     private Double buyVal;//买入值阀
 
 
@@ -153,5 +154,13 @@ public class UserConfTO {
 
     public void setBuyVal(Double buyVal) {
         this.buyVal = buyVal;
+    }
+
+    public Boolean getUp() {
+        return up;
+    }
+
+    public void setUp(Boolean up) {
+        this.up = up;
     }
 }
