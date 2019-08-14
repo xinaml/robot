@@ -24,7 +24,7 @@ public class MsgSession {
             .removalListener(new RemovalListener<String, String>() {
                 @Override
                 public void onRemoval(RemovalNotification<String, String> notification) {
-                    logger.info("remove:" + notification.getCause().name());
+                    logger.debug("remove:" + notification.getCause().name());
                 }
             })
             .build(new CacheLoader<String, String>() {

@@ -219,7 +219,11 @@
                             $("#long_unrealised_pnl").text(rs.data.long_unrealised_pnl)
                         }
                     } else {
-                        toastr.error(rs.msg);
+                        if (rs.code==403){
+                            window.location.href="/login"; //跳转到上一个未登陆页
+                        } else {
+                            toastr.error(rs.msg);
+                        }
                     }
                 }
             });
@@ -240,7 +244,11 @@
                             $("#timestamp").text(rs.data.timestamp);
                         }
                     } else {
-                        toastr.error(rs.msg);
+                        if (rs.code==403){
+                            window.location.href="/login"; //跳转到上一个未登陆页
+                        } else {
+                            toastr.error(rs.msg);
+                        }
                     }
                 }
             });
@@ -258,7 +266,11 @@
                             $("#last").text(rs.data);
                         }
                     } else {
-                        toastr.error(rs.msg);
+                        if (rs.code==403){
+                            window.location.href="/login"; //跳转到上一个未登陆页
+                        } else {
+                            toastr.error(rs.msg);
+                        }
                     }
                 }
             });
@@ -301,7 +313,11 @@
                             }
                         }
                     } else {
-                        toastr.error(rs.msg);
+                        if (rs.code==403){
+                            window.location.href="/login"; //跳转到上一个未登陆页
+                        } else {
+                            toastr.error(rs.msg);
+                        }
                     }
                 }
             });

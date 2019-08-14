@@ -71,6 +71,24 @@ var Order = (function () {
                     return "未知";
                 },
                 align: 'center'
+            }, {
+                field: 'orderType',
+                title: '类型', formatter: function (value, row, index) {
+                    if (value == "1") {
+                        return "开多"
+                    }
+                    if (value == "2") {
+                        return "开空"
+                    }
+                    if (value == "3") {
+                        return "平多"
+                    }
+                    if (value == "4") {
+                        return "平空"
+                    }
+                    return "未知";
+                },
+                align: 'center'
 
             }, {
                 type: 'text',

@@ -24,7 +24,7 @@ public class TaskSession {
             .removalListener(new RemovalListener<String, Timer>() {
                 @Override
                 public void onRemoval(RemovalNotification<String, Timer> notification) {
-                    logger.info("remove:" + notification.getCause().name());
+                    logger.debug("remove:" + notification.getCause().name());
                 }
             })
             .build(new CacheLoader<String, Timer>() {

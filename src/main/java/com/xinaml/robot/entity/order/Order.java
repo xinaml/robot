@@ -53,6 +53,8 @@ public class Order extends BaseEntity {
 
     @Column( columnDefinition = "INT(2) COMMENT '订单类型，1：买入，2卖出'")
     private Integer type;//1：买入，2卖出
+    @Column( columnDefinition = "INT(2) COMMENT '1:开多2:开空3:平多4:平空'")
+    private Integer orderType;//1:开多2:开空3:平多4:平空
     @Column(columnDefinition = "DATETIME  COMMENT '卖出时间'")
     private LocalDateTime sellDate;
     public User getUser() {
@@ -173,5 +175,13 @@ public class Order extends BaseEntity {
 
     public void setSize(String size) {
         this.size = size;
+    }
+
+    public Integer getOrderType() {
+        return orderType;
+    }
+
+    public void setOrderType(Integer orderType) {
+        this.orderType = orderType;
     }
 }

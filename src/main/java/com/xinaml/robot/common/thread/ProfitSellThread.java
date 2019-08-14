@@ -44,20 +44,37 @@ public class ProfitSellThread extends Thread {
      */
     private void profitSell(UserConf conf) {
         HoldInfo info = autoTradeSer.getHoldInfo(conf);
-        String profitStr = conf.getUp() == true ? info.getLong_pnl_ratio() : info.getShort_pnl_ratio();
-        String countStr = conf.getUp() == true ? info.getLong_avail_qty() : info.getShort_avail_qty();
+        String type;
+        type = "3";//平多
+        String countStr = info.getLong_avail_qty();
         Integer count = StringUtils.isNotBlank(countStr) ? Integer.parseInt(countStr) : 0;//剩余张数
+        String profitStr = info.getLong_pnl_ratio();
+        if (count > 0) {
+            sell(profitStr, count, type);
+        }
+        countStr = info.getShort_avail_qty();
+        type = "4";//平空
+        profitStr = info.getShort_pnl_ratio();
+        count = StringUtils.isNotBlank(countStr) ? Integer.parseInt(countStr) : 0;//剩余张数
+        if (count > 0) {
+            sell(profitStr, count, type);
+        }
+    }
+
+    private void sell(String profitStr, Integer count, String type) {
         // 多仓收益,达到设置阀，全部卖出
         if (StringUtils.isNotBlank(profitStr)) {//多仓收益
             double profit = Double.parseDouble(profitStr) * 100; //多仓收益率,负数为亏损
-            if (null != conf.getProfit() && profit >= conf.getProfit()) {//多仓收益达到设置阀，全部卖出
-                if (count > 0) {
-                    autoTradeSer.commitSellOrder(conf, count);//全部卖出
+            Double p = type.equals("3") ? conf.getProfit() : conf.getDownProfit();//设置的收益率
+            if (null != p && profit >= p) {//多仓收益达到设置阀，全部卖出
+                if (count > 0 && null != type) {
+                    autoTradeSer.commitSellOrder(conf, count, type);//全部卖出
                     String email = conf.getUser().getEmail();
                     if (StringUtils.isNotBlank(email)) {
-                        String msg = DateUtil.now() + ":收益率为" + StringUtil.formatDouble(profit) + "%，达到设定值" + conf.getProfit() + "%，已全部平仓卖出！" + "卖出张数为：" + count;
+                        String t = type.equals("3") ? "平多" : "平空";
+                        String msg = DateUtil.now() + ":收益率为" + StringUtil.formatDouble(profit) + "%，达到设定值" + conf.getProfit() + "%，已全部" + t + "卖出！" + "卖出张数为：" + count;
                         LOG.info(msg);
-                        MailUtil.send(email, "收益率达到" + StringUtil.formatDouble(profit) + "平仓卖出!", msg);
+                        MailUtil.send(email, "收益率达到" + StringUtil.formatDouble(profit) + t + "卖出!", msg);
                     }
                 }
             }

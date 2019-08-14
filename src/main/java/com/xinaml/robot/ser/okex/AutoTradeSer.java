@@ -1,7 +1,6 @@
 package com.xinaml.robot.ser.okex;
 
 import com.xinaml.robot.entity.order.Order;
-import com.xinaml.robot.entity.user.User;
 import com.xinaml.robot.entity.user.UserConf;
 import com.xinaml.robot.vo.user.HoldInfo;
 import com.xinaml.robot.vo.user.KLine;
@@ -29,7 +28,7 @@ public interface AutoTradeSer {
      *
      * @param conf
      */
-    default Order commitSellOrder(UserConf conf,Integer size) {
+    default Order commitSellOrder(UserConf conf, Integer size, String type) {
         return null;
     }
 
@@ -39,7 +38,7 @@ public interface AutoTradeSer {
      * @param conf 配置
      * @param buy  买入价
      */
-    default Order commitBuyOrder(UserConf conf, String buy,Integer size) {
+    default Order commitBuyOrder(UserConf conf, String buy, Integer size, String type) {
         return null;
     }
 

@@ -54,27 +54,17 @@ public class OrderSerImpl extends ServiceImpl<Order, OrderDTO> implements OrderS
         }
     }
 
-    @Cacheable(value = "orders", key = "#root.methodName.concat(#userId)")
+    @Cacheable(value = "orders", key = "#root.methodName.concat(#userId).concat(#orderType)")
     @Override
-    public List<Order> findBuySuccess(String userId) {
+    public List<Order> findBuySuccess(String userId,Integer orderType) {
         if (StringUtils.isBlank(userId)) {
-            return orderRep.findSuccess(1);
+            return orderRep.findSuccess(1,orderType);
         } else {
-            return orderRep.findSuccess(userId, 1);
+            return orderRep.findSuccess(userId, 1,orderType);
 
         }
     }
 
-    @Cacheable(value = "orders", key = "#root.methodName.concat(#userId)")
-    @Override
-    public List<Order> findSellSuccess(String userId) {
-        if (null == userId) {
-            return orderRep.findSuccess(2);
-        } else {
-            return orderRep.findSuccess(userId, 2);
-
-        }
-    }
 
     @CacheEvict(value = "orders", beforeInvocation = true, allEntries = true)
     @Override

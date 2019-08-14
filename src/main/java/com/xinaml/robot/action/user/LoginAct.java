@@ -74,7 +74,7 @@ public class LoginAct extends BaseAct {
             Map<String, String> maps = new HashMap<>(1);
             maps.put(FinalConst.TOKEN, token);
             Cookie cookie = new Cookie(FinalConst.TOKEN, token);
-            cookie.setMaxAge(60 * 60 * 24); //token 有效期为一天
+            cookie.setMaxAge(7*60 * 60 * 24); //token 有效期为7天
             response.addCookie(cookie);
             request.getSession().invalidate();
             return new ActResult(SUCCESS, maps);

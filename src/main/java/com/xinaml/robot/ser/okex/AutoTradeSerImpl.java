@@ -3,6 +3,7 @@ package com.xinaml.robot.ser.okex;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.xinaml.robot.base.rep.RedisRep;
 import com.xinaml.robot.common.constant.UrlConst;
 import com.xinaml.robot.common.okex.Client;
 import com.xinaml.robot.common.session.MsgSession;
@@ -42,7 +43,8 @@ import static com.xinaml.robot.common.constant.UrlConst.*;
 public class AutoTradeSerImpl implements AutoTradeSer {
     @Autowired
     private OrderSer orderSer;
-
+    @Autowired
+    private RedisRep redisRep;
     private static Logger LOG = LoggerFactory.getLogger(AutoTradeSer.class);
 
     @Autowired
@@ -55,14 +57,16 @@ public class AutoTradeSerImpl implements AutoTradeSer {
         Double last = getLast(conf); //最新成交价
         if (null != last) {
             cachedThreadPool.execute(new Thread(new ProfitSellThread(conf, this)));//收益卖出线程
-            cachedThreadPool.execute(new Thread(new LossSellThread(conf, this)));//止损卖出线程
+            cachedThreadPool.execute(new Thread(new LossSellThread(conf, this,redisRep)));//止损卖出线程
         }
         if (line != null && last != null) { //买入，单张卖出
-            double buy = conf.getBuyMultiple() * line.getClose();//买入价=买入价倍率*收盘价
             String userId = conf.getUser().getId();
-            if (conf.getUp() == true) {
-                buyUp(buy, last, conf, line, userId);//买涨
-            } else {//买跌
+            if (conf.getUp() == true ) {//开多
+                double buy = conf.getBuyMultiple() * line.getClose();//买入价=买入价倍率*收盘价
+                buyUp(buy, last, conf, line, userId);
+            }
+            if (conf.getDown() == true ) {//开空
+                double buy = conf.getDownBuyMultiple() * line.getClose();//买入价=买入价倍率*收盘价
                 buyDown(buy, last, conf, line, userId);
             }
             checkSell(conf, last);//检测卖出
@@ -84,22 +88,23 @@ public class AutoTradeSerImpl implements AutoTradeSer {
      * 买入多开
      */
     private void buyUp(Double buy, Double last, UserConf conf, KLine line, String userId) {
-        if (buy >= last && !conf.getOnlySell()) {//买入价>=最新成交价 且 如果非只卖出，可以继续买入下单 买入
+        String key =userId+"orders";
+        if (buy > last && !conf.getOnlySell() && redisRep.get(key)==null) {//买入价>=最新成交价 且 如果非只卖出，可以继续买入下单 买入
             String time = PriceSession.get(userId);//上次成交价
-            if (null == time || !(line.getTimestamp()).equals(time)) {
+            if (null == time || !line.getTimestamp().equals(time)) {
                 if (conf.getBuyVal() == null) { //没有设置买入阀值，直接买入
-                    commitBuyOrder(conf, buy + "", conf.getCount()); //提交订单
+                    commitBuyOrder(conf, buy + "", conf.getCount(), "1"); //提交订单
                 } else {//设置了阀值
                     HoldInfo info = getHoldInfo(conf);//获取持仓信息
                     String avg = info.getLong_avg_cost();//开仓均价
                     int size = StringUtils.isNotBlank(info.getLong_qty()) ? Integer.parseInt(info.getLong_qty()) : 0;
                     //张数>0 并且 最新价-开仓均价 >= 买入阀值
                     if (size > 0 && StringUtils.isNotBlank(avg) && last - Double.parseDouble(avg) >= conf.getBuyVal()) {
-                        commitBuyOrder(conf, buy + "", conf.getCount()); //提交订单
+                        commitBuyOrder(conf, buy + "", conf.getCount(), "1"); //提交订单
                     }
                     //如果持仓没有张数，即使设置了阀值，也买入
                     if (size == 0) {
-                        commitBuyOrder(conf, buy + "", conf.getCount()); //提交订单
+                        commitBuyOrder(conf, buy + "", conf.getCount(), "1"); //提交订单
                     }
                 }
                 PriceSession.put(userId, line.getTimestamp());
@@ -111,10 +116,11 @@ public class AutoTradeSerImpl implements AutoTradeSer {
      * 买入做空
      */
     private void buyDown(Double buy, Double last, UserConf conf, KLine line, String userId) {
-        if (last >= buy && !conf.getOnlySell()) {//买入价>=最新成交价 且 如果非只卖出，可以继续买入下单 买入
+        String key =userId+"orders";
+        if (last > buy && !conf.getDownOnlySell() && redisRep.get(key)==null) {//买入价>=最新成交价 且 如果非只卖出，可以继续买入下单 买入
             String time = PriceSession.get(userId);//上次成交价
             if (null == time || !(line.getTimestamp()).equals(time)) {
-                commitBuyOrder(conf, buy + "", conf.getCount()); //提交订单
+                commitBuyOrder(conf, buy + "", conf.getDownCount(), "2"); //提交订单
                 PriceSession.put(userId, line.getTimestamp());
             }
         }
@@ -126,35 +132,95 @@ public class AutoTradeSerImpl implements AutoTradeSer {
      * @param conf
      * @param last 最新成交价
      */
-    private void checkSell(UserConf conf, Double last) {
+    @Transactional
+    public void checkSell(UserConf conf, Double last) {
         HoldInfo info = getHoldInfo(conf);
-        String countStr = conf.getUp() == true ? info.getLong_avail_qty() : info.getShort_avail_qty();
-        Integer count = StringUtils.isNotBlank(countStr) ? Integer.parseInt(countStr) : 0;//剩余张数
-        List<Order> orders = orderSer.findBuySuccess(conf.getUser().getId());
+        String longCountStr = info.getLong_avail_qty();
+        Integer longCount = StringUtils.isNotBlank(longCountStr) ? Integer.parseInt(longCountStr) : 0;//剩余张数
+        String shortCountStr = info.getShort_avail_qty();
+        Integer shortCount = StringUtils.isNotBlank(shortCountStr) ? Integer.parseInt(shortCountStr) : 0;//剩余张数
+//      卖出平多
+        List<Order> orders = orderSer.findBuySuccess(conf.getUser().getId(), 1);
+        if (orders.size() > 0) {
+            sellUp(orders, conf, last, longCount);//卖出多开
+            if (longCount == 0) {//平台上没有张数了。删除本地未完成订单
+                Order[] list = new Order[orders.size()];
+                int oIndex = 0;
+                for (Order order : orders) {
+                    list[oIndex++] = order;
+                }
+                orderSer.remove(list);
+            }
+        }
+//        卖出平空
+        orders = orderSer.findBuySuccess(conf.getUser().getId(), 2);
+        if (orders.size() > 0) {
+            sellDown(orders, conf, last, longCount);//卖出开空
+            if (shortCount == 0) {//平台上没有张数了。删除本地未完成订单
+                Order[] list = new Order[orders.size()];
+                int oIndex = 0;
+                for (Order order : orders) {
+                    list[oIndex++] = order;
+                }
+                orderSer.remove(list);
+            }
+        }
+
+    }
+
+    /**
+     * 卖出平空
+     *
+     * @param orders
+     * @param conf
+     * @param last
+     * @param count
+     */
+    private void sellDown(List<Order> orders, UserConf conf, Double last, Integer count) {
         for (Order order : orders) {
             double buy = Double.parseDouble(order.getPrice());
-            double sell = buy * conf.getSelfMultiple();////卖出价=买入价*卖出价倍率
-            if ((conf.getUp() == true && last >= sell) || (conf.getUp() == false && sell >= last) && count == 1) { //如果张数为1时才卖出，张树大于等于2时，看整体收益率卖出
-                Order sOrder = commitSellOrder(conf, count);//卖出
+            double sell = buy * conf.getDownSelfMultiple();////卖出价=买入价*卖出价倍率
+            if ((conf.getDown() == true && sell >= last) && count == 1) { //如果张数为1时才卖出，张树大于等于2时，看整体收益率卖出
+                Order sOrder = commitSellOrder(conf, count, "4");//卖出平空
                 if (sOrder != null && sOrder.getStatus() == 2) {//卖出成功
                     orderSer.remove(order);//删除买入订单
                     String email = conf.getUser().getEmail();
                     if (StringUtils.isNotBlank(email)) {//发送邮件
-                        String msg = DateUtil.now() + ": 卖出下单成功！" + "单号id为：" + sOrder.getOrderId() + ",卖出张数为：" + count;
-                        MailUtil.send(email, "卖出下单成功！", msg);
+                        String msg = DateUtil.now() + ": 卖出平空下单成功！" + "单号id为：" + sOrder.getOrderId() + ",卖出张数为：" + count;
+                        MailUtil.send(email, "卖出平空下单成功！", msg);
                     }
                 } else {//找不到订单
                     orderSer.remove(order);
                 }
             }
         }
-        if (count == 0) {//平台上没有张数了。删除本地未完成订单
-            Order[] list = new Order[orders.size()];
-            int oIndex = 0;
-            for (Order order : orders) {
-                list[oIndex++] = order;
+    }
+
+    /**
+     * 卖出平多
+     *
+     * @param orders
+     * @param conf
+     * @param last
+     * @param count
+     */
+    private void sellUp(List<Order> orders, UserConf conf, Double last, Integer count) {
+        for (Order order : orders) {
+            double buy = Double.parseDouble(order.getPrice());
+            double sell = buy * conf.getSelfMultiple();////卖出价=买入价*卖出价倍率
+            if ((conf.getUp() == true && last >= sell) && count == 1) { //如果张数为1时才卖出，张树大于等于2时，看整体收益率卖出
+                Order sOrder = commitSellOrder(conf, count, "3");//卖出
+                if (sOrder != null && sOrder.getStatus() == 2) {//卖出成功
+                    orderSer.remove(order);//删除买入订单
+                    String email = conf.getUser().getEmail();
+                    if (StringUtils.isNotBlank(email)) {//发送邮件
+                        String msg = DateUtil.now() + ": 卖出平多下单成功！" + "单号id为：" + sOrder.getOrderId() + ",卖出张数为：" + count;
+                        MailUtil.send(email, "卖出平多下单成功！", msg);
+                    }
+                } else {//找不到订单
+                    orderSer.remove(order);
+                }
             }
-            orderSer.remove(list);
         }
     }
 
@@ -167,12 +233,12 @@ public class AutoTradeSerImpl implements AutoTradeSer {
      */
     @Transactional
     @Override
-    public Order commitSellOrder(UserConf conf, Integer size) {
+    public Order commitSellOrder(UserConf conf, Integer size, String type) {
         String url = COMMIT_ORDER;
         OrderVO orderVO = new OrderVO();
         orderVO.setInstrument_id(conf.getInstrumentId());//合约id
         orderVO.setSize(size + "");//每次开张数
-        orderVO.setType(conf.getUp() == true ? "3" : "4");
+        orderVO.setType(type);
         orderVO.setMatch_price("1");
         orderVO.setLeverage(conf.getLeverage() + "");
         String rs = Client.httpPost(url, JSON.toJSONString(orderVO), conf.getUser());
@@ -191,6 +257,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 order.setUid(conf.getUser().getId());
                 order.setCreateDate(LocalDateTime.now());
                 order.setType(2);//卖出
+                order.setOrderType(Integer.parseInt(type));
                 order.setSellDate(LocalDateTime.now());
                 OrderInfo info = getOrderInfo(conf, oc.getOrder_id());
                 if (null != info) {
@@ -214,16 +281,17 @@ public class AutoTradeSerImpl implements AutoTradeSer {
      * 买入，下单
      *
      * @param conf
+     * @param type 1:开多2:开空3:平多4:平空
      */
     @Transactional
     @Override
-    public Order commitBuyOrder(UserConf conf, String buy, Integer size) {
+    public Order commitBuyOrder(UserConf conf, String buy, Integer size, String type) {
         String url = COMMIT_ORDER;
         OrderVO orderVO = new OrderVO();
         orderVO.setInstrument_id(conf.getInstrumentId());//合约id
         orderVO.setSize(size + "");//每次开张数
         orderVO.setPrice(buy);//买入价格
-        orderVO.setType(conf.getUp() == true ? "1" : "2");
+        orderVO.setType(type);
         orderVO.setLeverage(conf.getLeverage() + "");
         String rs = Client.httpPost(url, JSON.toJSONString(orderVO), conf.getUser());
         if (rs.indexOf("\"error_code\":\"0\"") != -1) {//下单成功
@@ -237,6 +305,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 order.setErrorMessage(oc.getError_message());
                 order.setInstrumentId(conf.getInstrumentId());
                 order.setUid(conf.getUser().getId());
+                order.setOrderType(Integer.parseInt(type));
                 order.setCreateDate(LocalDateTime.now());
                 order.setSize(size + "");
                 order.setPrice(buy);

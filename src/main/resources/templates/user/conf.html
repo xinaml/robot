@@ -79,7 +79,7 @@
     </div>
 
     <div>
-        <button type="submit" class="btn btn-primary" id="edit_user_btn" onclick="editUserSecret()">保存设置</button>
+        <button type="submit" class="btn btn-primary" id="edit_user_btn" onclick="editUserSecret()">保存账号信息</button>
     </div>
 
 </div>
@@ -126,6 +126,15 @@
         <br>
         <div class="input-group">
             <div class="input-group-prepend">
+                <span class="input-group-text">止损等待时间</span>
+            </div>
+            <input type="text" class="form-control" placeholder="止损后等待时间" id="stopTime" name="stopTime"
+                   onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')">
+            <span class="input-group-text">分钟</span>
+        </div>
+        <br>
+        <div class="input-group">
+            <div class="input-group-prepend">
                 <span class="input-group-text">合约币种</span>
             </div>
             <select class="form-control" name="type" id="type">
@@ -141,14 +150,7 @@
             </div>
             <input type="text" class="form-control" placeholder="合约id" id="contract" name="contract" >
         </div>
-        <br>
-        <div class="input-group">
-            <div class="input-group-prepend">
-                <span class="input-group-text">保留金额</span>
-            </div>
-            <input type="text" class="form-control" placeholder="保留金额" id="account" name="account"
-                   onkeyup="if(isNaN(value))execCommand('undo')" onafterpaste="if(isNaN(value))execCommand('undo')">
-        </div>
+
         <br>
         <div class="input-group">
             <div class="input-group-prepend">
@@ -158,6 +160,14 @@
                    onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')">
         </div>
         <br>
+        <span style="font-weight: bold">买多配置</span>
+        <br>
+        <br>
+        <div class="input-group">
+            <span class="input-group-text">开启买入开多</span>
+            <input id="up" name="up" value="true" type="checkbox" onchange="changeUp()"  style="margin-left: 10px;width: 40px;height:40px">
+        </div>
+        <br>
         <div class="input-group">
             <div class="input-group-prepend">
                 <span class="input-group-text">开张数</span>
@@ -165,15 +175,7 @@
             <input type="text" class="form-control" placeholder="开张数" id="count" name="count"
                    onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')">
         </div>
-        <br>
-        <div class="input-group">
-            <div class="input-group-prepend">
-                <span class="input-group-text">买入值阀</span>
-            </div>
-            <input type="text" class="form-control" placeholder="值阀>收盘价-开仓平均价才买入，不填则不限制" name="buyVal" id="buyVal"
-                   onkeyup="if(isNaN(value))execCommand('undo')" onafterpaste="if(isNaN(value))execCommand('undo')">
 
-        </div>
         <br>
         <div class="input-group">
             <div class="input-group-prepend">
@@ -216,10 +218,71 @@
             &nbsp;<p style="color: gray">不买入，仅卖出。</p>
         </div>
         <br>
+
+
+
+
+
+
+
+
+<!--        买空-->
+        <span style="font-weight: bold">买空配置</span>
+        <br>
+        <br>
         <div class="input-group">
-            <span class="input-group-text">买入开多</span>
-            <input id="up" name="up" value="true" type="checkbox" onchange="changeUp()"  style="margin-left: 10px;width: 40px;height:40px">
-            &nbsp;<p style="color: gray">不勾选则为买入开空</p>
+            <span class="input-group-text">开启买入开空</span>
+            <input id="down" name="down" value="true" type="checkbox" onchange="changeDown()"  style="margin-left: 10px;width: 40px;height:40px">
+        </div>
+        <br>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">开张数</span>
+            </div>
+            <input type="text" class="form-control" placeholder="开张数" id="downCount" name="downCount"
+                   onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')">
+        </div>
+
+        <br>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">买入价倍率</span>
+            </div>
+            <input type="text" class="form-control" placeholder="买入价倍率" name="downBuyMultiple" id="downBuyMultiple"
+                   onkeyup="if(isNaN(value))execCommand('undo')" onafterpaste="if(isNaN(value))execCommand('undo')">
+        </div>
+        <br>
+
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">卖出价倍率</span>
+            </div>
+            <input type="text" class="form-control" placeholder="卖出价倍率" name="downSelfMultiple" id="downSelfMultiple"
+                   onkeyup="if(isNaN(value))execCommand('undo')" onafterpaste="if(isNaN(value))execCommand('undo')">
+        </div>
+        <br>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">亏损多少卖出</span>
+            </div>
+            <input type="text" class="form-control" placeholder="亏损多少卖出" name="downLoss" id="downLoss"
+                   onkeyup="if(isNaN(value))execCommand('undo')" onafterpaste="if(isNaN(value))execCommand('undo')">
+            <span class="input-group-text">%</span>  &nbsp;<p style="color: gray">如：亏损达到-50%卖出,填50</p>
+        </div>
+        <br>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">收益多少卖出</span>
+            </div>
+            <input type="text" class="form-control" placeholder="亏损多少卖出" name="downProfit" id="downProfit"
+                   onkeyup="if(isNaN(value))execCommand('undo')" onafterpaste="if(isNaN(value))execCommand('undo')">
+            <span class="input-group-text">%</span>  &nbsp;<p style="color: gray">如：收益达到20%全部卖出,填20</p>
+        </div>
+        <br>
+        <div class="input-group">
+            <span class="input-group-text">只等待卖出</span>
+            <input id="downOnlySell" name="downOnlySell" value="true" type="checkbox" onchange="changeDownOnly()"  style="margin-left: 10px;width: 40px;height:40px">
+            &nbsp;<p style="color: gray">不买入，仅卖出。</p>
         </div>
     </form>
     <br>
@@ -245,20 +308,30 @@
                         $("#time option[value='"+rs.data.time+"']").attr("selected",true);
                         $("#account").val(rs.data.account)
                         $("#count").val(rs.data.count)
+                        $("#downCount").val(rs.data.downCount)
                         $("#contract").val(rs.data.contract)
                         $("#type option[value='"+rs.data.type+"']").attr("selected",true);
                         $("#buyMultiple").val(rs.data.buyMultiple)
+                        $("#downBuyMultiple").val(rs.data.downBuyMultiple)
                         $("#selfMultiple").val(rs.data.selfMultiple)
+                        $("#downSelfMultiple").val(rs.data.downSelfMultiple)
                         $("#leverage").val(rs.data.leverage)
                         $("#orderTime").val(rs.data.orderTime)
                         $("#sellTime").val(rs.data.sellTime)
+                        $("#stopTime").val(rs.data.stopTime)
                         $("#onlySell").attr('checked',rs.data.onlySell)
                         $("#onlySell").val(rs.data.onlySell)
+                        $("#downOnlySell").attr('checked',rs.data.downOnlySell)
+                        $("#downOnlySell").val(rs.data.downOnlySell)
                         $("#up").attr('checked',rs.data.up)
                         $("#up").val(rs.data.up)
+                        $("#down").attr('checked',rs.data.down)
+                        $("#down").val(rs.data.down)
                         $("#buyVal").val(rs.data.buyVal)
                         $("#loss").val(rs.data.loss)
+                        $("#downLoss").val(rs.data.downLoss)
                         $("#profit").val(rs.data.profit)
+                        $("#downProfit").val(rs.data.downProfit)
 
                     }
                 } else {
@@ -357,6 +430,13 @@
         }else {
             $("#onlySell").val('false')
         }
+    }function changeDownOnly() {
+        var a =  $("#downOnlySell").prop('checked');
+        if(a==true){
+            $("#downOnlySell").val('true')
+        }else {
+            $("#downOnlySell").val('false')
+        }
     }
     function changeUp() {
         var a =  $("#up").prop('checked');
@@ -364,6 +444,13 @@
             $("#up").val('true')
         }else {
             $("#up").val('false')
+        }
+    }function changeDown() {
+        var a =  $("#down").prop('checked');
+        if(a==true){
+            $("#down").val('true')
+        }else {
+            $("#down").val('false')
         }
     }
 

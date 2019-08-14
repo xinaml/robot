@@ -23,7 +23,7 @@ public interface OrderSer extends Ser<Order, OrderDTO> {
      * 查询买入成功的订单
      * @return
      */
-    default List<Order> findBuySuccess(String userId){
+    default List<Order> findBuySuccess(String userId,Integer orderType){
         return null;
     }
 
@@ -35,11 +35,5 @@ public interface OrderSer extends Ser<Order, OrderDTO> {
         return null;
     }
 
-    /**
-     * 查询卖出成功的订单
-     * @return
-     */
-    default List<Order> findSellSuccess(String userId){
-        return null;
-    }
+
 }
