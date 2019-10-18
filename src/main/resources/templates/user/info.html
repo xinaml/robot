@@ -26,59 +26,71 @@
     <li><a href="/user/page">用户</a></li>
 
 </ul>
-<div id="message" style="text-align: center;width: 800px;height: 900px;overflow: auto;
+<div id="message" style="text-align: center;width: 800px;height: 100px;overflow: auto;
 border: 1px solid #000;margin: 20px">
 
 </div>
+<button value="开始" onclick="start()">开始</button>
 </body>
 
 <script type="text/javascript">
     var websocket = null;
+    function start() {
+        //判断当前浏览器是否支持WebSocket
+        if ('WebSocket' in window) {
+            var  mydate = new Date();
+            var id = "cms"+mydate.getDay()+ mydate.getHours()+ mydate.getMinutes()+mydate.getSeconds()+mydate.getMilliseconds();
+            websocket = new WebSocket("ws://localhost:8088/websocket/"+id);
 
-    //判断当前浏览器是否支持WebSocket
-    if ('WebSocket' in window) {
-        var id ='[[${userId}]]';
-        websocket = new WebSocket("ws://btc.lgqfun.top:8088/websocket/"+id);
-    }
-    else {
-        alert('Not support websocket')
+            //连接发生错误的回调方法
+            websocket.onerror = function () {
+                setMessageInnerHTML("error");
+            };
+
+            //连接成功建立的回调方法
+            websocket.onopen = function (event) {
+            }
+
+            //接收到消息的回调方法
+            websocket.onmessage = function (event) {
+                setMessageInnerHTML(event.data);
+            }
+
+            //连接关闭的回调方法
+            websocket.onclose = function () {
+            }
+
+            //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+            window.onbeforeunload = function () {
+                websocket.close();
+            }
+
+
+
+            //模拟上传
+            $.ajax({
+                type: 'GET',
+                url: '/start',
+                dataType: 'json',
+                data:{fileId:id},
+                cache: false,//false是不缓存，true为缓存
+                async: true,//true为异步，false为同步
+                success: function (rs) {
+
+                }
+            });
+        }
+        else {
+            alert('Not support websocket')
+        }
     }
 
-    //连接发生错误的回调方法
-    websocket.onerror = function () {
-        setMessageInnerHTML("error");
-    };
 
-    //连接成功建立的回调方法
-    websocket.onopen = function (event) {
-        setMessageInnerHTML("监控已打开...");
-    }
-
-    //接收到消息的回调方法
-    websocket.onmessage = function (event) {
-        setMessageInnerHTML(event.data);
-    }
-
-    //连接关闭的回调方法
-    websocket.onclose = function () {
-        setMessageInnerHTML("监控已关闭...");
-    }
-
-    //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
-    window.onbeforeunload = function () {
-        websocket.close();
-    }
 
     //将消息显示在网页上
     function setMessageInnerHTML(innerHTML) {
-        var  text = $("#message").html();
-        if(text.length>400){
-            text=text.substr(text.indexOf('<hr>')+4);
-            text+=innerHTML+'<hr>';
-            $("#message").html(text)
-        }else {
-            document.getElementById('message').innerHTML += innerHTML + '<hr>';
-        }
+        $("#message").html(innerHTML)
+
     }
 
     //关闭连接

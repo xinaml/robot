@@ -1,6 +1,7 @@
 package com.xinaml.robot.common.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
@@ -10,12 +11,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
+import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 /**
  * 处理前端传过来的日期，及返回的json日期
@@ -35,6 +39,7 @@ public class DateConverterConf {
         javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(CommonConst.DATETIME)));
         javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(DateTimeFormatter.ofPattern(CommonConst.DATE)));
         javaTimeModule.addSerializer(LocalTime.class, new LocalTimeSerializer(DateTimeFormatter.ofPattern(CommonConst.TIME)));
+        javaTimeModule.addSerializer(Date.class, new DateSerializer(true, DateFormat.getInstance()));
         om.registerModule(javaTimeModule);
         return om;
     }

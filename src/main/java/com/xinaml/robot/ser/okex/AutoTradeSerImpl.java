@@ -47,8 +47,8 @@ public class AutoTradeSerImpl implements AutoTradeSer {
     private RedisRep redisRep;
     private static Logger LOG = LoggerFactory.getLogger(AutoTradeSer.class);
 
-    @Autowired
-    private WebSocketServer webSocketServer;
+//    @Autowired
+//    private WebSocketServer webSocketServer;
     private ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
 
     @Override
@@ -76,7 +76,7 @@ public class AutoTradeSerImpl implements AutoTradeSer {
                 if (old == null) {
                     MsgSession.put(userId, msg);
                 }
-                webSocketServer.sendMessage(userId, msg);
+//                webSocketServer.sendMessage(userId, msg);
             } else {
                 MsgSession.put(userId, msg);
             }
